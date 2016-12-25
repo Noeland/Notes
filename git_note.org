@@ -121,3 +121,20 @@ Check [[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%9F%A5%E7%9C%8B
 ** Undoing things
 1. git commit --amend
    Modify your previous commit.
+
+2. git reset HEAD <file>
+   unstage the staged file <file>
+
+3. git checkout -- <file>
+   discard any change you made to file <file>. This command is dangerous because
+   all the change you've made will loss. A better method is to use branch, which
+   will be introduced later.
+
+** Remote repository
+1. git fetch <name>
+   This command only download new data in your remote repository. It does not
+   integrate any of those new file into your current working file.
+
+2. git pull <name> <branch>
+   This command not only download the new files but also tries to merge the new
+   data into your current working directory.
