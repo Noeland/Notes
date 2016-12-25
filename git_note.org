@@ -25,6 +25,7 @@
    In a DVCS (such as git, Mercurial, Bazaar and Darcs), clients not just
    check out the latest snapshot of the files: they fully mirror the
    repository. 
+
 ** Git Basics
 1. Snapshots, Not Differences
 2. Nearly every operation is local
@@ -47,6 +48,7 @@
    - Modified: If a file was changed since it's been check out but not yet
      staged.
    - Staged: If a file was modified and added to the staged area.
+
 ** Configurations
 1. About config
    Git configurations are stored in three different places
@@ -66,3 +68,56 @@
 4. Use git config --list to check all configurations.
 
 * Chapter 2: Git Basics
+** Ignoring files
+Sometimes, there is files that you do not want git to add automatically or even
+show you as untracked. You can configure your preference in a file called
+'.gitignore'. 
+
+There is a [[https://github.com/github/gitignore][useful link]] in github that maintains a fairly comprehensive list of
+'.gitignore' file for different languages.
+
+** Viewing you staged and unstaged change
+1. git diff shows differences between staged files and unstaged modified files.
+   Note that this command only shows differences between staged and unstaged
+   files. That's why if you will get nothing if you use this command after you
+   staged all your changes.
+
+2. git diff --staged can show differences between commited and staged files.
+
+** Skipping staged area
+1. git commit -a -m 'mgs'
+   This command makes git first stage all tracked files and then make a commit.
+
+** Remove files
+1. git rm
+   This command removes staged file as well as the file in your working directory.
+   If the file staged is modified, you have to provide an option -f (stands for
+   force) in order to do the removal.
+
+2. git rm --cached
+   This command only removes the staged file but the file is still in your
+   working directory.
+
+** Moving/Renaming files
+1. git mv file_from file_to
+   This command is equivalent to:
+   mv file_from file_to
+   git rm filr_from
+   git add file_to
+
+   Git can detect renaming through this sequence of command. 
+
+** git log
+1. options
+   -p show differences between each update
+   --stat show change statistics
+   --graph show ascii graph on branching
+   --pretty=format:"foramt"
+
+2. options for --pretty=format
+
+Check [[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%9F%A5%E7%9C%8B%E6%8F%90%E4%BA%A4%E5%8E%86%E5%8F%B2][this link]] for complete info.
+
+** Undoing things
+1. git commit --amend
+   Modify your previous commit.
