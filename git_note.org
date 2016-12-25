@@ -1,0 +1,68 @@
+* Chapter 1: Getting Started
+** About Version Control
+1. What is VC?
+   Version control is a system that record changes to a file or set of files
+   overtime so that you can recall specific versions later.
+
+2. Local Version Control
+   It is like a database that keeps all changes to a files under revision
+   control. A popular example is RCS which is still distributed with many
+   computers. RCS works by keeping patch sets(that is, differences between
+   files) in a special format on disk; it can then re-create what any file
+   looked at any point in time by adding up all the patches.
+
+3. Centralized Version Control System
+   To address the problem of collaboration between developers, CVCS was
+   created. These systems, such as CVS, Subversion and Perforce, has a single
+   server that contains all the versioned files, and a number of clients that
+   check out files from a central place. This kind of system let everyone gain a
+   knowledge of what everyone else are working at and system administrator has a
+   fine-grained control over accessibility of individual clients.
+
+   However, persistence is a problem.
+
+4. Distributed Version Control System
+   In a DVCS (such as git, Mercurial, Bazaar and Darcs), clients not just
+   check out the latest snapshot of the files: they fully mirror the
+   repository. 
+** Git Basics
+1. Snapshots, Not Differences
+2. Nearly every operation is local
+3. Git has integrity
+   Everything is git is check-summed before it is stored and is referred to by
+   that checksum. This means that it is impossible to change a file or directory
+   without git knowing about it.
+
+   The mechanism that Git uses for its checksumming is called SHA-1 hash. This
+   is a 40-character string composed of hexadecimal characters (0 to 9 and a to
+   f) and calculated based of the content of a file or directory structure in
+   Git. In fact, Git store everything in its database by those hash instead of
+   the actual file name.
+
+4. Git generally only add data
+   In this case, Git will almost never do something unrecoverable.
+
+5. The three states
+   - Commited: If a particular version of a file is in git repository.
+   - Modified: If a file was changed since it's been check out but not yet
+     staged.
+   - Staged: If a file was modified and added to the staged area.
+** Configurations
+1. About config
+   Git configurations are stored in three different places
+   - etc/gitconfig: modified with '--system' option
+   - ~/.gitconfig: for current user, modified with '--global' option.
+   - ./.git/config: for current repository.
+
+   Modification to each level will overrides values in previous level.
+
+2. Set username and email
+   git config --global user.name "Huanming"
+   git config --global user.email "noeland@g.ucla.edu"
+
+3. Set editor
+   git config --global core.editor emacs
+
+4. Use git config --list to check all configurations.
+
+* Chapter 2: Git Basics

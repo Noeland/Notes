@@ -1,0 +1,163 @@
+* Emacs Tutorial Day 2
+** Some Notes
+1. When setting mode, "1" is the same as "t".
+2. Use "<s + tab" to create code block
+#+BEGIN_SRC 
+
+#+END_SRC
+3. M-RET to correct ordering.
+4. [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Change-Window.html][Deleting and Resize Windows]]
+
+** Fix some annoying stuff
+1. make cursor type to bar
+   Introduces the concept of "buffer-local" varialbe and "non-buffer-local"
+   variable. 
+
+   For "buffer-local" varialbe, 'setq' only validate changes in current buffer
+   while 'setq-default' makes the global effect.
+   For "non-buffer-local" varialbe, those two have the same effect.
+
+   Command:
+#+BEGIN_SRC emacs-lisp
+   (setq-default cursor-type 'bar)
+#+END_SRC
+
+2. disable backup file
+   It is recommanded to used git/github as file management system. Therefore,
+   the file backup system of Emacs could be turned off.
+
+#+BEGIN_SRC emacs-lisp
+  (setq make-backup-files nil)
+#+END_SRC
+
+   You can use command C-' to edit source code. This is useful when you want to
+   edit code inside commend block.
+
+   There is a way to enable colorful annotations inside org file.
+#+BEGIN_SRC emacs-lisp
+   (require 'org)
+   (setq org-src-fontify-natively t)
+#+END_SRC
+
+3. enable recentf-mode
+#+BEGIN_SRC emacs-lisp
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files) 
+#+END_SRC
+
+4. bring electric indent mode back
+   
+5. delete selection mode
+#+BEGIN_SRC emacs-lisp
+   (delete-selection-mode t)
+#+END_SRC
+
+   Replace the selected text with the text you input.
+
+
+** Make emacs more fancy
+1. Open with full screen
+#+BEGIN_SRC emacs-lisp
+(setq initial-frame-alist (quote ((fullscreen . maximized))))
+#+END_SRC
+
+2. Show match parentheses
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
+#+END_SRC
+
+   Concept of "hook":
+   When a major mode is on, it will activate all the "hooks" it have.
+   The above code means that we want to add a hook to a major mode
+   "emacs-lisp-mode".
+
+ 3. Highlight current line (global-hi-line-mode)
+#+BEGIN_SRC emacs-lisp
+(global-hi-line-mode)
+#+END_SRC
+
+** Improve built-in pacakage system
+   MELPA!!!!
+
+#+BEGIN_SRC emacs-lisp
+
+  (when (>= emacs-major-version 24)
+    (require 'package)
+    (package-initialize)
+    (add-to-list 'package-archives '("melpa", "http://melpa.org/packages/") t)
+    )
+
+  (require 'cl)
+
+  ;; add whatever packages you want here
+
+  (defvar huanming/packages '(
+                              company
+                              ) "Default packages" )
+
+  (defun huanming/packages-installed-p ()
+    (loop for pkg in huanming/packages
+          when (not (package-installed-p pkg)) do (return nil)
+          finally (return t))
+
+    (unless (huanming/packages-installed-p)              ;; If this is not ture
+      (message "%s" "Refresing packages database...")    ;; Send msg and resfresh
+      (package-refresh-contents)
+      (dolist (pkg huanming/packages)                    ;; For all pkg in huanming/packages
+        (when (not (package-installed-p pkg))            ;; if it is not installed
+          (package-install pkg))))                       ;; Install it
+
+
+#+END_SRC
+
+1. Install a theme (monokai)
+2. Install hungry delete mode
+3. package-list-packages (add/delete/update packages)
+4. Install and configure smex and ivy 
+5. Use customize-group to customize the package settings
+6. Install and configure smartparens mode
+7. Don't try to update packages daily, the updating process may fail.
+
+(tips: you could use M-RET to fix the order, you could also use M-RET to add new headings)
+
+** Org Mode
+*** Agenda files and agenda view
+1. Set a gtd.org file
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files '("~/org"))
+  (global-set-key (kbd "C-c a") 'org-agenda)
+#+END_SRC
+*** Learn how to set schedule and deadline
+1. C-c s to set a schedule
+*** Hyperlinks in Org mode
+1. Link format
+   [[link] [description]]   or just [ [link] ]
+   (Note that there is no whitespace in real linking)
+   
+   Once the sytax has been completed, only the "description" part will be
+   displayed. If there is no "description" part, org will only display the link.
+
+   To view the invisible 'link' part, use 'C-c C-l' with the cursor on the link.
+
+2. Internal links
+   If the link does not look like a URL, it is considered to be internal link in
+   the current file. The most important case is a link like [
+   [#my-custom-id]]. It is our responsibility to make sure these ids are unique
+   in a file.
+
+   Internal link triggers a text search in the current file. The preferred match
+   for a text link is a dedicated target: the same string in double argular
+   brackets, like '<<my target>>'.
+
+   Another way is to create target using '#+NAME" keyword.
+
+3. External links
+   
+   Using command 'C-c l' to store a link to the current location. The keybinding
+   must be created by user.
+
+   Command 'C-c C-l' can insert a link.
+
+   Note that all the above feature is only available in Org mode text.
