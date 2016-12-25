@@ -138,3 +138,6 @@ Check [[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%9F%A5%E7%9C%8B
 2. git pull <name> <branch>
    This command not only download the new files but also tries to merge the new
    data into your current working directory.
+
+3. Failed to push after amend commit
+   
