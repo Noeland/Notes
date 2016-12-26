@@ -1,3 +1,4 @@
+[[https://git-scm.com/book/zh/v2/起步-关于版本控制][study link]]
 * Chapter 1: Getting Started
 ** About Version Control
 1. What is VC?
@@ -121,6 +122,7 @@ Check [[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%9F%A5%E7%9C%8B
 ** Undoing things
 1. git commit --amend
    Modify your previous commit.
+<Notes: Try not to use this command>
 
 2. git reset HEAD <file>
    unstage the staged file <file>
