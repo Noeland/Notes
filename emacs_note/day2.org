@@ -161,3 +161,12 @@
    Command 'C-c C-l' can insert a link.
 
    Note that all the above feature is only available in Org mode text.
+* Emacs Tutorial Day 3
+** Split your config into multiple files
+1. Use git to manage init.el
+
+2. Help window is annoying
+#+BEGIN_SRC emacs-lisp
+(require 'popwin)
+(popwin-mode t)
+#+END_SRC
