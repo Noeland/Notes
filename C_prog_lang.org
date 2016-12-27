@@ -1,5 +1,6 @@
 * Chapter 1
 
+
 * Chapter 2: Types, Operaters and Expressions
 ** Type
 1. short and int are at least 16-bit long. longs are at least 32-bit
@@ -25,13 +26,99 @@
 1. If an expression only involves int type, int operations are performed. If
    there is one float type, floating point operations are performed.
 ** Incremental and decremental operator
+1. prefix operator increment/decrement the variable before the value is used
+   while postfix operator increment/decrement the variable after the value if
+   used. 
+
+2. Those two operators can only be applied to variables, not
+   expressions. Therefore, expression like (i+j)++ is wrong.
+
+3. squeeze function: Removes all occurrences of the character @c from the string
+   @s.
+#+BEGIN_SRC c
+  void squeeze(char s[], int c)
+  {
+    int i,j;
+    // i is the iterator
+    // j does not move forward if we meet a @c.
+    for(i=0, j=0; s[i]!='\0'; i++)
+	if(s[i] != c)
+	  s[j++] = s[i];
+
+    s[j] = '\0';
+  }
+#+END_SRC
+
+4. strcat function
+#+BEGIN_SRC c
+  void strcat(char s[], char t[])
+  {
+    int i=0,j=0;
+
+    while(s[i] !='\0')
+      i++;
+
+    while(s[i++] = t[j++] != '\0');
+  }
+#+END_SRC
+
+5. a[i] = i++ is undefined. 
+For expression like x = i++, it could be thought of as the value of i is stored
+in a temporal container. When x is assigned a value, it is the value stored in
+the temporal location. However, for a[i] = i++, we have no way to deduce what is
+the value of i when such assignent occurs.
+** Assignment operators and expression
 1. expr1 op = expr2
    This is equivalent to
    expr1 = (expr1) op (expr2)
    Notice the parentheses. It means that expression like x += y + 1 is 
-   x = x + (y+1). 
+   x = x + (y+1).
 
-2. a[i] = i++ is undefined
+2. bitcount function: avoid machine dependency when doing shift
+#+BEGIN_SRC c
+  // the argument is declared to be unsigned
+  // because this ensures that the shift if
+  // logical shift.
+  int bitcount(unsigned x)
+  {
+    int cnt;
+
+    for(cnt=0;x!=0 ; x>>=1)
+      {
+	cnt +=x & 01;
+      }
+    return cnt;
+  }
+#+END_SRC
+
+3. A faster version of bitcount Some more observation: x & (x-1) deletes the
+   rightmost 1 in x. Note that (x-1) flip every bit up until the rightmost bit
+   which is 1 in x. Therefore, x & (x-1) turn off the rightmost 1.
+#+BEGIN_SRC c
+  int bitcount(unsigned x)
+  {
+    int cnt = 0;
+
+    while(x!=0)
+      {
+	x &= x-1;
+	cnt++;
+      }
+    return cnt;
+  }
+
+#+END_SRC
+
+** Conditional expression: expr1 ? expr2 : expr3
+#+BEGIN_SRC c
+  for(i=0; i!=n; i++)
+    printf("%d%c", ( i % 9 == 0 || i = n-1 ) ? '\n' : ' ' );
+#+END_SRC
+#+BEGIN_SRC c
+    printf("You have %d itme%s\n", n, n==1 ? "." : "s.");
+
+#+END_SRC
+
 
 * Array
 ** Prime generating algorithm
