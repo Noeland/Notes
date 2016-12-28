@@ -3,13 +3,13 @@
 
 * Chapter 2: Types, Operaters and Expressions
 ** Type
-1. short and int are at least 16-bit long. longs are at least 32-bit
-      long. short must not longer than int, which must not longer than long.
-      Normally, short is 16-bit long while int and long are 32-bit long.
+1. short and int are at least 16-bit long. longs are at least 32-bit long. short
+   must not longer than int, which must not longer than long. Normally, short is
+   16-bit long while int and long are 32-bit long. 
 
-2. Constant expressions are expressions that only involves constants. The
-      exact value of such expression is known at compile time rather than
-      run-time. Constant expression is different from "constant".
+2. Constant expressions are expressions that only involves constants. The exact
+   value of such expression is known at compile time rather than
+   run-time. Constant expression is different from "constant". 
 
 3. Non-automatic variable can only be initialize once. Extern and static
    variable is initialize to zero by default.

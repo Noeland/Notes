@@ -6,7 +6,7 @@
      copied into a brand new object. However, when we define a reference, the
      program binds the reference to its initial value instead of copy. The
      binding remains throughout the program so you cannot rebind the reference
-     to a new value. Also, a reference must be initialized.
+     to a new value. 
 
    - Reference is NOT an object. Therefore, you cannot define a reference to
      another reference.
@@ -101,7 +101,7 @@ with const identifier. A const object must be initialized.
      to store the address of a const object, we must use pointer to const.
 
    - const Pointer: int *const cp = &i;
-     Since poitner is an object, const identifier can apply to pointer.
+     Since pointer is an object, const identifier can apply to pointer.
 
 6. Low-level const and top-level const
    - Top-level const is used to indicate an object is const. An object which is
