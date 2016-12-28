@@ -1,0 +1,131 @@
+* Chapter 2: C++ Basics
+** Counpound Type
+1. reference: reference give an object another name. reference type refers to
+   another type. 
+   - Reference must be initialized: During initialization, an initial value is
+     copied into a brand new object. However, when we define a reference, the
+     program binds the reference to its initial value instead of copy. The
+     binding remains throughout the program so you cannot rebind the reference
+     to a new value. Also, a reference must be initialized.
+
+   - Reference is NOT an object. Therefore, you cannot define a reference to
+     another reference.
+
+   - Assignment to a reference is actually assignment to the object binded to
+     the reference.
+
+   - Type of reference must exactly match the type of the object it binds
+     to. However, there are two exceptioins: [[An exception][here]]  [[][here]].
+
+2. Pointer: pointer is the memory address of another object.
+   - Pointer itself is an object. Assignment and copy to a pointer is
+     allowed. This is different from reference. 
+
+   - Uninitialized pointer has garbage value (except it is non-automatic).
+
+   - Since reference is NOT an object, we cannot create a pointer to a
+     reference.
+
+   - Just like reference, type of a pointer must exactly match the type of the
+     object it's pointing  to, except two situation: [[][here]] and [[][here]].
+
+   - Status of a pointer:
+     a. point to an object
+     b. point to the next position of an object
+     c. nullptr
+     d. invalid pointer: non of the above.
+
+   -Do not assign an int variable to a pointer.
+
+   - It is better to initialize all pointers.
+
+   - Two pointers are equal if they contain the same memory address.
+
+3. Declaration
+   - int* p1, p2: p1 is a pointer to an int while p2 is an int.
+
+   - reference to a pointer: int *&r
+     Read the declaration from right to left.
+
+** Const identifier
+If we want a variable to be constant throughout the program, we can declare it
+with const identifier. A const object must be initialized.
+
+1. Note that const identifier is part of "type". What this means is that int is
+   a type different from const int. This is important when we are considering
+   compound type.
+
+2. Any operation on const object cannot change its value. However, It's OK to
+   use a const object for initialization because initialization is copy.
+
+3. By default Linkage is external for non-const symbols and static (internal)for
+   const symbols. This follows from C++ standard: A name of file scope that is
+   explicitly declared const, and not explicitlydeclared extern, has internal
+   linkage, while in C it would have external linkage.
+
+4. Reference to a const object
+   Note that many C++ programmer often call "reference to a const object" a
+   "const reference", which is reasonable to some extent. However, we should
+   always remember that this is incorrect.
+
+   Strictly speaking, there is no such thing as "const reference". We cannot
+   apply const identifier to a reference type because reference is not an
+   object. In fact, since C++ does not allow modifications to the object a
+   reference binds to, all reference is "constant" in a sense. Whether or not
+   the object being referenced is const only determines which operations the
+   reference can perform.
+
+   - <<An exception>> : we are allowed to use expression of any type to initialize a
+     reference to a const object, provided that the type conversion is feasible.
+     
+     When a "const reference" is binded to another type, like:
+     #+BEGIN_SRC c++
+
+         double dval = 3.14;
+         const int &ri = dval;
+
+     #+END_SRC
+     To make sure that r1 binds to an int value, the compiler does the
+     following:
+     #+BEGIN_SRC c++
+          const int temp = dval;
+          const int &ri = temp;
+     #+END_SRC
+     If ri is not const reference, the assignment is illegal.
+
+   - Const reference can bind to a non-const object.
+
+5. Pointer and const
+   - pointer to const: const int *pc = &i;
+     Cannot change the content of the object through a pointer to const. Also,
+     to store the address of a const object, we must use pointer to const.
+
+   - const Pointer: int *const cp = &i;
+     Since poitner is an object, const identifier can apply to pointer.
+
+6. Low-level const and top-level const
+   - Top-level const is used to indicate an object is const. An object which is
+     top-level const can be copied because copy will not change value of the
+     original object.
+
+   - Low-level const means the object the pointer points to is const (similiar
+     logic applies to reference). For low-level const, copy operation is no
+     longer an unrestricted operation. 
+
+7. C++11: constexpr
+   From C++11, it is allowed to declare variable of type constexpr. Compiler
+   will check if the value of thie variable is really a constant expression.
+   #+BEGIN_EXPORT c++
+   constexpr int m = 20;       // correct
+   constexpr int lim = m + 1   // correct
+   constexpr int sz = size();  // correct only if size() is a constant expression.
+#+END_EXPORT
+   - "Literal type" is used to initialize variable of type constexpr. Literal
+     type could be primitive arithmetic type, pointer and reference. Struct is
+     not literal type.
+
+   - The object pointed to by a constexpr pointer ( or binds to a constexpr
+     reference) must be nullptr, 0 or variable allocated to fixed memory
+     address. Those variables are non-automatic.
+
+   - constexpr pointer is top-level const pointer.

@@ -164,3 +164,46 @@ square root of that number.
   }
 
 #+END_SRC
+** Base converting programmin
+#+BEGIN_SRC c
+  int main()
+  {
+    const char baseDigit[16] = {'0', '1', '2', '3',
+			    '4', '5', '6', '7',
+			    '8', '9', 'A', 'B',
+			    'C', 'D', 'E', 'F' };
+
+    int base, input;
+
+    do {
+      printf("Please enter base (between 2 and 16): ");
+      scanf("%d", &base);
+    } while(base < 2 && base > 16);
+
+    printf("Please enter your input: ");
+    scanf("%d", &input);
+
+    if(input == 0)
+    {
+      printf("Converted number: 0\n");
+      return 0;
+    }
+
+    int curr=0;
+
+    char digitHolder[sizeof(int)*8] = {'0'};
+    while(input != 0)
+      {
+	digitHolder[curr++] = baseDigit[ input%base ];
+	input = input / base;
+      }
+
+    printf("Converted number: ");
+    while(curr != -1)
+	printf("%c", digitHolder[--curr]);
+
+
+    printf("\n");
+  }
+
+#+END_SRC
