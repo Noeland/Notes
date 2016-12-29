@@ -1,4 +1,5 @@
 * Chapter 2: C++ Basics
+
 ** Counpound Type
 1. reference: reference give an object another name. reference type refers to
    another type. 
@@ -11,11 +12,16 @@
    - Reference is NOT an object. Therefore, you cannot define a reference to
      another reference.
 
-   - Assignment to a reference is actually assignment to the object binded to
-     the reference.
+   - Within almost all contexts, a variable defined as reference is treated as a
+     synonym for the object to which it refers. There are two examples:
 
-   - Type of reference must exactly match the type of the object it binds
-     to. However, there are two exceptioins: [[An exception][here]]  [[][here]].
+     a. Assignment to a reference is actually assignment to the object binded to
+     the reference. 
+     b. When we use a reference as an initializer, the initializer is actually
+     the corresponding object. 
+
+   - Type of reference must match the type of the object to which it
+     refers. However, there are two exceptioins: [[An exception][here]]  [[][here]]. 
 
 2. Pointer: pointer is the memory address of another object.
    - Pointer itself is an object. Assignment and copy to a pointer is
@@ -46,6 +52,10 @@
 
    - reference to a pointer: int *&r
      Read the declaration from right to left.
+
+   - base_type (declarator)(type_name)
+
+   - A declaration can only have one base type.
 
 ** Const identifier
 If we want a variable to be constant throughout the program, we can declare it
@@ -113,8 +123,14 @@ with const identifier. A const object must be initialized.
      longer an unrestricted operation. 
 
 7. C++11: constexpr
-   From C++11, it is allowed to declare variable of type constexpr. Compiler
-   will check if the value of thie variable is really a constant expression.
+
+   A constant expression is an expression whose value cannot be changed and that
+   can be evaluated at compile time. A literal is a constant expression. A const
+   object that is initialized from a constant expression is also a constant
+   expression. 
+
+   In the new C++ standard, we can ask the compiler to check for us whether a
+   variable is a constant expression.
    #+BEGIN_EXPORT c++
    constexpr int m = 20;       // correct
    constexpr int lim = m + 1   // correct
@@ -124,8 +140,22 @@ with const identifier. A const object must be initialized.
      type could be primitive arithmetic type, pointer and reference. Struct is
      not literal type.
 
-   - The object pointed to by a constexpr pointer ( or binds to a constexpr
+   - The object pointed to by a constexpr pointer (or binds to a constexpr
      reference) must be nullptr, 0 or variable allocated to fixed memory
      address. Those variables are non-automatic.
 
-   - constexpr pointer is top-level const pointer.
+   - The constexpr specifier applies to the pointer, not the type to which the
+     pointer points. Therefore, constexpr pointer is top-level const pointer.
+     Now the confusion occurs. One may recall that a top-level pointer just means
+     we cannot change the address stored but does not impose any restrictions on
+     the content in that address. Therefore, constexpr pointer does not mean we
+     cannot change the content. It depends on the type to which the pointer
+     points.
+     #+BEGIN_SRC c++
+     constexpr int *np = nullptr;
+     int j=0;
+     constexpr int i = 42;
+     // i and j must be defined outside any function
+     constexpr const int *p = &i;     // p is a constant pointer to the const int i
+     constexpr int *pl = &j;          // pl is a constant pointer to the int j
+#+END_SRC
