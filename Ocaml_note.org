@@ -16,14 +16,14 @@
    Say there is a function called "repeated" which takes string s and a number
    n, and return a new string which contains the original string s repeated in n
    times. 
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
    repeat "hello" 3
 #+END_SRC
    Note that there is NO brackets and NO comma between the arguments
 
    Here is another example:
 
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      repeated (prompt_string "Please Enter: ") 3
    #+END_SRC
 
@@ -78,7 +78,7 @@
 
 * The Structure of Ocaml Program
 ** Local "variables" (/really/ local expressions)
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      let average a b =
        let sum = a +. b in
        sum /. 2.0;;
@@ -93,7 +93,7 @@
 
 ** Global "variables" (/really/ global expressions)
    GLobal name is defined at top level:
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      let html =
        let content = read_whole_file file in
        GHtml.html_from_string content
@@ -120,12 +120,12 @@
 
 ** Reference: a real variable 
    We can use reference to create a real variable in Ocaml:
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      ref 0;;
    #+END_SRC
    The above statement isn't very useful since it will probably be thrown away
    at compile time due to garbage collection.
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      let my_ref = ref 0;;
      my_ref := 100;;
      !my_ref;;
@@ -142,7 +142,7 @@
 ** Nexted function
    This weird stuff is actually pretty common in Ocaml.
    Example:
-   #+BEGIN_SRC tuareg
+   #+BEGIN_SRC ocaml
      let read_whole_channel chan =
        let buf = Buffer.create 4096 in
        let rec loop () =
@@ -172,8 +172,7 @@
       /except/ for the very last one.
 
    Example:
-   #+BEGIN_SRC tuareg
-
+   #+BEGIN_SRC ocaml
      for i = 0 to 39 do
        let x_init = Random.float 1.0 in
        let x_final = iterate r x_init 500 in
