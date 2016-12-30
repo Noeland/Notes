@@ -1,0 +1,72 @@
+* Basics
+** Comment
+   In Ocaml, comments are delimited by '(*' and '*)', like this:
+   #+BEGIN_EXAMPLE text
+   (* this is an Ocaml comment *)
+
+   (* This is a
+    * multi-line
+    * Ocaml comment
+    *)
+#+END_EXAMPLE
+    This is like '/*' in C/C++ except that Ocaml allows nested comments.
+
+** Calling functions
+   Say there is a function called "repeated" which takes string s and a number
+   n, and return a new string which contains the original string s repeated in n
+   times. 
+   #+BEGIN_SRC tuareg
+   repeat "hello" 3
+#+END_SRC
+   Note that there is NO brackets and NO comma between the arguments
+
+   Here is another example:
+
+   #+BEGIN_SRC tuareg
+     repeated (prompt_string "Please Enter: ") 3
+   #+END_SRC
+
+   Note that the bracket encloses the first argument of function repeated
+   because we are using the return value of function prompt_string.
+
+** Defining functions
+   let <function_name> =
+        expressions ;;
+    
+    For recursive function:
+
+    let rec <function name> =
+        expressions ;;
+
+** Ocaml features
+   1. Ocaml is a /strongly statically/ typed language. There is nothing dynamic
+      going on among int, float and string etc.
+
+   2. Ocaml uses /type inference/ to work out the types. We do not need to worry
+      about it.
+
+   3. There is no implicit casting and no *automatic conversion* in Ocaml.
+
+   4. As a side effect of type inference, function can't have overloaded
+      definition. Ocaml define '+' as /integer/ addition function.
+
+   5. Ocaml doesn't have /return/ keyword. The last expression of a function
+      becomes the result of the function automatically.
+
+
+** Basic types
+
+   #+BEGIN_EXAMPLE
+   OCaml type  Range
+   
+   int         31-bit signed int (roughly +/- 1 billion) on 32-bit
+               processors, or 63-bit signed int on 64-bit processors
+   float       IEEE double-precision floating point, equivalent to C's double
+   bool        A boolean, written either true or false
+   char        An 8-bit character
+   string      A string
+   unit        Written as ()
+   #+END_EXAMPLE
+   int use one bit for garbage collection purpose.
+
+** Must use explicit type conversion functions
