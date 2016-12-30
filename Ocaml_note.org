@@ -11,6 +11,7 @@
 #+END_EXAMPLE
     This is like '/*' in C/C++ except that Ocaml allows nested comments.
 
+
 ** Calling functions
    Say there is a function called "repeated" which takes string s and a number
    n, and return a new string which contains the original string s repeated in n
@@ -29,14 +30,16 @@
    Note that the bracket encloses the first argument of function repeated
    because we are using the return value of function prompt_string.
 
+
 ** Defining functions
-   let <function_name> =
+   *let* function_name [list of arguments] =
         expressions ;;
     
     For recursive function:
 
-    let rec <function name> =
+    *let* rec function name [list of arguments] = 
         expressions ;;
+
 
 ** Ocaml features
    1. Ocaml is a /strongly statically/ typed language. There is nothing dynamic
@@ -69,4 +72,113 @@
    #+END_EXAMPLE
    int use one bit for garbage collection purpose.
 
+
 ** Must use explicit type conversion functions
+
+
+* The Structure of Ocaml Program
+** Local "variables" (/really/ local expressions)
+   #+BEGIN_SRC tuareg
+     let average a b =
+       let sum = a +. b in
+       sum /. 2.0;;
+   #+END_SRC
+   The standard phrase /let name = expression/ is used to define a named local
+   expression, and name can be used later in the function instead of expression,
+   till a ';;' which ends the block of code.
+
+   The name 'sum' in the above code is just another name for the expression so
+   there is no way to assign it a new value or get its memory address. This is
+   different from C variables.
+
+** Global "variables" (/really/ global expressions)
+   GLobal name is defined at top level:
+   #+BEGIN_SRC tuareg
+     let html =
+       let content = read_whole_file file in
+       GHtml.html_from_string content
+       ;;
+
+     let menu_bold () =
+       match bold_button#active with
+       | true -> html#set_font_style ~enable:[`BOLD] ()
+       | false -> html#set_font_style ~disable:[`BOLD] ()
+       ;;
+
+     let main () =
+       (* code omitted *)
+       factory#add_item "Cut" ~key:_X ~callback: html#cut
+       ;;
+   #+END_SRC
+
+   As stated above, this so-called "global variable" is different from global
+   variable in C.
+
+** Let-binding
+   Any use of 'let...' whether at the top level or within a function is called
+   *let-binding*.
+
+** Reference: a real variable 
+   We can use reference to create a real variable in Ocaml:
+   #+BEGIN_SRC tuareg
+     ref 0;;
+   #+END_SRC
+   The above statement isn't very useful since it will probably be thrown away
+   at compile time due to garbage collection.
+   #+BEGIN_SRC tuareg
+     let my_ref = ref 0;;
+     my_ref := 100;;
+     !my_ref;;
+   #+END_SRC
+   
+   In Ocaml, references are very similiar to pointers in C/C++. The above code
+   is similiar to the following:
+   #+BEGIN_SRC C++
+     int a = 0, *my_ptr;
+     ,*my_ptr = 100;
+     ,*my_ptr;
+  #+END_SRC
+
+** Nexted function
+   This weird stuff is actually pretty common in Ocaml.
+   Example:
+   #+BEGIN_SRC tuareg
+     let read_whole_channel chan =
+       let buf = Buffer.create 4096 in
+       let rec loop () =
+         let newline = input_line chan in
+         Buffer.add_string buf newline;
+         Buffer.add_char buf '\n';
+         loop ()
+       in
+       try
+         loop ()
+       with
+         End_of_file -> Buffer.contents buf;;
+   #+END_SRC
+
+
+** Modules and open
+
+** Using and omitting ;; and ;
+   1. Use ';;' to seperate statement at top level and /never/ within function
+      definitions or any other kind of statement.
+
+   2. Some time we can elide the ';;'
+
+   3. Consider 'let ... in' as a statement, and never put a single ; after it.
+
+   4. For all the statement within a block of code, follow them with a single ';',
+      /except/ for the very last one.
+
+   Example:
+   #+BEGIN_SRC tuareg
+
+     for i = 0 to 39 do
+       let x_init = Random.float 1.0 in
+       let x_final = iterate r x_init 500 in
+       let y = int_of_float (x_final *. 480.) in
+       Graphics.plot x y
+     done
+   #+END_SRC
+
