@@ -139,8 +139,14 @@
      ,*my_ptr;
   #+END_SRC
 
-** Nexted function
+** Nested function
    This weird stuff is actually pretty common in Ocaml.
+
+   A nested function is a function defined inside another function. The name of
+   the function is local to the block where it is defined. The nested function
+   can access all the variables of the containing function that are visible at
+   the point of its definition.
+
    Example:
    #+BEGIN_SRC ocaml
      let read_whole_channel chan =
@@ -181,3 +187,36 @@
      done
    #+END_SRC
 
+
+* Data TYpes and Matching
+** Linked lists
+   To write a linked list, use:
+   #+BEGIN_SRC ocaml
+     [1; 2; 3]
+   #+END_SRC
+   (Note semicolons, NOT commas).
+
+   A list has a *head* (the first element) and a *tail* (the rest of the
+   elements). The head is an element while the tail is a list.
+
+   Some alternative ways to write a list:
+   #+BEGIN_SRC ocaml
+     [1; 2; 3]
+     1 :: [2; 3]
+     1 :: 2 :: [3]
+     1 :: 2 :: 3 :: []
+   #+END_SRC
+
+   Note that all the above lists are equivalent.
+
+*** The type of a linked list
+    The type of a linked list of integers is 'int list', and in general the type
+    of a linked list of 'foos' is 'foo list'.
+
+    This implies that all the element of a linked list must have the same
+    type. However, the type could be polymorphic (ie. 'a list), which is useful
+    for generic functions. Note that 'a list means this list could be of any
+    type but all elements in the list still must have the same type.
+
+
+** Structures
