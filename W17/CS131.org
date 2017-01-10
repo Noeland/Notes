@@ -1,0 +1,83 @@
+* Week 1
+** Intro Problem
+   Given a text file as input. Generate a list of words sorted according to its
+   frequency in the input file.
+
+   - Literate Programming
+
+   - Professor simple method
+     #+BEGIN_SRC shell
+       tr -cs a-zA-Z [\n]  |  sort  | uniq  -c  | sort -nr
+     #+END_SRC
+
+   - Parallelism on the Above Method
+     In a four core matchine it is possible for true parallelism. However, sort
+     can only output after finishing processing all its input.
+** Language popularity
+1. Java
+2. C
+3. C++
+4. C#
+5. Python
+6. VBNET
+7. js
+8. Perl
+9. assm
+10. PHP
+
+** Course description
+   - Core of this course
+     * Principles and *limitations* of programming models.
+
+     * Notations for these models
+       How to design, use and support for.
+
+     * Methods to evaluate the strength and weakness of these notations in
+       various contexts.
+
+   - Current reading assignment: Ch 1-3, 5,7,9
+
+   - Grading:
+     * 40% final exam; open book + notes; closed computer
+
+     * 20% midterm:
+
+     * 40% HW: 6 - each 5%; 1 - 10%
+
+     * Late penalty: same as 35L; due on 23:55 on the due date
+
+   - Topics
+     * Theory behind programming languages
+
+     * Language design
+
+     * Syntax
+
+     * Semantics
+
+     * Functions
+
+     * Names
+
+     * Types: descriptions of values
+
+     * Control: Art of letting your program use CPU
+
+     * Objects
+
+     * Exceptions: Sort of control
+
+     * Concurrency
+
+     * Scripting: like shell, python
+
+     * Exercises on Ocaml, Prolong, Java, Python
+
+   - Some questions
+     1. Why are there so many programming languages?
+	Why cna't we just have one? There is a paper about "NExt 700 programming
+        language".
+	Why not only a broad-spectrum approach?
+
+     2. Why software is so slow? (in lisp)
+	Try C++ instead for fast memory access but loss reliability somehow.

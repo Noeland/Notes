@@ -1,0 +1,166 @@
+* Week 1
+** Grading
+1. HW: 6x3
+2. Weekly quizzes: 10x1
+3. Exam 1: 26 (First 7 lectures)
+4. Exam 2: 22 (Next 6 lectures)
+5. Exam 3: 24 (Last 6 lectures)
+6. Post on Monday at 2 pm and due on next Mondy at 6:59 PM. Discussion on
+   Frdday. Done on Gradescope.
+7. Attempts count:
+   100% correct; 75% serious attempt; 50% reasonable attempt
+8. Quiz posted on W
+9. [[http://cs180.raghumeka.org][Detailed Calendar]]
+10. Textbook: Algorithm Design
+
+** Introduction
+*** What is an algorithm
+Definition is general...
+**** *Multiplication*: The first algorithm we've learn
+*INPUT*: Two n-digit numbers
+*OUTPUT*: The product
+
+   - How to define Efficiency
+     a. Does is run fast on typical real-world inputs?
+
+        Pros: Enough in practive
+	      Easy to satisfy
+
+        Cons: Hard to quantify
+	      Exceptions matter
+	      "Real-world" is a moving target. Modern smart phone is much more
+              powerful than old computer.
+
+     b. We need a general theory of efficiency that is:
+	i. Simple (mathematically
+	ii. Objective (independent of hardware)
+	iii. Captures scalability (show effect of changing input size)
+	iv. Predictive of practive performance ( Theoretically bad algorithm
+	    should be bad in real world)
+
+     c. Measuring efficiency
+        *TIME*: # of instructions executed in a simple programming language
+	Only simple operations
+	Each operation takes one time step
+	Each mem access takes one time step
+	No fancy stuff built in
+
+     d. We left out things but...
+        Things we've dropped are memory hierarchy; inequality between instruction
+        execution time. However, it is easy to tune implementations according to
+        specific hardware.
+
+     e. Measure performance on input size n: 
+        *Average-case*
+        - Over what probability distribution?
+        - Analysis is hard  
+   
+	*Worst-case*
+	- A fast algorithm has a comforting guarantee
+	- Analysis is easier
+	- Useful in real-world
+	- May too pessimistic
+
+	*Best-case*
+	- Characterize /grow-rate/
+
+*** Complexity
+**** Asymptotic analysis
+Methodology for comparing run-times
+
+Given Two functions /f, g/: N -> R+
+
+- f(n) = O(g(n)): iff there is a constant c>0 so that f(n) is eventually-walways
+  at most c*g(n).
+
+- f(n) = omega(g(n)): iff there is a constant c>0 so that f(n) is
+  eventually-always at least cg(n).
+
+- f(n) = theta(g(n)): iff there is constant c1 and c2 larger than 0 so that
+  eventually c1g(n) < f(n) < c2g(n)
+**** Big-theta, etc. not always "nice"
+- f(n) = n^2, n even
+         n,   n odd
+
+No big-theta bound for this f(n).
+
+**** Polynomial time
+P: Running time is O(n^d) for some constant d independent of the input size n.
+
+*NICE SCALING*: Doubling problem size, increases time by a constant factor c
+ (e.g., c ~ 2^d)
+
+Contrast with exponential: Doubling problem size can square the run-time.
+
+Behaves well under composition: if algorithm has a polyomial running time with
+polynomial number of called to a subroutine with polyomial running time, then
+overfall running time is still polyomial.
+
+**** Another view of poly vs exponential
+
+Next year's computer will be 2x faster. If I can solve problem of size n0 today,
+how large a problem can i solve in the same time next year?
+
+O(n): n0 -> 2n0
+
+*** Complexity of multiplication
+- O(n^2)
+- This is not the fastest algorithm for multiplication.
+
+** Divide-and-counquer paradigm
+*** Divide and conqure
+*Divide-and-conqure*
+- Divide problem into subproblems.
+- Solve each subproblem recursively
+- Combine solutions to subproblems into overall solution.
+
+*Common usage*
+- Divide n into *two* subproblems of size n/2 in *linear time*.
+- Solve two subproblems recursively.
+- Combine two solutions into overall solution in *linear time*.
+
+Run-time: O(NlogN)
+*** Sorting problem
+Problem: Geven a list of elements from a totally-ordered universe, rearrange
+them in accending order.
+
+- Obvious application
+  * Organize an MP# library
+  * Display Google PageRand results
+  * List RSS news items in reverse chronological order.
+  * Binary search
+  * Remove duplicate
+  * Find median
+
+- Some non-obvious application
+  * Convex hull.
+  * Closest pair of points
+  * Interval sechuduling
+  * Minimal spanning tree
+
+**** Mergesort?
+- Developed in 1945 by von Meumann
+- Must faster than "Selection", "Insertion", "Bubble"
+- Sorting in Perl, Java, Python, Android: hybrid
+
+- Merge Algorithm
+
+***** Is mergesort any good?
+Defn: T(n) = # of Comparisons made by mergesort in worst-case on array with n
+elements
+
+Mergesort recurrence: T(1) = 1 (input of size 1)
+
+    T(n) =   T(n/2) +  T(n/2)    +    n
+           left-half  right-half  merginng
+
+***** Master theorem
+Goal: Solve common divide-and-conquer recurrences:
+
+T(n) = a*T(n/b) + f(n)
+
+- a is the number of subproblems
+- b if the factor by which subproblem size decreases.
+- f(n) cost of deviding/merging
+
+

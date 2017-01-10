@@ -1,0 +1,43 @@
+* Week 1
+** Instruction Details
+- Homework is due at the beginning of Friday lecture.
+- There is a quiz at the end of each Friday lecture.
+- Midterm at Feb 13.
+
+** Lecture 1
+- Definitino (Sample Space)
+  The set of outcomes of an uncertain situation is called *sample space* and is
+  denoted as Ω.
+
+- Definitino (Event)
+  A subset of the sample space is called a event.
+
+- Example:
+  For a die throw, the sample space is {1,2,3,4,5,6}.
+  A event of {getting even numbers} corresponds to set {2,4,6}.
+
+  *Note:* Sample space is usually up to choices. For example, if we are
+  interested in population distribution, we may use sample space as all males
+  instead of a sample space of people with blue eyes.
+
+  *Note:* Elements in sample space must be distinct, mutually exclusive and
+  collectively exhaustive.
+
+- Definitino (Probability)
+  The probability of a given sample space is a function P from events of sample
+  space to [0,1] such that:
+  a. P(Ω) = 1
+  b. If A and B are two disjoint sets, then P(A and B) = P(A) + P(B)
+
+  *Remark*: P(∅) is always 0
+  Proof: P(Ω and ∅) = P(Ω) + P(∅) = 1 + P(∅) = 1
+         P(∅) = 0
+
+  *Remark*: If A is an event and the probability of ~A is P(~A) = 1 - P(A)
+
+  *Remark*: Can only add probability of two events if they are disjoint
+
+  *Remark*: Can reconstruct the probability of any combination of events if
+  probability of each event is known.
+
+
