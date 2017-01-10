@@ -1,5 +1,4 @@
 * Chapter 2: C++ Basics
-
 ** Counpound Type
 1. reference: reference give an object another name. reference type refers to
    another type. 
@@ -159,3 +158,78 @@ with const identifier. A const object must be initialized.
      constexpr const int *p = &i;     // p is a constant pointer to the const int i
      constexpr int *pl = &j;          // pl is a constant pointer to the int j
 #+END_SRC
+
+** Dealing with Types
+1. Type Alias
+   A *type alias* is a name that is a synonym for another type. Type aliases
+   symplify complicated type definitions.
+      
+   There are two ways of defining type alias. The second one is from new
+   C++11 standard.
+   - typedef
+     #+BEGIN_SRC c++
+       typedef double wages;
+       typedef wages base, *p;    // base is a synonym for double; p for *double
+	#+END_SRC
+   - *alias declaration*
+     #+BEGIN_SRC c++
+       using SI = Sales_item;    // SI is synonym for Sales_item
+	#+END_SRC
+   - Pointers, const, and Type Alias
+     Consider the following example:
+     #+BEGIN_SRC c++
+       typedef char *pstring;
+       const pstring cstr = 0;
+       const pstring *ps;
+	#+END_SRC
+
+     The base type in these declaration is const pstring. As usual, the const
+     that appears in the base type modifies the given type. The type of pstring
+     is "pointer to char." Therefore, const pstring is a "const pointer to
+     char." 
+
+2. The auto Type Specifier
+   Unlike type specifier, like double, auto tells the compiler to deduce the
+   type from the initializer. By implication, a variable that uses auto as its
+   type specifier must have an initializer.
+
+   As with any other type specifier, we can define multiple variables using
+   auto. Because *a declaration can involve only a single base type*, the
+   initializer for all the variables in the declaration list must have types
+   that are consistent with each other. 
+
+   - Compound Type, const and auto
+     The type that the compiler infers for auto is not always exactly the same
+     as the initializer's type.
+
+     First, in almost all circumstances (only one exception with decltype), when we are
+     using a reference, we are really using the object to which the reference
+     refers. Therefore, when we use reference as initializer, the initializer is
+     the corresponding object:
+     #+BEGIN_SRC c++
+     int i=0, &r = i;
+     auto a = r;    // a is an int
+#+END_SRC
+     Second, auto ordinarily ignores top-level consts.
+     #+BEGIN_SRC c++
+     const int ci = i, &cr = ci;
+     auto b = ci;    // b is an int
+     auto c = cr;    // c is an int; cr is an alias for ci whose const is top-level
+     auto d = &i;    // d is an int*
+     auto e = &ci;   // e is an const int* (& of a const object is low-level const)
+#+END_SRC
+     If we want the deduced type to be const, we must explicitly add const
+     specifier before auto.
+
+     We can specify that we want a reference to the auto-deduced type.
+
+     #+BEGIN_SRC c++
+       auto &q = ci;        // for plain reference, type must match
+       auto &h = 42;        // error: can't bind a plain reference to a literal
+       const auto &j = 42;  // reference to const can accept initializer of any type
+     #+END_SRC
+       
+3. The decltype Type Specifier
+   
+       
+* Chapter 3: Strings, Vectors and Arrays

@@ -144,9 +144,14 @@ Check [[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%9F%A5%E7%9C%8B
 3. Failed to push after amend commit
    
 * Branching
+** Branch operations
+** Remote branch
+** Merge
+** Rebase
+** Revert
 ** Differences between git reset and git rm
 Reference: [[http://stackoverflow.com/questions/5798930/git-rm-cached-x-vs-git-reset-head-x][this link]]
-git reset HEAD rerset the staging area to the state is was before you started
+git reset HEAD reset the staging area to the state is was before you started
 adding any file. The staging area was in sync with your working directory, but
 it now is in sync with the HEAD.
 
