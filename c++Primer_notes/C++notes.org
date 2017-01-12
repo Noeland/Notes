@@ -2,7 +2,7 @@
 ** Counpound Type
 1. reference: reference give an object another name. reference type refers to
    another type. 
-   - Reference must be initialized: During initialization, an initial value is
+   - Reference must be initialized: During normal initialization, an initial value is
      copied into a brand new object. However, when we define a reference, the
      program binds the reference to its initial value instead of copy. The
      binding remains throughout the program so you cannot rebind the reference
@@ -40,7 +40,7 @@
      c. nullptr
      d. invalid pointer: non of the above.
 
-   -Do not assign an int variable to a pointer.
+   - Do not assign an int variable to a pointer.
 
    - It is better to initialize all pointers.
 
@@ -58,7 +58,7 @@
 
 ** Const identifier
 If we want a variable to be constant throughout the program, we can declare it
-with const identifier. A const object must be initialized.
+with const identifier. /A const object must be initialized./
 
 1. Note that const identifier is part of "type". What this means is that int is
    a type different from const int. This is important when we are considering
@@ -67,9 +67,9 @@ with const identifier. A const object must be initialized.
 2. Any operation on const object cannot change its value. However, It's OK to
    use a const object for initialization because initialization is copy.
 
-3. By default Linkage is external for non-const symbols and static (internal)for
+3. By default linkage is external for non-const symbols and static (internal)for
    const symbols. This follows from C++ standard: A name of file scope that is
-   explicitly declared const, and not explicitlydeclared extern, has internal
+   explicitly declared const, and not explicitly declared extern, has internal
    linkage, while in C it would have external linkage.
 
 4. Reference to a const object
@@ -84,8 +84,9 @@ with const identifier. A const object must be initialized.
    the object being referenced is const only determines which operations the
    reference can perform.
 
-   - <<An exception>> : we are allowed to use expression of any type to initialize a
-     reference to a const object, provided that the type conversion is feasible.
+   - <<An exception>> : we are allowed to use expression of any type(literal is
+     a kind of expression) to initialize a reference to a const object, provided
+     that the type conversion is feasible. 
      
      When a "const reference" is binded to another type, like:
      #+BEGIN_SRC c++
@@ -102,12 +103,15 @@ with const identifier. A const object must be initialized.
      #+END_SRC
      If ri is not const reference, the assignment is illegal.
 
-   - Const reference can bind to a non-const object.
+   - Const reference can bind to a non-const object. Then we cannot change the
+     value of that object through this reference.
 
 5. Pointer and const
    - pointer to const: const int *pc = &i;
      Cannot change the content of the object through a pointer to const. Also,
-     to store the address of a const object, we must use pointer to const.
+     to store the address of a const object, we must use pointer to
+     const. Otherwise, it is possible to change the content of that object
+     through this pointer. 
 
    - const Pointer: int *const cp = &i;
      Since pointer is an object, const identifier can apply to pointer.
@@ -119,7 +123,8 @@ with const identifier. A const object must be initialized.
 
    - Low-level const means the object the pointer points to is const (similiar
      logic applies to reference). For low-level const, copy operation is no
-     longer an unrestricted operation. 
+     longer an unrestricted operation (particularly this means that we cannot
+     copy a low level const object to a non-low-level const object.
 
 7. C++11: constexpr
 
@@ -143,13 +148,13 @@ with const identifier. A const object must be initialized.
      reference) must be nullptr, 0 or variable allocated to fixed memory
      address. Those variables are non-automatic.
 
-   - The constexpr specifier applies to the pointer, not the type to which the
-     pointer points. Therefore, constexpr pointer is top-level const pointer.
-     Now the confusion occurs. One may recall that a top-level pointer just means
-     we cannot change the address stored but does not impose any restrictions on
-     the content in that address. Therefore, constexpr pointer does not mean we
-     cannot change the content. It depends on the type to which the pointer
-     points.
+   - constexpr pointer is *top-level const*: The constexpr specifier applies to
+     the pointer, not the type to which the pointer points. Therefore, constexpr
+     pointer is top-level const pointer. Now the confusion occurs. One may
+     recall that a top-level pointer just means we cannot change the address
+     stored but does not impose any restrictions on the content in that
+     address. Therefore, constexpr pointer does not mean we cannot change the
+     content. It depends on the type to which the pointer points.
      #+BEGIN_SRC c++
      constexpr int *np = nullptr;
      int j=0;

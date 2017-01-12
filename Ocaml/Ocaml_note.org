@@ -92,7 +92,7 @@
    different from C variables.
 
 ** Global "variables" (/really/ global expressions)
-   GLobal name is defined at top level:
+   Global name is defined at top level:
    #+BEGIN_SRC ocaml
      let html =
        let content = read_whole_file file in
@@ -134,7 +134,7 @@
    In Ocaml, references are very similiar to pointers in C/C++. The above code
    is similiar to the following:
    #+BEGIN_SRC C++
-     int a = 0, *my_ptr;
+     int a = 0, *my_ptr = a;
      ,*my_ptr = 100;
      ,*my_ptr;
   #+END_SRC
@@ -188,7 +188,7 @@
    #+END_SRC
 
 
-* Data TYpes and Matching
+* Data Types and Matching
 ** Linked lists
    To write a linked list, use:
    #+BEGIN_SRC ocaml

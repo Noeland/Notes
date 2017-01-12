@@ -13,10 +13,9 @@
 9. [[http://cs180.raghumeka.org][Detailed Calendar]]
 10. Textbook: Algorithm Design
 
-** Introduction
-*** What is an algorithm
+** What is an algorithm
 Definition is general...
-**** *Multiplication*: The first algorithm we've learn
+*** *Multiplication*: The first algorithm we've learn
 *INPUT*: Two n-digit numbers
 *OUTPUT*: The product
 
@@ -64,8 +63,8 @@ Definition is general...
 	*Best-case*
 	- Characterize /grow-rate/
 
-*** Complexity
-**** Asymptotic analysis
+** Complexity
+*** Asymptotic analysis
 Methodology for comparing run-times
 
 Given Two functions /f, g/: N -> R+
@@ -78,13 +77,18 @@ Given Two functions /f, g/: N -> R+
 
 - f(n) = theta(g(n)): iff there is constant c1 and c2 larger than 0 so that
   eventually c1g(n) < f(n) < c2g(n)
-**** Big-theta, etc. not always "nice"
+
+- f(n) = o(g(n)): f(n)/g(n) tends to 0 as n goes to infinity.
+
+- f(n) = little_omega(g(n)): f(n)/g(n) tend to infinity as n goes to infinity.
+
+*** Big-theta, etc. not always "nice"
 - f(n) = n^2, n even
          n,   n odd
 
 No big-theta bound for this f(n).
 
-**** Polynomial time
+*** Polynomial time
 P: Running time is O(n^d) for some constant d independent of the input size n.
 
 *NICE SCALING*: Doubling problem size, increases time by a constant factor c
@@ -96,7 +100,7 @@ Behaves well under composition: if algorithm has a polyomial running time with
 polynomial number of called to a subroutine with polyomial running time, then
 overfall running time is still polyomial.
 
-**** Another view of poly vs exponential
+*** Another view of poly vs exponential
 
 Next year's computer will be 2x faster. If I can solve problem of size n0 today,
 how large a problem can i solve in the same time next year?
@@ -106,20 +110,20 @@ O(n): n0 -> 2n0
 *** Complexity of multiplication
 - O(n^2)
 - This is not the fastest algorithm for multiplication.
-
-** Divide-and-counquer paradigm
-*** Divide and conqure
+  
+** Divide and conqure paradigm
 *Divide-and-conqure*
 - Divide problem into subproblems.
 - Solve each subproblem recursively
 - Combine solutions to subproblems into overall solution.
 
 *Common usage*
-- Divide n into *two* subproblems of size n/2 in *linear time*.
+- Divide n into *two* subproblems of size \(n/2\) in *linear time*.
 - Solve two subproblems recursively.
 - Combine two solutions into overall solution in *linear time*.
 
-Run-time: O(NlogN)
+*Run-time: O(NlogN)*
+
 *** Sorting problem
 Problem: Geven a list of elements from a totally-ordered universe, rearrange
 them in accending order.
@@ -142,11 +146,10 @@ them in accending order.
 - Developed in 1945 by von Meumann
 - Must faster than "Selection", "Insertion", "Bubble"
 - Sorting in Perl, Java, Python, Android: hybrid
+- Merge Algorithm: Can reduce space complexity by using linked-list.
 
-- Merge Algorithm
-
-***** Is mergesort any good?
-Defn: T(n) = # of Comparisons made by mergesort in worst-case on array with n
+**** Is mergesort any good?
+Define T(n) = # of Comparisons made by mergesort in worst-case on array with n
 elements
 
 Mergesort recurrence: T(1) = 1 (input of size 1)
@@ -154,13 +157,125 @@ Mergesort recurrence: T(1) = 1 (input of size 1)
     T(n) =   T(n/2) +  T(n/2)    +    n
            left-half  right-half  merginng
 
-***** Master theorem
+Solution: O(n log n)
+
+Proof by recursion tree:
+
+*** Master theorem
 Goal: Solve common divide-and-conquer recurrences:
 
 T(n) = a*T(n/b) + f(n)
 
+*terms*
 - a is the number of subproblems
 - b if the factor by which subproblem size decreases.
 - f(n) cost of deviding/merging
 
+*Recursion tree*
+- k = log(n, b) levels.
+- a^i = number off subproblems at level /i/.
+- n / (b^i) = size of the subproblems at level /i/.
 
+*Example*
+  *case 1*
+  T(1) = 1. /T(n) = 3 T(n/2) + n. Then, T(n) = Theta(n^(lg3)).
+  Number of problems at level /i/ is 3^(log(n, 2)) = n^(log3(2))
+
+  By recursion tree, at each level we need to do work of 3^(log2(n)) * (n/(2^i)).
+  The total work is the sum of each level, which could be calculated as sum of
+  geometric seris.
+
+  *Result*
+  *3n^(log2(3)) - 2n*
+
+  *Note*
+  Cost mainly comes from leaves for this case because size of work increases as we
+  get deeper.
+
+  *Case 2*
+  Here is another case which total cost evenly distributed on all levels:
+  T(n) = 2T(n/2) + n
+  because for each level, we need to do work of size n.
+
+  *Case 3*
+  T(n) = 3T(n/4) + n^5   ==> Theta(n^5)
+
+  For this case the cost is dominated by *root*.
+
+*Master theorem*
+T(n) = aT(n/b) + f(n)
+k = logb(a)
+
+  * if f(n) = Theta(n^k log(n)^p), then T(n) = Theta(n^k log(n)^(p+1))
+
+*** Integer multiplication: Karatsuba Algorithm
+
+- Basic arithmetic op: addition and subtraction
+  O(n): Cannot do better because we need to look at all the digits.
+
+- Naive recursive method: T(n) = 4T(n/2) + O(n)
+  The result is Theta(n^2) because a = 4 which is less than b^d = 2
+  Therefore, a < b^d ==> O(n^log2(4)) = O(n^2)
+  
+  The O(n) is due to the shift and addition.
+
+- Reduce recursive calls by reduce the number of multiplication
+  x0*y1 + x1*y0 = (x0 + x1)(y0 + y1) - x1*y1 - x0*y0
+
+- Pseudocode
+
+- Time complexity
+  T(n) = 3T(n/2) + O(n)
+  a = 3, b^d = 2 ==> a > b^d
+  O(n^log2(3)) ~ O(n^1.585)
+
+- Histroy of integer multiplication
+  As the time complexity approaches linear, the constant shoots up.
+  1971 Theta(nlogn *loglogn) with big constant be not as big as previous
+  2007 nlogn 2^(O(log*n))
+    ?  nlogn
+
+*** Exponentiation
+*INPUT*: Given two numbers a, n
+*OUTPUT*: a^n in binary format.
+
+*Example*: Take a = 3
+
+- Naive-exponentiation
+  1. set A0 = 1        O(1)
+  2. For i = 1:n
+   set Ai = 3*Ai-1   O(i) for each multiplication inside the loop
+  3. return An
+
+  The total time complexity is O(n^2)
+
+- Recursive version of Naive-exponentiation
+
+  1. if n= 1, return 3
+  2. else An-1 = Naive-exponentiation(3, n-1)
+   return 3*An-1
+
+- Fast exponentiation
+  1. if n = 1, return 3
+
+  2. else
+     (a) set A1 = exponentiation(3, floor(n/2))
+     (b) set A2 = exponentiation(3, ceil(n/2))
+     (c) return Karatsuba(A1, A2)
+
+  3. Here we are doing extra work because A1 and A2 is similiar
+
+- Improvement on Fast exponentiation
+  1. if n = 1 return
+
+  2. else
+     (a) set A1 = exponentiation(3, floor(n/2)
+     (b) if n is even
+         return Karatsuba(A1, A1)  ==> O(n^1.585)
+
+     (c) if n is odd
+         return 3 * Karatsuba(A1, A1)   ==> This outer multiplication cost O(n),
+	 the inner cost O(n^1.585)
+
+  3. Running time: T(n) = T(n/2) + O(n^log2(3))
+     result = O(n^log2(3)) same as the speed of algorithm of multiplication.
