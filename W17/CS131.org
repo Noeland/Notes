@@ -81,3 +81,420 @@
 
      2. Why software is so slow? (in lisp)
 	Try C++ instead for fast memory access but loss reliability somehow.
+
+** Reasons to prefer one language to another
+- Popularity
+- Support from compilers, debuggers, etc.
+- Similarity to existing languages
+- Simplicity
+- Versatility: How widly can we apply this language
+- Performance
+  * CPU
+  * Memory
+  * IO (disk/flash)
+  * Network
+- Scalability: how well the language is for larger and larger program.
+- Reliability
+- Convenience: How easy to use? (i++ in C)
+
+We have competing goals, like similarity is in contradiction with convenience.
+
+- Orthoganality
+  From mathematic concept, there are indipendent axis which means change in one
+  axis does not impose changes on another axis. One we have multiple features,
+  people do not need to worry about some other features.
+
+  Example: In C, a function can return any kind of types
+  #+BEGIN_SRC C
+    int f();
+    char g();
+    struct s h();
+  #+END_SRC
+  However, we cannot return an array (or a function). One argument is that copy
+  is potentially expensive.
+  Then what about a structure? We can have a structure that is really big and
+  that works. 
+  They want to emphasize that arr and pointer are the same thing.
+
+  Consider you want to write a code return some type t defined
+  elsewhere. However, that is not guaranteed feasible (what if that t is an
+  array type or function type?). Therefore, C kind of lack of orthoganality.
+
+- Safety(Important subset of reliability)
+  Does not cause really bad consequence.
+
+- Concurrency for multi-threaded program
+- Exceptions handling
+- Mutability (Successful language evolve)\
+We want language that can change over time.
+  
+  Example: A language on 1971 run on PDP-11
+  two int add
+  16 KB RAM
+  1.2 us memory
+
+  Anyway, on this machine, memory access if considerably faster than
+  cpu. Therefore, a language tuned for this machine has easy access to memory. 
+
+  Nowadays, cpu speed is 100x faster than memory access.
+
+Example: Varying number of args for function.
+  In C there is some called Obj.
+  Obj arr[7];
+  arr[4] = ...
+  arr[1] = ...
+  Foo(7, arr); 
+  What we really want: foo(x, yz, w, u, v) but we have to fill those variables
+  in array. 
+
+  We cannot realize this exactly but we can approach this as much as we can.
+  #+BEGIN_SRC c
+    #define ELTS(a) sizeof(a)/sizeof(*(a))
+    #define CALLMANY(f, args) (f)(ELTS(args), args)
+
+    #define CALLN(f, ...)  CALLMANY(f, (Obj[]{__VA_ARGS__}))
+
+    Obj args[7];
+    // Some Assignemtns
+    //CALLMANY(Foo, args);
+    CALLN(Foo, x, y,z ,u, v, a, b ,c);
+  #+END_SRC
+
+  #+BEGIN_SRC c
+    #define IF if(
+    #define THEN ){
+    #define ELSE } else {
+    #define FI }
+  #+END_SRC
+
+  These are examples of mutability. Can the program evolve with the changing
+  hardware (outside world). Can it change according to the idea of the
+  programmer.
+
+** Syntax
+   - whether a program is valid????
+     #+BEGIN_SRC c
+       int x = "abc"; // No syntax rule indicates that this is invalid
+       int main(void) {return ""[1]; } // Stil, no syntax rule indicates that this is not valid.
+     #+END_SRC
+     Above programs are definitely wrong but not because of wrong syntax.
+
+   - whether a program will compile????
+     Consider the first example. It will not compile not because its syntax.
+
+   - *A syntax is the form independent of meanings*
+     In syntax we just care about its form. We do not care about what does it mean.
+
+   - Syntax
+     "Clolorless greed ideas sleep furiously." ===> Good syntax, nonsensee
+     semantics.
+     
+   - Natural Language Syntax
+      "Ireland has leoperd galore. "--P.Egger  ===> Bad syntax but meaning is
+      clear
+
+      In real life the meaning is important. However, in the world of
+      programming, syntax is critical.
+
+      "Time flies." 'Time' chould be none and verb, so does 'files'. This is the
+      problem of ambiguity.
+
+   - Programming language syntax: Reasons to prefer one over another
+     * Inertia: Use syntax people have already get used to.
+       a + b OR a b +
+
+     * simple and regular
+       Pick syntax that lets us say things easily.
+       Some claim postfix notation is simpler and regular.
+       In C, (a+b)*c. With postfix, a b + c * ==> No parens.
+
+       The first reason prefers normal syntax
+
+     * It's unambiguous
+       #+BEGIN_SRC c
+         a---b;
+         // a-----b; does not work
+         a--- --b;
+       #+END_SRC
+       Why a-----b does not work?
+       Because the token analyzer (tokenizer) reads from left to right and it reads
+       greedily. The above line of code is intepreted as (a)(--)(--)(-)(b).
+       *Greedy means it is going to keep gluing characters together*
+  - Tokenization
+    comment: ??
+
+  - Language without keyword: no reserved word
+    Why we have language like this? ==> mutability? backward compatibility?
+    Note that for C/C++ it is painful to improve the language.
+
+Clear syntax is one where visualization skill "work"
+Example
+do {
+   x/=10;
+} while(x > 10);
+
+do {
+  x/=10
+} until(x <= 10)
+
+if( i > 0 && i < 1000) // Not what we want
+if(0 < i && i < 1000)
+
+* Week 2
+** On Context free language
+*** Some intro
+- Sentence= finite sequence of tokens(terminal symbols)
+
+- Token is from a set of finite elements.
+  * Identifier: A special kind of token.
+  * Some tokens have special information associated which is important for the
+    language's semantics.
+  * A sentence must be finite
+  * Set of tokens must be finite: Important for analyzing of the language.
+
+    Example: L = {a^nb^n | n >= 0}
+             This language has infinite token set.
+             This language does not scale well.
+
+- Nonterminal
+  Short for a (finite) sequence of tokens, than can be part of a sentence.
+
+- Grammar
+  * set of tokens(terminal symbols) and a finite set of nonterminal symbols.
+
+  * Start symbol: a nonterminal symbols
+
+  * finite set of rules
+
+    Example: <nonterminal> -> finite sequence of symbols (either a terminal or
+    nonterminal)
+
+  * The compiler is going to figure out whether a sentence is a valid program language.
+
+  * Recursive grammar: A symbol is both on the RHS and LHS
+
+    Example: Internet RFS 5322 (request for comment)
+    comtains a grammar for email headers.
+    * Subject: <any sequence of chars, except newline>
+      Grammar of subject content:
+	    subject contents -> empty
+	    subject contents -> subject_contents CHAR
+	    (subject content -> CHAR subject_contents)
+
+	    Different grammar can produce the same sentence.
+
+    * MessageID: <xxx.xxx@xx.xx.xx>
+      Grammar of MessageID:
+      msg-id = "<" word *<"."word> "@" atom * ("." atom) ">"
+
+      * Some meta-notation like "*" (not strict BNF but EBNF)
+	EBNF just give us some convenience
+	BNF <==> EBNF
+	dotword -> <empty> | . word dotword vs. *<"."word>
+	BNF is better for parser
+
+    * Some other grammar
+      atom = 1 * <any CHAR except special , SPACE and CR>  
+      specials = ()<>@  
+      word = atom | quotestring
+      CTLS = \000 \037 \177
+      quotestring = <"> *(qtext | quoted-pair) <">
+      qtext = <any CHAR except " \ newline>
+      quoted-pair = "\" CHAR 
+	  
+    * Possible trouble
+      - Infinite long string
+	Fixed by standard other than grammar
+
+      - Control symbol in message
+
+    * Use RegExpr: Turn a specification of a language to a program
+      qp = '\\.'
+      qt = '[^\"]'
+      ps =
+
+      Regular expression can be used to write grammar with meta-symbols and terminal symbols.
+      However, regExpr cannot count.
+      Note that recursion is not the limitation.
+      Example: T -> abT is possible (tail-recursion)
+               T -> aTb is not possible to convert (not tail-recursion)
+               (tail-recursion rule)
+
+- ISO Standard for EBNF: Decreasing in precedence
+  * "token" or 'token'
+  * [ option ]
+  * { repetition }
+  * (* comment *)
+  * X* repetition of X
+  * X-Y: X except for Y
+  * X,Y: concatenation
+  * X | Y: OR
+  * X = expr;
+
+- Define EBNF formmally
+  syntax = syntax rule, {syntax rule};
+  syntax rule = meta id, '=', defines list, ';' ;
+  definitions list = defn, { '|', defns} ;
+  Note: Define itself through itself
+
+- Problems of Grammar
+  * Large grammar is hard to understand
+    * Syntax chart
+  * Nonterminal used but not defined (bug in grammar)
+    Or better described as "non-productive"
+  * Nonterminal are defined but not used
+    Or better described as "non-reachable"
+    Cannot reach it from ths start symbol
+    This applies recursively, consider the following with start symbol A
+    W -> W A
+    A -> /some other rules/ | <empty>
+
+  * Ambiguity
+    Has multiple way to parse the same input
+    By making the program easy to parse, you may introduce ambiguity
+
+    - Associativity
+      E -> E+E
+      E -> E-E
+      E -> ID
+      E -> (E)
+
+      Has two ways to parse the sentence "a - b - c"
+
+      - Problem: Is it possible to write a program to test the ambiguity of a
+        grammar just by looking at the grammar itself?
+
+        It is too hard. However, we still want to debug the grammar. 比如debug普通
+        的程序很难，但是我们还是会去debug并且有所收获。Solve the general problem
+        of ambiguity is hard, but we are looking for a practical partial solution.
+
+      - General Idea: prohibit the part we do not want. Ambiguous grammar is too
+      general. Consider the above grammar, is too general. Consider the second
+      rule, the second E cannot be a plus/minus operation.
+
+      - Change: result in a more complicated parse tree
+      E -> T
+      E -> E+E (This is stil a problem because E is allowed to recurse on both side)
+      E -> E-T
+      T -> ID
+      T -> ( E )
+ 
+      - Why we must have (a+b)+c?
+      - Arithmetic overflow: Some order of the operation results in overflow
+      - Floating point rounding problem
+      - Side effects?
+      - Unsigned arithmetic: Wrap around give different answer
+	(a+b)+c if a and b are unsigned int but c is unsigned long
+
+    - Precedence
+
+      E -> T
+      E -> E + T
+      E -> E*T   ==> E -> F * T
+                 ==> T -> F
+      T -> ID    ==> F -> ID
+      T -> ( E ) ==> F -> ( E )
+
+      * Infix grammar has trouble of precedence
+
+    - Another ambiguity in C
+      * stmt: 
+            ;
+            break;
+	    continue;
+	    expr;
+	    return expr; (no parens)
+	    while (expr) stmt
+	    do stmt while (expr); (we have no parens)
+
+	* Some modification:
+	  do stmt while expr; ==> This is not going to cause trouble)
+          while expr stmt     ==> This may cause ambiguous because parser
+          may combine expr and stmt together:
+	  while i<1 *c / while i<1 -c;
+
+	  The parens for expr in do-while is not going to solve ambiguity
+          but it is still there because we want consistency.
+
+      * Some other statement
+	{ stmt or declaration list }
+	for(expr; expr; expr;) stmt
+	if (expr) stmt
+	if (expr) stmt else stmt
+	switch (expr) stmt
+	    
+	* Dangling "else" problem
+	  fix: stmt: if (expr) stmt | stmt1 
+	  stmt1 has everything except if (expr) stmt
+
+  * Too much details 
+    * because of ambiguity
+      * Abstract syntax and concrete syntax
+        Let the parser deal with known ambiguity issue directly instead of writing
+        complex grammar rule.
+    * because of attempts to cover too much
+      IntE -> IntE + IntE | IntE * IntE | IntID| Inte
+      StrE -> StrID | StrLiteral | StrE ^ StrE
+
+      Note: The above is rarely done in real world language because there are
+      infinite number of types. Generally grammar is only good at deal with
+      syntax but not semantics.
+
+- Expressions problems
+  
+  * user-defined operators (not the c++ way because we must pick the existing
+    operator and give it new meaning)
+
+    * Prolong: defining new operator
+    :-op (700, xfx, [=, <=, >=,])
+    :-op (500, yfx, [+,-])
+    :-op (400, yfx, [*, /])
+    :-op (200, xfy, [**])
+    :-op (1200, xfy, [<--])
+
+    - 500 is the precedence
+    - y means same precedence is ok
+    - x means sae precedence is not ok
+
+    - Note that ambiguity is not possible because "yfy" is not allowed. 
+
+  * Side effect(especially in C/C++): a = f(x) + g(x);
+    a = a++ -a++;
+    We cannot determine the order of executing because compiler will optimize
+    the code.
+
+    Example of Professor:
+    #+BEGIN_SRC c
+      double stack[1000];
+      double *top = &sstack[1000];
+      #define PUSH(x) (*--top = (x))
+      #define POP()   (*top++)
+      switch(op) {
+       case MULTI:
+         PUSH( POP() * POP());
+         break;
+       }
+    #+END_SRC
+    *--top = (*top++) * (*top++);
+
+
+** Functional programming
+- Functional programming motivation
+  - Clarity
+  - performance
+
+*** Clarity: 
+- Take advantage of mathematic notation
+  We want to build on mathematic traditions.
+  - a + b = b + a
+    May not true in C due to side effects
+    (a+=10) + (a-=10)
+  - E - E = 0
+    what if E is getchar() which return different char each time.
+  - i = i + 1 is definitely false mathematically
+
+*** Performance
+C or Java are designed for Von Neuman architecture(loading and store)
+
+*** One success story
+

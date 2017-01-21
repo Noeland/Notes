@@ -72,10 +72,10 @@ Given Two functions /f, g/: N -> R+
 - f(n) = O(g(n)): iff there is a constant c>0 so that f(n) is eventually-walways
   at most c*g(n).
 
-- f(n) = omega(g(n)): iff there is a constant c>0 so that f(n) is
+- f(n) = Omega(g(n)): iff there is a constant c>0 so that f(n) is
   eventually-always at least cg(n).
 
-- f(n) = theta(g(n)): iff there is constant c1 and c2 larger than 0 so that
+- f(n) = Theta(g(n)): iff there is constant c1 and c2 larger than 0 so that
   eventually c1g(n) < f(n) < c2g(n)
 
 - f(n) = o(g(n)): f(n)/g(n) tends to 0 as n goes to infinity.
@@ -244,7 +244,7 @@ k = logb(a)
 - Naive-exponentiation
   1. set A0 = 1        O(1)
   2. For i = 1:n
-   set Ai = 3*Ai-1   O(i) for each multiplication inside the loop
+   set Ai = 3*Ai-1   [[https://piazza.com/class/iviu55djfst5pn?cid=11][O(i) for each multiplication inside the loop]]
   3. return An
 
   The total time complexity is O(n^2)
@@ -279,3 +279,23 @@ k = logb(a)
 
   3. Running time: T(n) = T(n/2) + O(n^log2(3))
      result = O(n^log2(3)) same as the speed of algorithm of multiplication.
+
+* Week 2
+** (2017-01-18) Announcements:
+1. HW1 posted today
+2. Register on Gradescope
+3. Quiz 2 posted (Quiz 1 abg 0.7)
+
+** Divide & Conquer "Methodology" for designing algorithms
+- Mergesort
+- Fast Multiplication
+- Exponentiation
+
+*** Fast Fourier Transform
+**** DFT
+Given an n-demensional vector a = {a0, a1, ... an-1} 
+Transform to vector z = {z0, z1, ... , zn-1}, where
+ zj = a0 + w^j*a1 + w^2j*a2 + ... + w^(n-1)j*an-1
+w = e^i(2*pi/n)
+
+ 
