@@ -1,0 +1,135 @@
+* Primitive Types
+** Bitcount
+bitcount function: avoid machine dependency when doing shift
+#+BEGIN_SRC c
+  // the argument is declared to be unsigned
+  // because this ensures that the shift if
+  // logical shift.
+  int bitcount(unsigned x)
+  {
+    int cnt;
+
+    for(cnt=0;x!=0 ; x>>=1)
+      {
+	cnt +=x & 01;
+      }
+    return cnt;
+  }
+#+END_SRC
+A faster version of bitcount Some more observation: x & (x-1) deletes the
+rightmost 1 in x. Note that (x-1) flip every bit up until the rightmost bit
+which is 1 in x. Therefore, x & (x-1) turn off the rightmost 1.
+#+BEGIN_SRC c
+  int bitcount(unsigned x)
+  {
+    int cnt = 0;
+
+    while(x!=0)
+      {
+	x &= x-1;
+	cnt++;
+      }
+    return cnt;
+  }
+#+END_SRC
+
+Here is another faster bitcount
+#+BEGIN_SRC c
+  int bitcount(unsigned x)
+  {
+    int cnt = 0;
+
+    do {
+      y = x & ~(x-1);
+      x ^= y;
+      cnt++;
+    } while(y!=0);
+
+    return cnt;
+  }
+
+#+END_SRC
+
+** Propagate Rightmost Set Bit
+#+BEGIN_SRC c
+  int propagate(unsigned x)
+  {
+    return (x-1) | (x&~(x-1));
+  }
+  }
+#+END_SRC
+** 5.1: Computing Parity (Question on Time complexity)
+   - The parity of a binary word is 1 if the number of 1s in the word is odd;
+   otherwise, it is 0. Parity checks are used to detect single bit errors in data
+   storage and communication.
+
+   * Method 1
+     #+BEGIN_SRC c
+       int countbit (unsigned x)
+       {
+         int cnt = 0;
+         while(x!=0)
+	 {
+     	 x &= x - 1;
+     	 cnt++;
+	 }
+
+         return cnt;
+       }
+
+       int mod2(unsigned x)
+       {
+         return x & 0x1;
+       }
+
+       int check_parity(unsigned x)
+       {
+         return mod2(countbit(x));
+       }
+     #+END_SRC
+
+   * Method 2
+     #+BEGIN_SRC c
+       int check_parity64(unsigned long long x)
+       {
+         const unsigned long MASK = 0xffffffff;
+         const unsigned long SHIFT = 32;
+
+         while(x!=0 && x!=1)
+         {
+     	 unsigned long lsb = x & MASK;
+     	 unsigned long msb = x >> SHIFT;
+
+     	 x = lsb ^ msb;
+         }
+
+         return x;
+       }
+     #+END_SRC
+
+   * Method 3 for large scale input
+** 5.2: Flip Bit/ Swap Bits with XOR
+   For a single bit x, x^0 = x
+** 6.1: Array Partition
+   #+BEGIN_SRC c
+     void partition(int pivot_idx, vector<int>* A)
+     {
+     int last_smaller=0, first_non_smaller = 0, first_greater = 0;
+     int pivot = (*A)[pivot_idx];
+     size_t len = A->size();
+
+       for(size_t iter=0; iter!=len; iter++) {
+         if(A->at(iter) < pivot) {
+   	 swap(A[iter], A[first_greater)
+   	 swap(A[first_greater], A[first_non_smaller])
+   	 last_smaller = first_non_smaller;
+   	 first_non_smaller++;
+   	 first_greater++;
+         }
+         else if(A->at(iter) == pivot) {
+	 swap(A[iter], A[first_greater]);
+   	 first_greater++;
+         }
+       }
+     }
+   #+END_SRC
