@@ -496,5 +496,108 @@ if(0 < i && i < 1000)
 *** Performance
 C or Java are designed for Von Neuman architecture(loading and store)
 
-*** One success story
+*** One success story (empty)
 
+*** Function: What is a function
+- CS: a chunk of code with a name
+  This is how we think when we are implementing the function.
+
+- Math: A mapping from a domain to a range
+  This is how we think when we are using a function.
+  
+- Side Effect: Evaluation is no longer imposed by sequencing but only by function calls.
+  #+BEGIN_SRC c
+    a = f(x);
+    b = g(y);
+    c = h(z);
+    e(a, b, c);
+  #+END_SRC
+  The above code might have hidden dependency so the sequential relationship
+  must be as written.
+
+  #+BEGIN_SRC c
+    a = b + f(x) - b;
+  #+END_SRC
+  In C/C++ or Java, b cannot be eliminated.
+  
+- Referential transparency: Variables with the same name always have the same
+  value.
+    #+BEGIN_SRC ocaml
+    let a = b + (f x) - b
+  #+END_SRC
+
+*** Higher Order Function (Functional forms in math)
+- Functions that take function as argument
+  "Build function on some other functions".
+  * Summation operator
+  * Integration operator
+  * Function composition operator "o"
+
+*** Ocaml
+- Compile time type checking (like C/C++, Java)
+  * Type inference
+    Do not need to write all types down. The types are inferred from the
+    context. 
+
+- Garbage Collection
+  No need to worry about storage management.
+
+- Good support for higher order function
+
+- Name and Types are really important in Ocaml
+
+- Pattern matching
+  #+BEGIN_SRC ocaml
+  let cons (x,y) = x::y;;
+  (* The above is equivalent to the following*)
+       (fun a -> 
+         match a with
+         | (x,y) -> x::y)
+  #+END_SRC
+
+*** Functions
+- Simple functions
+  #+BEGIN_SRC ocaml
+    (fun a -> a);;
+    -: 'a -> 'a = <fun>
+
+    (fun () -> ());;
+    -: unit -> unit
+#+END_SRC
+
+- Higher order function
+  #+BEGIN_SRC ocaml
+    (fun x -> match x with
+              | 0 -> (fun x -> -x)
+              | _ -> (fun x -> x * 2));;
+    -: int -> (int -> int) = <fun>
+  #+END_SRC
+  
+  - Note that '->' is right associative
+  - Function is left associative
+
+- Recursion
+  - Fib
+    #+BEGIN_SRC ocaml
+      let rec fib n =
+      match n with
+      | 0 -> 1
+      | 1 -> 1
+      | n -> fib(n-1) + fib(n-2)
+    #+END_SRC
+
+- Currying function: *All the functions are curried*
+  - Max element in list
+    #+BEGIN_SRC ocaml
+      let rec maxlist =
+      function 
+      | (x::l) -> let m = maxlist l in if x < m then m else x
+      | [] -> 0;;
+    #+END_SRC
+
+  - Reverse
+    #+BEGIN_SRC ocaml
+      let rec reverse= function
+        | [] -> []
+        | (x::l) -> (rev l) @ [x]
+    #+END_SRC
