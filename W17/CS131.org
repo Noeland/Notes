@@ -100,8 +100,8 @@
 We have competing goals, like similarity is in contradiction with convenience.
 
 - Orthoganality
-  From mathematic concept, there are indipendent axis which means change in one
-  axis does not impose changes on another axis. One we have multiple features,
+  From mathematic concept, there are independent axis which means change in one
+  axis does not impose changes on another axis. Once we have multiple features,
   people do not need to worry about some other features.
 
   Example: In C, a function can return any kind of types
@@ -454,7 +454,7 @@ if(0 < i && i < 1000)
 
     - 500 is the precedence
     - y means same precedence is ok
-    - x means sae precedence is not ok
+    - x means same precedence is not ok
 
     - Note that ambiguity is not possible because "yfy" is not allowed. 
 
@@ -478,6 +478,7 @@ if(0 < i && i < 1000)
     *--top = (*top++) * (*top++);
 
 
+* Week 3
 ** Functional programming
 - Functional programming motivation
   - Clarity
@@ -601,3 +602,508 @@ C or Java are designed for Von Neuman architecture(loading and store)
         | [] -> []
         | (x::l) -> (rev l) @ [x]
     #+END_SRC
+
+
+** Reading
+    1-9, 13, 15, 17
+** HW
+*** Theory
+    1. Finite State Automata
+    2. Push Down Automata = FSA + Stack
+    3. Turing Machine: FSA dealing with infinite term.
+
+*** Parsing a CFG
+    1. Recursion
+       Grammar rules are recursive.
+    2. Concatenation
+       Suppose S -> T U and we know how to build a matcher for T and U
+       matcher = acceptor -> token list -> bool
+
+    3. OR (disjunction)
+       - lookahead
+	 S -> a T b
+	 S -> c U d
+	 Check if it is a or c
+
+	 However,
+	 S -> a T b
+	 S -> a U d
+	 
+	 But we can change it into the following form to use lookahead
+	 S -> a S'
+	 S' -> T b
+	 S' -> U d
+
+	 But if the "T" is "if then"  ???
+
+       - Create a choice point while parsing
+	 First parse a T b, if fail then parse a U b
+	 BUt need memory to record information
+
+       - Stack
+	 Note that function call is build-in stack.
+
+       - acceptor(token list -> bool)
+         Takes a string of tokens and indicates correctness
+	 #+BEGIN_SRC ocaml
+           function | ")"::_ -> true | _ -> false
+	 #+END_SRC
+
+** Translation into machine code
+   - Consider the following code
+     #+BEGIN_SRC c
+       int main()
+       {
+         return ! getchar();
+       }
+     #+END_SRC
+     This piece of code will not compile because getchar() has not been
+     declared. We need to include stdio.h
+
+     #+BEGIN_SRC c
+       #include <stdio.h>
+       int mainn() { return !getchar();}
+     #+END_SRC
+     
+   - Translation
+     * Preprocessor: a kind of text expansion.
+       #+BEGIN_SRC c
+         extern int getchar(void);
+
+         int main() {return !getchar();}
+       #+END_SRC
+
+     * Convert program text into sequence of tokens
+       Each token is represented by a byte.
+
+       *lexing*: extra information associated with the token. For example, the
+       difference between "main" and any other identifier.
+
+     * Parsing: Parse tree
+     * Semantics analysis
+       - Type checking
+       - Scope checking
+     * Intermediate code generation
+       main:
+            push &getchar
+            push 0
+            call 
+            not
+            ret
+     * Code generation x86_64
+       main:
+            call getchar
+	    tstl %eax, %eax
+	    setn %eax, %eax
+	    ret 
+
+   - Unix design philosophy (software tools)
+     Break a procoess into multiple independent pieces.
+     Ensures independence but increase overhead.
+
+   - Smalltallc Design Philosophy (IDE)
+     
+
+* Week 4
+
+** Compiler vs. Intepreter
+
+
+** Hybrid Approach: JVM
+
+Foo.java -> java compiler -> Foo.class(bytecodes)
+                              ||
+			      \/
+			      Java(intepret + profiler(for performance))
+			      hotpot -> (another compiler) -> machine code
+			      (this method is expensive so we only do it for "hotspot")
+
+*** Profiling
+- statistical: sample hw ip 100 times/s => make a histogram
+      We can know the "hotspot" of our program
+
+- Insert counting code (gcc -pg -fprofile -...)
+      finer graine performance measrue
+
+- Once we know the "hotspot" we translate it into machine code
+
+- Cause nondeterministic performance
+
+- Hard to debug on the lower level compiler
+  * Nondeterministic
+  * Generally we will never see the machine code??
+
+
+** Linking
+
+- Loading time dynamic linking (load code before main start)
+  Library will be dynamically linked as part of initialization process.
+
+- Running dynamic linking (use special function to call)
+  Self modifying code
+  * Pros: Flexibility
+  * Cons: Library version conflict: some module need version 1 but some other need version 2
+  * Cons: Worry about unstructed code
+    Once we allow dynamic linking, our program may execute some suspicious code.
+
+** Type
+- Why we need type
+  * Help us understand the code
+    when we look at an id x, we know which operations are valid and which are
+    not.  
+  * Reliability/Redundancy
+    #+BEGIN_SRC c
+    string x;
+    x = x + 1; // ???
+    #+END_SRC
+    Catch trivial mistakes early
+  * Performance
+    Type helps compiler generate better code
+
+- Strongly Typed: All operations are type checked, you cannot escape
+  C/C++ is not strongly typed.
+
+- Primitive vs. Constructed types
+  * Primitive types are built in while structure type are built by user.
+  * array of C/C++ are constructed types
+
+- What is type? Is it some data structure? How exposed is the implementation of
+  a type?
+  * Exposed Type
+    User know details of the type: integral type
+
+  * Abstract Type
+    User only konw what operation can be done to that type
+    check NaN
+    #+BEGIN_SRC c
+    bool isnanf(float x)
+    { return x!=x; }
+    bool isinfinityf()
+    { return x!=0 && x == 2*x; }
+    #+END_SRC
+    
+    - floating point
+      * Abstract type 
+      * Why we need small number?
+	We need computation with small number
+	#+BEGIN_SRC c
+	if(x == y && x-y==0) // does this always true????
+	#+END_SRC
+	
+*** Type equivalence: Structurally Equivalence and Name equivalence
+    - C uses structural equivalence for typedef and name equivalence for struct
+      type.
+
+*** Subtype
+    #+BEGIN_SRC pascal
+    var a int,
+    var b 1..127,
+    #+END_SRC
+    - Subtype in C
+      * float and double
+      * char* vs. char const* ???
+	#+BEGIN_SRC c
+	char *p;
+	char const* c_p;
+	c_p = p;
+	// p = c_p
+	#+END_SRC
+	
+
+** Polymorphism
+   - Early polymorphism: Type Coersion & overloading
+     int vs. unsigned int
+     #+BEGIN_SRC c
+     int i = random();
+     if( i < -217473848)
+     {
+        printf("machine error");
+     }
+     #+END_SRC
+
+     long vs. double
+
+     multiple bugs
+     double f(double, int);
+     double f(int, double);
+     f(3,5);
+
+     Error: Semantically ambiguous
+
+   - Parametric polymorphism
+     * iterator
+       Suppose a list of string, we want to remove the short ones
+       
+       s = iterator.next
+       s.length < xxx
+       s.remove()
+
+       This code has some problems because collections might contian any object
+       so first assigning an object to string may cause trouble.
+
+       If we know we are working with list of string, we can do runtime cast.
+       s = (string) iterator
+
+       However, some language has static type checking.
+       Also, runtime type check has may harm performance. Python has the
+       "runtime type checking" problem.
+
+       In java, we use java template to solve this problem.
+
+                             c is a collection of string Collection<string>
+                             
+       for(iterator<string> = c.begin(), ...)
+          String s = c.next()
+
+       No runtime type check.
+       
+       ML, Java: Generic
+       C++: templates
+
+       Template method is different from java/ml method. In template, we
+       instantiate the template with the actual type. We know what the type is
+       at compile time. It is similiar to macros. We actually compitle the code
+       n times if we have n template. The machine code is copied n times also.
+
+       That not how generic work. In Java, we just compile the generic version
+       once. It is going to think is that going to work with any type. We just
+       have one copy of the machine code. 
+
+       Generic wins?
+
+       "sizeof T" with T some template type. The compiler can convert it into a
+       constant. However, in generic, this is still a variable. We do not know
+       the size.
+
+       Another example
+       T x,y;
+       x = y;
+
+       In template, we know what instruction to execute because the type is know
+       at compile time. However, in generic we do not know which instruction to
+       take. 
+
+       However, Java or ML use some other method to make this efficient. Every
+       object is a pointer. We will never see the actual object. The above
+       assignment is just poiner assignment. (Java does not have "sizeof"
+       operator either). That's how generic work. We do not need to know the
+       exact type of our object. We are just dealling with pointers(references).
+       
+     * Subtypes and generic
+       Soppose a list of string:
+       List<string> ls = [                  ];
+       List<Obejct> lo = ls;
+       lo.add new Thread;
+       String s = ls.get() // we want the most recently added object
+       
+       The problem is that although string is a subtype of object, list of
+       string is not a subtype of list of object.
+
+       #+BEGIN_SRC java
+         void printALL(Collection<?> c) {
+           for(object o: c) {
+             Object o = c.next();
+             System.out.println(o);
+           }
+         }
+
+	 // Soppose we String has a subtype of BlueString
+	 printAll(Collection<BlueString> cbs); // Does this work?
+	                                       // No because collection of bluesring is not a subtype of collection os string
+         void printAll<Collection(? extends String> o);
+	 // Only accept types that extends string
+       #+END_SRC
+       #+BEGIN_SRC java
+         public static void <T> convert( T[], Collection<T> c) {
+             for(int i=0; i<a.len ; i++)
+             c.add(a[i]);
+         }
+
+         /**
+          ,** Suppose: BlueString[] a, Collection<String> c will not work on convert
+          ,** because convert require two parameter to be the same type.
+          ,**/
+
+         public static void <T> convert( T[], Collection<? super T> c) {
+             for(int i=0; i<a.len ; i++)
+             c.add(a[i]);
+         }
+
+       #+END_SRC	 
+       
+     * Python & Subtype
+       - Duck Typing: 
+	 Never ask whether a type is the subtype of another type. Just check if
+         it works.
+
+** Java -- history
+   - What we had
+     workstations + servers + operation staff on a network = (Solaris written in
+     C)
+   - what they wanted: IoT
+     * Reliability
+     * size of program 
+     * Flexibility(OOP)
+     * architecture agnostic
+
+   - First trial: C++
+     C++ does provide flexibility but not other thing. For example, template
+     increases program size.
+
+   - Steal Smalltalk
+     * OOP -> Flexibility
+     * Bytecodes -> architecture agnostic
+       Took program and translate it into machine independent bytecode. Then the
+       interpreter will analyze the bytecode.
+     * Runtime checking -> Reliability
+
+   - Smalltalk bad ideas
+     * Weird syntax
+     * Program internally use secret bytecode
+       For internet of thing, they need download bytecodes instead of machine
+       code and let the hardware to intepret.
+     
+   - Oak ==> Java
+     * 1995 Browser in Java
+       HotJava and applets(java code compiled into bytecode)
+     * And Browser Mosaic in C++
+       which becomes IE and Mozilla
+       Plugin technology which are dynamic linked machine code.
+       To fix security issue, they later use javascript.
+     * Java -> server worked well
+            -> thread support
+     
+
+** Java Types
+   - Primitive type
+     byte, short, int, long, char, boolean, float, double
+      8      16    32    64   16      1       32     64
+                                           IEEE-754 fp
+
+     In java, the those numbers are fixed for portable flexibility.
+     In C, performance is more concerned. Machine are allowed to choose more
+     suitable size.
+
+     * Overflow??
+       In C, overflow is undefined.
+       In Java, overflow causes wrapping around ==> reliability.
+
+   - References type
+     Array.
+     All objects are represented in pointers. You cannot see them but they're
+     there.
+
+     * Some thing valid in C++ but not in Java
+       #+BEGIN_SRC c++
+         int foo(int n) {
+           char buf[512];
+
+           return ...;
+         }
+       #+END_SRC
+
+       Cannot allocate on the stack. Everything is on the heap.
+       The size is dynamically chosen.
+       Fixed after created.
+       #+BEGIN_SRC java
+         int foo(int n){
+             char[] bof = new char[512];
+             return xxx;
+         }
+
+         char[] foo(int n) {
+             char[] bof = new char[512]; // Could be new char[n];
+             return bof;
+         }
+       #+END_SRC 
+
+** Java: Single Inheritance
+   - Simple and elegant but not flexible
+   - Use interfaces instead
+
+* Week 5
+
+** Abstract Class
+
+*** Java Standard Library
+1. Collection framwork
+   Three interfaces
+     (Copy)
+     Serializable
+     RandomAccess
+
+   Collection of iterable which could be put into a for loop
+     (Abstract collections) which implement collection
+     List
+       Abstract List
+         Abstract Sequential list
+	   LinkedList  ==> (implement) Queue CS
+	   Array List CSR
+	   vector (synchronized, thread-safe compared to array list) CSR
+     Set 
+       Sorted Set
+       Abstract Set 
+         Hash set (real class. can use the "new" keyword) CS
+           LinkedHashSet
+         TreSet CS
+
+2. Object
+   * Has constructor 
+     so we can use "new" keyword for Object.
+     Can be used as test case
+     Placeholder
+
+   * public boolean equal(Object arg);  == (reference equality)
+
+   * public int hashCode();  default hashcode is some bits extracted from mem addr.
+     For building hash table.
+     We want the following to be true:
+     If o1 == o2 then hashCode(o1) == hasCode(o2)
+     Note that the reverse is not true.
+
+   * public final Class<? extends Object> getClass(); 
+     abstract (class) ==> subclass is mandatory
+     final (class) ==> subclass is not allowed
+     final (function) ==> cannot override it.
+     Final allows inline and optimization ????
+
+     Object o = ???
+     Class c = o.getClass(); ==> May get "Thread"
+     This is runtime type of o
+
+     Reflection:
+     Program tries to understand itself
+
+     What is the point of getClass()?
+     debug
+
+     The "final" keyword does not allow overriding because you could write it in
+     a way that it return a different class.
+
+   * public String toString();
+     For debug
+
+   * protected void finalize(); can throw exception
+     For garbage collector
+     Why we need to override finalize method?
+     A subclass overrides the finalize method to dispose of system resources or
+     to perform other cleanup.
+
+   * protected Object clone();
+     
+3. class Class
+   * public final Class<? extends Object> getClass()
+     
+
+1. Thread
+   Threads stay out of trouble via:
+   * Synchronized
+     int i;
+     public synchronized int m() { i++; }
+     this.lock() -> this.unlock()
+   * Object.wait()
+     1. remove all synchronized locks held by this thread
+     2. Wait until the object beomes available
+
+   * Object.notify()
+     1. wakes up one thread 
