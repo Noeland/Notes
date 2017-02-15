@@ -1,4 +1,5 @@
 * Chapter 2: C++ Basics
+** Variable
 ** Counpound Type
 1. reference: reference give an object another name. reference type refers to
    another type. 
@@ -234,7 +235,194 @@ with const identifier. /A const object must be initialized./
        const auto &j = 42;  // reference to const can accept initializer of any type
      #+END_SRC
        
-3. The decltype Type Specifier
+3. TODOS: The decltype Type Specifier
    
        
 * Chapter 3: Strings, Vectors and Arrays
+** Namespace /using/ Declaration
+1. Headers should not include using declarations. If a header has a using
+   declaration, all the programs that include that header get that same using
+   declaration, even if that is not intended.
+** Direct and Copy Form of Initialization
+#+BEGIN_SRC c++
+  string s1;          // default initialization; s1 is the empty string
+  string s2 = s1;     // s2 is a copy of s1
+  string s3 = "hiya"; // s3 is a copy of the string literal
+  string s4(10,'c')   // s4 is cccccccccc
+#+END_SRC
+1. Copy Initialization
+   When using "=", we are asking the compiler to *copy initialize* the object by
+   copying the initializer on the right-hand size into the object being created.
+
+2. Direct Initialization
+   If an initialization is not copy initialization, it is *direct
+   initialization*
+
+#+BEGIN_SRC c++
+  string s5 = "hiya";     // copy initialization
+  string s6("hiya");      // direct initialization
+  string s7(10,'c');      // direct initialization
+  string s8 = string(10,'c'); // copy
+#+END_SRC
+** Operations on String
+1. /cin>>string/ first discards any leading white spaces. Then it reads
+   characters until a white space is encountered.
+2. /getline(is, s)/ reads the given stream up to and including the first newline
+   and stores what it reads -- not including the newline -- in its string
+   argument. It returns immediately when it encounters a newline. The newline is
+   discarded. 
+** Vectors
+1. Vector is a template, not a type. Types generated from vector must include
+   the element type.
+2. Vector can hold any non-reference type because reference is not object
+
+*** Initializing Vector
+1. C++11: List initializing a vector
+   We can list initialize a vector from a list of zero or more initial element
+   values enclosed by curly braces:
+   #+BEGIN_SRC c++
+     vector<string> articles = {"a", "an", "the"};
+   #+END_SRC
+     
+   Three restrictions so far
+   * copy initialization need only one initializer
+   * in-class initializer can only use copy or curly braces
+   * list initialization only by curly braces
+
+2. Value Initialization
+   We can usually omit the value and supply only a size. In this case the
+   library creates a *value-initialized* element initializer. The value depends
+   on the object stored.
+   #+BEGIN_SRC c++
+     vector<int> ivec(10);     // ten elements, each initialized to 0
+     vector<string> svec(10);  // ten elements, each initialized to empty string
+   #+END_SRC
+
+   * Restrictions:
+     1. If some classes do not have default constructor, we cannot use this
+        method. Instead, we must suppoy an instance of the object.
+	#+BEGIN_SRC c++
+          vector<int> ivec(10, 1);
+	#+END_SRC
+     2. If we only supply the element count, we must use this method.
+
+3. List Initializer or Element Count?
+   * Rule 1
+     When we use parentheses, we are saying that the values we supply are to be
+     used to construct the object.
+
+   * Rule 2
+     When we use curly braces, we are saying that, if possible, we want to /list
+     initialize/ the object. Only if it is not possible to list initialize the
+     object will the other ways to initialize the object be considered.
+
+     #+BEGIN_SRC c++
+       vector<string> v5{"hi"};     // list initialization: v5 has one element
+       vector<string> v6("hi");     // error: cannot construct a vector of string from string literal
+       vector<stirng> v7{10};       // There is no way to list initialize, so v7 has ten empty strings
+       vector<string> v8{10, "hi"}; // v8 has ten elements initialized to "hi"
+     #+END_SRC
+
+     Note that only v5 is successfully list initialized.
+
+*** Grow Efficiency
+    Unless we need a vector that all elements are the same, it is better to
+    define an empty vector and grow it gradually.
+*** Range For
+   * The body of /range for/ must not change the size of the sequence which it
+     is iterating 
+   * range for is a way to avoid indexing non-existent element in a sequence.
+    
+
+** Iterator
+Iterator is a more general mechanisim to access elements in a container. Just
+like pointers, it provides indirect acess to object which could be an element in
+a container or a character in a string. All library containers have iterator
+although some of them does not  subscripting operation.
+
+*** Validity
+    A valid iterator either denotes an elements or denotes a position one past
+    the last element in a container. *All other iterators are invalid.*
+
+*** Using Iterator
+We can only obtain an iterator object by calling member functions that return
+iterator type. Moreover, we do not care about the precise type an iterator
+has. We can just use /auto/ to define an iterator object returned by some member
+functions of the containers.
+#+BEGIN_SRC c++
+  // the compiler determines the type of a and b
+  // a denotes the first element (if the container has one) and
+  // e denotes one past the last element in v
+  auto a = v.begin(), b = v.end() // a and b have the same type
+#+END_SRC
+
+*Note:* If a container is empty, the iterators returned by /begin/ and /end/ are
+        equal -- they are both the off-tne-end iterators.
+
+*** Iterator Operations
+    *iter               Return a reference to the element denoted by the
+                        iterator iter.
+    iter->mem           Dereferences /iter/ and fetches the member named /mem/
+                        from the underlying element. Equivalent to (*iter).mem 
+    ++iter              Increment the /iter/ to refer to the next element in the
+                        container. 
+    --iter              Decrement the /iter/ to refer to the previous element in
+                        the container.
+    iter1 == iter2      Compares two iterators for equality (inequality). Two
+    iter1 != iter2      iterators are equal if they denotes the same element or
+                        if they are the off-the-end iterator for the same
+                        container.
+
+*Note:* Since iterator returned by /end()/ does not denote an element, it may
+        not be incremented or decremented.
+
+*Note:* /const_iterator/ type is a low-level const object. It is recommanded
+        that we use const iterator when we only need to read elements from a
+        container. The C++11 introduces /cbegin/ and /cend/ that always return
+        constant iterator regardless of whether the container is const or
+        non-const. 
+
+*** Some vector Operations Invalidate Iterator
+    Since vector can grow dynamically, we noted that we cannot modify the vector
+    in a ranged for loop. Another implication is that operations, such as
+    /push_back/ , that changes the size of a vector potentially invalidates all
+    iterators into that vector.
+
+*Warning:* A loop should not add elements to the container to which the
+           iterators refer.
+
+*** Iterator Arithmetic (for /vector/ and /string/)
+    iter + n            Adding (subtracting) an integral value n to (from) an
+    iter - n            iterator that many elements forward (backward) within
+                        the container. *The resulting iterator must be still*
+			*valid in the same container.*
+    iter1 += n          
+    iter1 -= n
+    iter 1 - iter 2     Subtracting two iterators yields the number that when
+                        added to the right-hand iterator yields the left-hand
+			iterator. The iterators must be valid in the same
+			container. 
+    >, >=, <, <=        Relational operators on iterators. One iterator is less
+                        than another if it refers to an element that appears in
+			the container before the one referred toby the other
+			iterator. The iterators must be valid in the same
+			container.
+
+    Example: Binary Search
+    #+BEGIN_SRC c++
+      // text must be sorted
+      // beg and end denote the range we are searching
+      auto beg = text.cbegin();
+      auto end = text.cend();
+      auto mid = text.cbegin() + (end - beg)/2;
+
+      while(mid != end && *mid != sought) {
+        if(sought < *mid)     // is the element we want in the first half
+          end = mid;          // if so, adjust the range to ignore the second half
+        else                  // the lement we want is in the second half
+          beg = mid + 1;      // start looking with the element just after mid 
+        mid = beg + (end - beg)/2; // new midpoint
+       }
+    #+END_SRC
+
+** Arrays
