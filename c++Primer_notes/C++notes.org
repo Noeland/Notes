@@ -1,5 +1,7 @@
 * Chapter 2: C++ Basics
 ** Variable
+*** Type Conversion
+*** Scope
 ** Counpound Type
 1. reference: reference give an object another name. reference type refers to
    another type. 
@@ -33,7 +35,7 @@
      reference.
 
    - Just like reference, type of a pointer must exactly match the type of the
-     object it's pointing  to, except two situation: [[][here]] and [[][here]].
+     object it's pointing to, except two situation: [[][here]] and [[][here]].
 
    - Status of a pointer:
      a. point to an object
@@ -146,7 +148,7 @@ with const identifier. /A const object must be initialized./
      not literal type.
 
    - The object pointed to by a constexpr pointer (or binds to a constexpr
-     reference) must be nullptr, 0 or variable allocated to fixed memory
+     reference) must be *nullptr, 0 or variable allocated to fixed memory*
      address. Those variables are non-automatic.
 
    - constexpr pointer is *top-level const*: The constexpr specifier applies to
@@ -156,6 +158,13 @@ with const identifier. /A const object must be initialized./
      stored but does not impose any restrictions on the content in that
      address. Therefore, constexpr pointer does not mean we cannot change the
      content. It depends on the type to which the pointer points.
+     
+     *Additional notes on 03/10/2017:* It is easier that if we do not think
+     constexpr as part of the type. Instead we can treat it as some kind of
+     "modifier" that modifies the whole expression. The value of this expression
+     could not be changed.
+
+
      #+BEGIN_SRC c++
      constexpr int *np = nullptr;
      int j=0;
@@ -179,7 +188,7 @@ with const identifier. /A const object must be initialized./
 	#+END_SRC
    - *alias declaration*
      #+BEGIN_SRC c++
-       using SI = Sales_item;    // SI is synonym for Sales_item
+     using SI = Sales_item;    // SI is synonym for Sales_item
 	#+END_SRC
    - Pointers, const, and Type Alias
      Consider the following example:
@@ -195,9 +204,12 @@ with const identifier. /A const object must be initialized./
      char." 
 
 2. The auto Type Specifier
-   Unlike type specifier, like double, auto tells the compiler to deduce the
-   type from the initializer. By implication, a variable that uses auto as its
+   Unlike type specifier, like double, auto tells the compiler to *deduce the*
+   *type from the initializer*. By implication, a variable that uses auto as its
    type specifier must have an initializer.
+
+   *NOTE*: The auto type specifier can only deduces the type from its
+   initializer. It is not able to reason out the type from the context.
 
    As with any other type specifier, we can define multiple variables using
    auto. Because *a declaration can involve only a single base type*, the
@@ -206,7 +218,9 @@ with const identifier. /A const object must be initialized./
 
    - Compound Type, const and auto
      The type that the compiler infers for auto is not always exactly the same
-     as the initializer's type.
+     as the initializer's type. 这体现在（1）用reference type来初始化auto对象得
+     到的并不是reference type 和（2）auto不会是top-level const，除非在auto前面加
+     上const。
 
      First, in almost all circumstances (only one exception with decltype), when we are
      using a reference, we are really using the object to which the reference
@@ -227,7 +241,12 @@ with const identifier. /A const object must be initialized./
      If we want the deduced type to be const, we must explicitly add const
      specifier before auto.
 
+     auto也是作为type specifier存在的，如果auto不无视top-level const的话会很容易出现程序员写出两个const的错误。
+     总之，要记住没有const修饰的auto类型不可能是一个const object，也就是说，如果没有const的修饰，那么一个auto类型
+     的对象永远是可以被修改的。但是它可能是low-level const。
+
      We can specify that we want a reference to the auto-deduced type.
+     Note that we cannot bind a plain reference to a literal. See reason [[http://stackoverflow.com/questions/1565600/how-come-a-non-const-reference-cannot-bind-to-a-temporary-object][here]].
 
      #+BEGIN_SRC c++
        auto &q = ci;        // for plain reference, type must match
@@ -237,7 +256,7 @@ with const identifier. /A const object must be initialized./
        
 3. TODOS: The decltype Type Specifier
    
-       
+   
 * Chapter 3: Strings, Vectors and Arrays
 ** Namespace /using/ Declaration
 1. Headers should not include using declarations. If a header has a using
@@ -270,8 +289,13 @@ with const identifier. /A const object must be initialized./
 2. /getline(is, s)/ reads the given stream up to and including the first newline
    and stores what it reads -- not including the newline -- in its string
    argument. It returns immediately when it encounters a newline. The newline is
-   discarded. 
+   discarded.
+3. String Indexing []
+   The index we supply can be any expression that yields an integral
+   value. However, if our index has a signed type, its value will be convereted
+   to the unsigned type that string::size_type represents.
 ** Vectors
+*** About Vectors
 1. Vector is a template, not a type. Types generated from vector must include
    the element type.
 2. Vector can hold any non-reference type because reference is not object
@@ -292,7 +316,8 @@ with const identifier. /A const object must be initialized./
 2. Value Initialization
    We can usually omit the value and supply only a size. In this case the
    library creates a *value-initialized* element initializer. The value depends
-   on the object stored.
+   on the object stored. If the vector holds elements of built-in type such as
+   int, then the element initializer has a value of 0.
    #+BEGIN_SRC c++
      vector<int> ivec(10);     // ten elements, each initialized to 0
      vector<string> svec(10);  // ten elements, each initialized to empty string
@@ -300,7 +325,7 @@ with const identifier. /A const object must be initialized./
 
    * Restrictions:
      1. If some classes do not have default constructor, we cannot use this
-        method. Instead, we must suppoy an instance of the object.
+        method. Instead, we must supply an instance of the object.
 	#+BEGIN_SRC c++
           vector<int> ivec(10, 1);
 	#+END_SRC
@@ -325,6 +350,27 @@ with const identifier. /A const object must be initialized./
 
      Note that only v5 is successfully list initialized.
 
+4. Array(iterator) initialization
+
+*** Adding Elements to vector
+    Directly initializing the elements of a vector is feasible only if we have a
+    small number of known initial values, if we want to make a copy of another
+    vector, of if we want to initialize all the elements to the same value.
+
+    More commonly, we gradually add elements to the vector at run time by the
+    *push_back* method. The *push_back* operation takes a value and "pushes"
+    that value as a new last element on to the "back" of the vector.
+
+    For example
+    #+BEGIN_SRC c++
+      vector<int> v2;              // empty vector
+      for (int i=0; i != 100; ++i) 
+        v2.push_back(i);           // append sequential integers to v2
+      // at end of loop v2 has 100 elements, values 0 to 99.
+    #+END_SRC
+    Note that even though we know we ultimately will have 100 elements, we
+    define v2 to be empty.
+
 *** Grow Efficiency
     Unless we need a vector that all elements are the same, it is better to
     define an empty vector and grow it gradually.
@@ -332,6 +378,24 @@ with const identifier. /A const object must be initialized./
    * The body of /range for/ must not change the size of the sequence which it
      is iterating 
    * range for is a way to avoid indexing non-existent element in a sequence.
+    
+*** Other vector Operations
+    v.empty()
+    v.size()          Returns the size of vector v in type vector::size_type
+    v.push_back()
+    v[n]              Returns a *reference* to the element at position n in v.
+    
+*** vector Indexing Example
+    #+BEGIN_SRC c++
+      vector<unsigned> scores(11,0);   // 11 buckets, all initially 0s
+      unsigned grade;
+      while(cin>>grade) {              // read the grade
+        if(grade <= 100)               // handle only valid grades
+          ++score[grade/10];           // Increment the counter for the current buckets
+       }
+    #+END_SRC
+
+*** Scripting Does Not Add Elements    
     
 
 ** Iterator
@@ -360,7 +424,7 @@ functions of the containers.
         equal -- they are both the off-tne-end iterators.
 
 *** Iterator Operations
-    *iter               Return a reference to the element denoted by the
+    *iter               Return a *reference* to the element denoted by the
                         iterator iter.
     iter->mem           Dereferences /iter/ and fetches the member named /mem/
                         from the underlying element. Equivalent to (*iter).mem 
@@ -376,7 +440,7 @@ functions of the containers.
 *Note:* Since iterator returned by /end()/ does not denote an element, it may
         not be incremented or decremented.
 
-*Note:* /const_iterator/ type is a low-level const object. It is recommanded
+*Note:* /const_iterator/ type is a *low-level const object*. It is recommanded
         that we use const iterator when we only need to read elements from a
         container. The C++11 introduces /cbegin/ and /cend/ that always return
         constant iterator regardless of whether the container is const or
@@ -419,10 +483,258 @@ functions of the containers.
       while(mid != end && *mid != sought) {
         if(sought < *mid)     // is the element we want in the first half
           end = mid;          // if so, adjust the range to ignore the second half
-        else                  // the lement we want is in the second half
+        else                  // the element we want is in the second half
           beg = mid + 1;      // start looking with the element just after mid 
         mid = beg + (end - beg)/2; // new midpoint
        }
     #+END_SRC
 
 ** Arrays
+*** About Arrays
+Arrays are a compound type. An array declarator has the form /a[d]/.
+1. The dimension must be greater than zero.
+2. The number of the array is part of the type.Therefore, the dimension must be
+   known at compile time which means the dimension must be a constant
+   expression.
+
+   #+BEGIN_SRC c++
+     unsigned cnt = 42; // not a constant expression
+     constexpr unsigned sz = 42; // a constant expression.
+
+     int arr[10];
+     int *parr[sz];
+     string bad[cnt]; // error: cnt is not a constant expression.
+     string strs[get_size()]; // ok if get_size() is a constant expression.
+   #+END_SRC
+3. By default, the elements in an array are default initialized. Therefore, *a*
+   *default-initialized array of built-in type that is defined inside a function*
+   *will have undefined values.*
+4. We cannot use /auto/ to deduce the type of an array. The type must be
+   explicitly initialized.
+5. Array can only hold object.
+
+*** Array Initialization
+1. List initialization
+2. Omit dimension allowed, size is deduced from initializer.
+3. Size of initializer can be less than dimension. In that case, the rest of the
+   elements are value-initialized.
+   *Question*: difference between int arr[10] and int arr[10] = {}?
+   int arr[10] is an undefined initialized array while int arr[10] = {} is an
+   value-initialized array.
+   *Question*: What is value-initialized?
+               If the object is int, then it is initialized to be 0.
+
+4. String literals can be used directly to initialize character array. The size
+   of the resulting array is one more larger than the size of the initializer.
+5. There is no copy or assignment operator for array type.
+   #+BEGIN_SRC c++
+     int a[] = {0, 1, 2}; // array of three ints
+     int a2[] = a; // error: cannot initialize one array with another.
+     a2 = a; // error: cannot assign one array to another.
+   #+END_SRC
+   However, we can create a reference that binds to an existing array.
+   #+BEGIN_SRC c++
+     int arr[5] = {1,2,3,4,5};
+     int (&arr_r)[5] = arr;
+   #+END_SRC
+
+*** Pointers and Arrays
+1. In most places when we use an array, the compiler automatically substitutes a
+   pointer to the first element.
+   #+BEGIN_SRC C++
+   string nums[] = {"one", "two", "three"};
+   string *p = &nums[0];
+   string *p2 = nums; // equivalent to string *p2 = &nums[0];
+   #+END_SRC
+
+2. Exceptions on Pointer-Array Conversion
+   One exception is when we use decltype.
+   Another exception is when we use the sizeof operator.
+   The third exception is when we initialize a reference type. Since the type of
+   non-const reference must be identical to the initializer.
+
+   *Note*: Despite that, pointer and array are still different types. One
+   example is that the ranged for loop can only loop through array type. It is
+   an error for a ranged for loop to loop through a pointer.
+   
+3. The New C++11 BEGIN and END funciton in header "iterator".
+   Take array as an argument and return pointer to the beginning and off-the-end
+   element. 
+
+4. The ptrdiff_t type for the result type of subtracting two pointers.
+
+5. Dereferencing and Pointer Arithmetic
+   
+6. Negative subscripting
+
+*** C-style Character Strings
+1. The cstring library provides functions for c-style character strings.
+   strlen(p): Return the length of p, not counting the null.
+   strcmp(p1, p2): Compares p1 and p2 for equality.
+   strcat(p1, p2): Append p2 to p1. Returns p1.
+   strcpy(p1, p2): Copies p2 into p1. Returns p1.
+
+2. Those functions do not verify their string parameters.
+
+3. It is caller's responsibility to check the size of a destination string. In
+   function strcpy. p1 must be large enough to hold p2.
+
+*** Interface to Older Code
+1. We can use c-style character array anywhere that we can use string
+   literals. 
+
+2. We can use the memeber funciton of string c_str() to obtain a c-style
+   character array.
+   - The type of the pointer is const char*
+   - It is not guaranteed that the array will remain valid indefinitely. Any
+     subsequent change of the original string may invalidate that array.
+
+* Chapter 4: Expressions
+
+  An Expression is composed of one or more *operands* and yields a *result* when
+  it is evaluated.
+
+** Lvalue and Rvalue
+   A famous definition for lvalue and rvalue is that lvalue appears at the left
+   side of assignment but rvalue appears at the right side. In C++, however, it
+   is a little bit more complicated.
+
+   An expression is either an lvalue or a rvalue. Lvalue can replace rvalue but
+   rvalue cannot replace lvalue.
+
+   - Lvalue represents object that occupies some identifiable memory location
+   - Rvalue represents everything that is not lvalue...
+
+   Some facts about lvalue and rvalue:
+   - Assignment requires nonconst lvalue at its left side and it yields it left
+     side as an lvalue.
+   - The address-of operator (&) requires its operand as lvalue and returns a
+     pointer as rvalue.
+   - The built-in dereference and subscript operators and iterator dereference
+     and string/vector subscript operator all yields lvalue.
+   - The built-in and iterator increment and decrement operator requires lvalue
+     operand and the *prefix version* yields lvalue.
+
+   For decltype, when we apply decltype with lvalue operand, the result is
+   reference type.
+
+** Order of Evaluation
+   The only operators that guarantes order of evaluation is:
+   - Logical AND
+   - Logical OR
+   - Conditional : ?
+   - Comma ,
+
+*** Order of Evaluation, Precedence and Associativity
+
+    For the expression f() + g() * h() + j():
+    - Precedence guarantees that the result of g() and h() are multiplied.
+    - Associativity guarantees that the result of f() is added to the product of
+      g() and h() and that result is added to the result of j().
+    - No order of evaluation is guaranteed.
+** Arithmetic Operator
+
+   - All six arithmetic operators are left associative. 
+
+   - The result they returned are *rvalue* object.
+
+   - Operand will be converted to arithmetic type if possible.
+
+   - Unary +, binary + and - can also be applied to pointer type.
+
+   - true will be promote to 1 and false to 0.
+     #+BEGIN_SRC C++
+     bool b = true;
+     bool b2 = -b; // b2 is also true.
+     #+END_SRC
+     In the above example, since the unary - converts its operand to arithmetic
+     type, b, which has the value true, is converted to int with
+     value 1. Applied the unary -, it becomes -1 which is then converted to bool
+     type. Since it is a non-zero value, the result of b2 is true.
+
+   - Overflow is undefined.
+
+** Logical and Relational Operator
+   - All left associative except logical NOT.
+
+   - Logical operators convert operands to bool.
+
+   - Relational operators convert operands to arithmetic type or pointer type.
+     Therefore, when we say 
+     #+BEGIN_SRC C++
+     if(val == b)
+     #+END_SRC
+     
+     It is equivalent to saying
+      #+BEGIN_SRC C++
+     if(val == 1)
+     #+END_SRC
+     Because the bool type b is converted to int type.
+   
+
+   - Results are rvalues.
+** Increment and Decrement Operator
+   - Prefix increment the object and yields the changed object as an lvalue
+     result.
+   - Postfix increment the object and yields a copy of the unchanged object as
+     rvalue. 
+
+** Conditional Operator
+   cond ? expr1 : expr2
+   - Low precedence
+   - Right associative
+   - Result is lvalue if both expressions are lvalues.
+** Bitwise Operator
+   - Right shift a signed integer is a machine dependent behavior.
+** The sizeof Operator
+   - The result is constexpr.
+   - It does not evaluate its operand. sizeof(*p) is safe even if p is an
+     invalid pointer.
+   - As an exception, the array operand will not be converted to pointer type. 
+   - Can use scope operator to get the size of member object.
+** Type Conversion
+*** Arithmetic Conversion
+    
+    Arithmetic conversions are defined to preserve precision.
+*** Integral Promotion
+    Integral promotions convert the small integral types to a larger integral
+    type. The type bool, char, signed/unsigned char, signed/unsigned short are
+    promoted to int if all possible values of that type fit in an
+    int. Otherwise, it is converted to unsigned int.
+
+    The larger char type such as wchar_t, wchar16_t and wchar32_t is promoted to
+    the smallest type of int, unsigned int, long, unsigned long, long long and
+    unsigned long long in which all possible values of that type can fit in.
+
+*** Operand of Unsigned Type\
+    Same size ==> Unsigned
+    Same signedness ==> Larger
+
+    Different signedness:
+    if unsigned larger ==> unsigned
+    else if equal ==> unsigned
+    else (if signed larger) ==> fitness.
+
+*** Array to Pointer Conversion
+    All cases except:
+    1. decltype
+    2. sizeof operator
+    3. address-of (&)operator: Pointer to an array.
+    4. typeid
+    5. initialization to a reference to an array.
+
+*** Pointer Conversion
+    1. 0 or nullptr can be converted to all pointer types
+    2. a pointer to any non-const type can be converted to void*
+    3. a pointer to any type can be converted to const void*
+
+*** Conversion to bool
+    Pointer and arithmetic types are converted to true is they are zero-valued
+    and false otherwise.
+
+*** Explicit Type Conversion: /cast_name<type>(expression);/
+    1. static_cast: allow all kind of type conversion without complilation
+       error.
+    2. const_cast: remove const identifiable. Undefined if try to modify through
+       it.
+    3. reinterpret_cast
