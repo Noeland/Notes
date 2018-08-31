@@ -527,6 +527,8 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
 4. String literals can be used directly to initialize character array. The size
    of the resulting array is one more larger than the size of the initializer.
 5. There is no copy or assignment operator for array type.
+   没有copy assignment。尤其注意当要初始化一个array of array的时候。不能用既在的array。
+
    #+BEGIN_SRC c++
      int a[] = {0, 1, 2}; // array of three ints
      int a2[] = a; // error: cannot initialize one array with another.
@@ -538,6 +540,30 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
      int (&arr_r)[5] = arr;
    #+END_SRC
 
+   When creating a reference that binds to an existing array, remember that the type of reference must be exactly
+   identical to the type it binds to.
+
+   #+BEGIN_SRC C++
+   int arr[] = {1, 2}; // arr has type int [2]
+   int (&arr_r)[] = arr; // ERROR! Type must be exactly identical.
+   
+   int (&arr_r)[2] = arr; // Correct.
+   #+END_SRC
+
+   Here is a subtle example.
+
+   #+BEGIN_SRC C++
+   typedef double *arr[]; // Array to pointer of double with indefinite size.
+   typedef double *arr2[2]; // Array to pointer of double with 5 elememnt.
+
+   double d1 = 0.1, d2 = 0.2;
+
+   arr arr_d = {&d1, &d2};
+   arr2 arr_d2 = {&d1, &d2};
+
+   arr2 &arr_r = arr_d; // Correct.
+   arr &arr_r2 = arr_d; // Error!. arr_r2 does not specify the size.
+   #+END_SRC
 *** Pointers and Arrays
 1. In most places when we use an array, the compiler automatically substitutes a
    pointer to the first element.
@@ -738,3 +764,263 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
     2. const_cast: remove const identifiable. Undefined if try to modify through
        it.
     3. reinterpret_cast
+
+* Chapter 5: Statements
+
+* Chapter 6: Functions
+* Chapter 7: Classes
+** Member function
+ - Member funciton must be declared inside the class.
+ - Member function may be defined outside or inside the class.
+*** Introducing *this*
+    - Member functions access the object on which they were called through an
+      extra, implicit parameter named *this*. When we call the member funciton,
+      *this* is initialized with the address of the obejct on which the function
+      was invoked.
+
+      #+BEGIN_SRC C++
+      // pseudo-code illustration of how a call to a member funtion is translated.
+      // by compiler.
+      Sale_data::isbn(&total);
+      #+END_SRC
+    - *this* is an constant object. By default /this/ is a const pointer to a
+      nonconst object.
+    - By default initialization rule, since /this/ is a const pointer to a
+      nonconst object, we are not able to bind /this/ to a const
+      object. Therefore, we cannot call the member function if the object on
+      which the function was invoked is a const object. So we need the "const"
+      member function.
+*** Introducing const member function
+    - The purpose of the const is to modify the type of /this/ pointer. It makes
+      the (const) pointer becomes low-level const. Therefore, we can bind it to
+      a const object.
+
+      #+BEGIN_SRC C++
+      // pseudo-code illustration of how the compiler handles const modifier
+      // of member function.
+      Sales_data::isbn(const Sales_data* const this)
+      #+END_SRC
+      
+      Therefore, we are not able to modify the content of the object in the body
+      of a const member function （except the object has a /mutable/ data member).
+
+    - Objects that are const, and pointers or references to const object may
+      only call const member function.
+
+*** More on Member Function
+    - The class itself defines a scope.
+    - The compiler processes classes in two step
+      1. Data members declarations are processed first
+      2. The member function bodies are then processed.
+	 
+    - Specify the return type to be a reference to return lvalue.
+
+*** Constructor
+**** Synthesized Default Constructor
+     - The default constructor does the following two things for each data
+       member: 
+       1. If there is an in-class initializer, use it to initialize the member.
+       2. Otherwise, default initialize the member.
+
+     - The compiler writes the default construct for us only if we define *no*
+       constructor. 
+
+     - Sometimes the default constructor does the wrong thing:
+       1. Built-in or compound type (such as arrays or pointers) that are
+          defined inside a block have undefined value when they are default
+          initialized. Therefore, classes that have data members of built-in or
+          compound type should rely on the synthesized default constructor only
+          if all such members have in-class initializer.
+
+       2. Sometimes the compiler is not able to synthesize a default constructor
+          for us. For example, class type data member that does not have a
+          default constructor.
+
+     - = default;
+**** Constructor Initializer List
+
+*** Copy, Assignment and Distruction
+    - Like constructor, compiler will synthesize default operators for us. And
+      also like constructor, those synthesized versions will sometimes fail. One
+      example is when we want to dynamically allocate memory.
+
+    - Some times it is handy to use vector or string to handle the situations
+      when we want to allocate memory dynamically because the synthesized
+      operators can operate correctly.
+     
+** Access Control
+*** Friend
+    - A class can allow another class or function to access it non-public
+      members by making that class or function a friend.
+    - Note that friend declaration only specifies access. It is not a
+      "declaration" of a function. Therefore, we have to declare that function
+      seperately. 
+
+** Additional Class Feature
+*** Class Member Revisited
+**** Defining A Type Member
+     - In addition to defining data and function members, a class can define its
+       own local names for types. Type names defined by a class are subjected to
+       the same access rule.
+       #+BEGIN_SRC C++
+         class Screen {
+         public:
+           typedef std::string::size_type pos;
+         private:
+           pos curser = 0;
+           pos height = 0, weight = 0;
+           std::string content;
+         };
+       #+END_SRC
+
+       - We can also use the C++11 standard syntax of type alias.
+
+       - Type member, unlike ordinary data member, must be defined before used.
+**** Makeing Members inline
+     - Functions *defined* inside the class are implicitly inlined.
+**** Overloading Member Function
+**** mutable Data Member
+     - It happens sometimes that a class has a data member that we want to
+       modify even inside a const member function.
+     - A mutable data member is never const, even when it is a member of a const object.
+**** Initializers for Data Member of Class Type
+     - When we provide an in-class initializer, we must do so by either an = or
+       curly braces.
+
+*** Functions that Return *this
+    - A const member function that return *this as a reference must have a
+      return type that is a reference to const.
+
+**** Overloading Based On const
+
+*** Class Type
+    - Forward Declaration: Incomplete Type
+      We can create pointers or references to such types, and we can *declare*
+      (but not define) functions that use such types as parameters and return
+      type.
+
+    - A class must be defined before we can write codes to create an object of
+      that class.
+
+    - Data member can be a class type only if the class is fully defined.
+
+    - Undefined Behavior??
+      https://stackoverflow.com/help/privileges/comment: On the Screen/Window_mgr example
+      https://stackoverflow.com/questions/31345193/how-can-an-incomplete-type-be-used-as-a-template-parameter-to-vector-here
+      Undefined Behavior?? 
+
+      
+*** Friendship Revisited
+    - Friendship is not transitive. The class itself controls which classes or
+      functions are its friend.
+
+    - Make member functions of other classes a friend require careful
+      structuring of the code.
+
+    - Even if the function is defined after the friend specifier, it is still
+      not considered declared by the compiler. We need to decalre that function
+      seperately. Since such kind of function is automatically inlined, we can
+      provide multiple definition of that function. However, each definition
+      must be identical.
+
+** Class Scope
+   - Class defines its own scope. Outside the class scope, data and function
+     members may be accessd only through an object, a reference or pointer using
+     member access operator. We access type member from the class using the
+     scope operator.
+
+*** Scope and Members Defined Outside the Class
+    - Since a class is a scope, we must specify the class name when we define
+      functions outside the class. Outside the class, all the inner details of
+      the class is hidden.
+
+    - However, once we enter the scope of the class, the parameter list and the
+      function body are in the class's scope. So we on longer need to specify
+      the class name.
+
+    - On the other hand, the return type of a function member is outside the
+      scope because normally the return type appears before the name of the
+      class is seen:
+      #+BEGIN_SRC C++
+      Window_mgr::ScreenIndex Window_mgr::addScreen(const Screen &s) 
+      {
+        // function body here.
+      }
+      #+END_SRC
+
+*** Name Lookup and Class Scope
+**** Normal Name Lookup
+     1. First, look for a declaration of the name in the block in which the
+        name was used. Only names declared before the use are considered.
+
+     2. If the name isn't found, look in the enclosing scope(s).
+
+     3. If no declaration is found, then the program is in error.
+
+**** Name Lookup Inside Class Member Function
+     - Class definitions are processd in two phases:
+       1. First, the member declarations are compiled
+       2. *Function bodies* are compiled only after the entire class has been
+          seen. Note that even if function bodies are inside the class
+          definition, the compiler will still process them after compiling all
+          the member declarations.
+
+***** Name Lookup for Class Member *Declaration*
+      - 在 declaration 这个步骤中，names used for return types and for types in
+        the parameter list must be seen before they are used. Here is an example
+        to illustrate this point:
+	#+BEGIN_SRC C++
+          typedef double Money;
+          string bal;
+          class Account{
+          public:
+            Money balance() { return bal; }
+
+          private:
+            Money bal;
+            // ...
+          };
+	#+END_SRC
+
+	The type declaration of Money must be placed before the class.
+	However, since the function body is process after all the declarations,
+        the bal inside the member function balance refers to the private data
+        member of class Account, but not the string.
+
+      - Cannot redefine a type in the class scope.
+
+***** Block-Scope Name Lookup inside Member Definition
+
+** Constructor
+*** Constructor Initializer List
+    - It is worth noting that data members are initialized before the control
+      enters the constructor's body. Therefore, in the following case, we are
+      actually *assign* values to initialized members:
+      #+BEGIN_SRC C++
+        Sales_data::Sales_data(const string &s, unsigned cnt, double price)
+        {
+          bookNo = s;
+          units_sold = cnt;
+          revenue = price * cnt;
+        }
+      #+END_SRC
+
+    - To actually initialize the data member, we have to use either in-class
+      initializer or the constructor initialization list. Moreover, sometimes we
+      have to do so.
+
+    - If the data member is of type reference, const object or class type that
+      does not have a default constructor, we have to actually "initialize" the
+      data member.
+
+    - Order of initialization is only determined by the order you define the
+      data member inside the class. The order you write the initializer list
+      does not affect this.
+*** Default Argument and Constructor
+    - A constructor that supplies defualt arguments for all its parameter also
+      defines the default constructor.
+
+    - There can only be one default constructor, otherwise there will be
+      anbiguous function matching.
+
+** Static Class Member
