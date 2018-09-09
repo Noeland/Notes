@@ -926,6 +926,8 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
     - Can also use type alias. But still take care when using decltype.
 
 * Chapter 7: Classes
+
+
 ** Member function
  - Member funciton must be declared inside the class.
  - Member function may be defined outside or inside the class.
@@ -940,13 +942,16 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
       // by compiler.
       Sale_data::isbn(&total);
       #+END_SRC
+
     - *this* is an constant object. By default /this/ is a const pointer to a
       nonconst object.
+
     - By default initialization rule, since /this/ is a const pointer to a
       nonconst object, we are not able to bind /this/ to a const
       object. Therefore, we cannot call the member function if the object on
       which the function was invoked is a const object. So we need the "const"
       member function.
+
 *** Introducing const member function
     - The purpose of the const is to modify the type of /this/ pointer. It makes
       the (const) pointer becomes low-level const. Therefore, we can bind it to
@@ -1181,3 +1186,84 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
       anbiguous function matching.
 
 ** Static Class Member
+* Classes 精简版
+  - *Interface* of class consists of the operations that users of the class can
+    execute. 
+
+  - *Implementation* includes data members and the bodies of member functions
+    that consitute the interface.
+
+** On "this" Pointer
+   - Member functions access the object's data member through an implicitly
+     parameter called "this".
+     #+BEGIN_SRC c++
+     // psudo-code illustration of how a call to a member function is translated
+     Sales_data::isbn(&total);
+     #+END_SRC
+
+   - "this" is a const pointer to non-const object. Therefore, a const object
+     cannot call ordinary member function since non-const pointer cannot points
+     to const object.
+
+   - the "const" specifier for member function
+     The const specifier is used to modify "this" pointer. Const object can
+     therefore call const member functions.
+
+*** Overloading Member funciton based on const
+
+** Data Member Initialization
+   - Member are initialized before the constructor body is executed.
+
+** Friendship
+   - A class can allow annother class or function to access its private data
+     member by granting that class or function as friend.
+
+   - A friend declaration does not make that function visible to the rest of the
+     program. We must declare it outside the class (even if we define the
+     function as we are making the friend declaration).
+
+   - Classes and *nonmember* function need not have been declared before they
+     are used in a friend declaration. When a name first appears in a friend
+     declaration, that name is assumed to be part of the surrounding scope.
+
+** Class and Scope
+   - Member function definitions are processed after the compiler processes all
+     of the *declarations* in the class.
+     
+   - It only applied to names used *in* the member function bodies. Names used
+     in declarations, including names used for return type and types in
+     parameter list, must be seen before they are used.
+
+   - Member type definition must be seen before used.
+
+   - Name Look UP
+     1. In current block
+
+     2. In class
+
+     3. In outer scope.
+
+** Implicit Class Type Conversion
+   - Every constructor that can be called with a single argument defines an
+     "implicit conversion" to a class type.
+
+   - Use "explicit" keyword to suppress the automatic conversion.
+
+** Static Class Member
+   - Objects do not contain data associated with static data member. Static
+     functions are not bound to any object and therefore do not have a "this"
+     pointer.
+
+   - We can use an object, reference or pointer to access a static member.
+
+   - They are not defined when we create objects of the class. They are not
+     initialized by constructors. We must define and initialize them outside the
+     class body.
+
+   - const static member may be initialized in class body.
+
+   - consexpr static member must be initialized inside class body.
+
+   - Have to declare them outside to make them visible.
+
+   - A class may contain static data member of its own type.
