@@ -766,8 +766,165 @@ Arrays are a compound type. An array declarator has the form /a[d]/.
     3. reinterpret_cast
 
 * Chapter 5: Statements
-
+  
 * Chapter 6: Functions
+** Function Basics
+   - A function definition contains a return type, a function name, a parameter
+     list containing zero or more parameters and a funciton body.
+
+   - We execute the function through the *call operator*, which is a pair of
+     parentheses. It takes an expression that is a function or a pointer to a
+     function.
+
+   - Arguments are passed to the function and are *initializers* for the
+     function's parameters. *The order of evaluation is not garuanteed.*
+
+   - Argument passing is exactly like variable initialization.
+** Local Objects
+   - *Scope* of a name is the part of the program's text in which that name is
+     visible.
+
+   - *Lifetime* of a name is the timing during the program's execution that the
+     object exists.
+
+   - *Automatic Objects* are objects that exist only during the execution of a
+     block. After the execution exits the block, automatic objects are
+     destroyed and their values are undefined. Uninitialized automatic objects
+     has undefined value.
+
+   - *Local Static Object* is intialized before the first time the execution
+     passes through the object's definition. Its lifetime is the entire
+     execution of the program. It is like a global variable but private to the
+     function that defines it.
+** Argument Passing
+*** Array argument
+    - We cannot pass an array as a function's argument because we are not able
+      to copy array. The compiler treats array as a pointer. When we pass the
+      array to a function, we are actually passing a *pointer to the array's*
+      *first element.*
+
+    - The compiler has no way to know the extent of the passed array. We make
+      use a marker to indicate the end (C-string) or include the size as another
+      argument.
+
+    - In the new C++11 standard. We can also use the library begin() and end()
+      function.
+
+    - We actually can make a function's parameter be the type of reference to an
+      array. However, we must specify the exact size of the array because size
+      if part of the array's type.
+      #+BEGIN_SRC C++
+      // OK: parameter is a reference to an array; the dimension is part of the type.
+      void print(int (&arr)[10])
+      {
+          for(auto elem : arr)
+              cout << elem << endl;
+      }
+      #+END_SRC
+
+      In the above example, we can only pass "int [10]" to print.
+
+** Initializer List
+
+** The Return Statement
+   - Returning is just like use the return value to initialize a variable at the
+     call site.
+
+   - Do not return local object as a reference.
+
+** inline and constexpr Function
+   - constexpr funcitons are implicitly inlined.
+
+   - For a constexpr function, the return type and all parameters must be
+     literal type and the function body must contain exactly one return
+     statement.
+
+   - inline and constexpr function may be defined everal times. To avoid
+     unnecessary mass, those functions are usually defined in the header files.
+
+** Function Overloading
+   - Overloaded functions must differ in their parameter lists. Also, top-level
+     const makes no difference.
+
+*** const_cast and Overloading
+    - const_cast is useful when using overloaded functionl
+      #+BEGIN_SRC c++
+      const string &isShorter(const string &s1, const string &s2)
+      {
+          return s1.size() <= s2.size() ? s1 : s2;
+      }
+
+      string &isShorter(string &s1, string &s2)
+      {
+          auto &r = isShorter(const_cast<const string&>(s1), const_cast<const string&>(s2));
+	  return const_cast<string&>(r);i 
+      }
+      #+END_SRC
+*** Overloading and Scope
+    - Just as usual, a name declared in an inner scope hides all uses of that
+      name declared in outer scope.
+*** Function Matching
+    - Matching steps
+      1. Search for candicate function. A function is considered as a candidate
+         if it has the same name and is visible in the current scope.
+      2. Search viable functions in those candidates. A function is viable if it
+         has the same number of parameters as there are arguments in the call,
+         and the type of each argument must match --- or be convertible to ---
+         the type of its corresponding parameter.
+      3. Find the "best match".
+
+    - "Best Match"?
+      1. An exact match is the best. It happens when
+	 - Argument and parameter have exactly the same type.
+
+	 - An array or function to corresponding pointer conversion.
+
+	 - Top-level const are added or discarded.
+
+      2. If only Lower-level const is added.
+
+      3. Integral promotion. When a smaller integral type is promoted to a
+         larger type.
+	 - Worth noting that small integral type are always promoted to int or
+           larger type even if conversion to short is a seemingly closer
+           conversion. 
+	   #+BEGIN_SRC c++
+	   void ff(int);
+	   void ff(short); // Will be called only when the argument type is short.
+	   ff('a');        // ff(int) is called: small integral type char is converted to int. 
+#+END_SRC
+
+      4. Arithmetic and pointer conversion.
+	 - 0 and literal nullptr can be converted to pointer of any type.
+	 - Any nonconst pointer type can be converted to void*.
+	 - Pointers of any type can be converted to const void*.
+
+      5. Class type conversion.
+
+** Function Pointer
+   - A function's type is determined by the type of its parameters and its
+     return type. Name does not matter.
+
+   - There is no conversion from one fp type to another fp type. However, we can
+     always assign 0 or nullptr to indicate that this pf does not point to any
+     function.
+
+   - Automatic function-to-functor conversion applies only to parameters. Not
+     return type, not decltype.
+
+*** Function Pointer Parameters
+    - In declaration: just write the function, compiler will convert it to
+      function poitner; equivalent to writing the parameter as function pointer.
+    - In argument passing: Just pass the function's name (automatic conversion
+      to pointer).
+    - Type alias. Note that decltype does not perform the function-2-pointer
+      conversion.
+
+*** Return a Function Poitner
+    - Have to specify clearly that we want to return a function poitner. There
+      is no automatic conversion.
+    - Can also use type alias. But still take care when using decltype.
+
 * Chapter 7: Classes
 ** Member function
  - Member funciton must be declared inside the class.
