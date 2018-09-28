@@ -4,7 +4,6 @@
     策略，比如 auto 和 decltype() 的策略就是不一样的，template function 的参数类
     型确定也和前面这两个不一样。
 
-
 ** Item 1: Understanding Template Type Deduction
    所谓的 template type deduction 大致是下面的这种形式
    #+BEGIN_SRC C++
@@ -43,7 +42,7 @@
        样， 而 T 的具体类型就是在这个过程中被确定的。
 
     这点用中文说出来有些难以理解，英文说得非常清楚，下面是原文
-       #+BEGIN_SRC org
+       #+BEGIN_SRC english
        1. If /expr/'s type is a reference, ignore the reference part.
        2. Then pattern-match /expr/'s type against /ParamType/ to determin T.
        #+END_SRC
