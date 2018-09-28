@@ -48,6 +48,10 @@
        2. Then pattern-match /expr/'s type against /ParamType/ to determin T.
        #+END_SRC
 
+    这里提到了 pattern-matching，一开始我还有点不太理解，但是事实上就是
+    ParamType 这个类型要和 expr 的类型的形式完全一样。或者说，param 的类型要和
+    expr 的类型完全一样。 
+       
     下面是例子：
     #+BEGIN_SRC C++
     template <typename T>
