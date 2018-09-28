@@ -1,0 +1,150 @@
+* Chapter 1. Deducing
+    这一章讲的主要是 C++11 和 C++14 的 type deduction。所谓 type deduction 就是
+    编译器会自动从你给出的 expression 推断出他的 type 。这个过程会遵循几个不同的
+    策略，比如 auto 和 decltype() 的策略就是不一样的，template function 的参数类
+    型确定也和前面这两个不一样。
+
+** Item 1: Understanding Template Type Deduction
+   所谓的 template type deduction 大致是下面的这种形式
+   #+BEGIN_SRC C++
+   template <typename T>
+   void f(ParamType param);
+   #+END_SRC
+
+   对上面那个函数的调用应该是这个形式
+   #+BEGIN_SRC C++
+   f(expr);
+   #+END_SRC
+
+   在编译的过程中，编译器会用 expr 的 type 来推断两个东西的类型，一个是 T, 另一
+   个是 parameter 的类型 ParamType。 通常这两个不会一样，因为 ParamType 会有一些
+   额外的修饰符，比如：
+   #+BEGIN_SRC C++
+   template <typename>
+   void f(const T& param);
+   #+END_SRC
+
+   在这个情况下，T 的类型还未定，而 ParamType 则是 const T& 。不论 T 是什么类型，
+   ParamType 是 reference to const T.
+
+   这个策略根据函数参数列表中对 ParamType 的修饰可以具体分为三个情况
+   1. ParamType 是指针(pointer) 或者引用(reference)
+   2. ParamType is a universal reference (T&&)
+   3. Paramtype is neither a pointer or a reference.
+
+*** Case 1: ParamType is a pointer or non-universal reference   
+    这种情况下，这本书的讲解方式和 Primer 里的不太一样。Primer 引入了 reference
+    collapsing 的概念，但是这本书里没有提到这个。大概觉得那样做反而会更加复杂吧。。
+
+    书中列出的，在这种情况下的策略是这样的，从 expr 的类型来做出判断
+    1. 如果 expr 是个带有引用的类型，那么表示引用的那个部分直接不考虑。
+    2. 去掉引用之后，考虑进 ParamType 额外的修饰符后的类型要和 expr 的类型完全一
+       样， 而 T 的具体类型就是在这个过程中被确定的。
+
+    这点用中文说出来有些难以理解，英文说得非常清楚，下面是原文
+       #+BEGIN_SRC english
+       1. If /expr/'s type is a reference, ignore the reference part.
+       2. Then pattern-match /expr/'s type against /ParamType/ to determin T.
+       #+END_SRC
+
+    下面是例子：
+    #+BEGIN_SRC C++
+    template <typename T>
+    void f(T &param);
+
+    int x = 0;             // x is int
+    const int cx = x;      // x is const int
+    const int &rx = x;     // x is const int&
+
+    f(x);                  // T is int; param's type is int &
+    f(cx);                 // param's type is const int&, so T has type const int
+    f(rx);                 // param's type is const int&, so T has type int.
+
+    #+END_SRC
+
+    这本书的讲解方式对读者更加友好。不过 Primer 的思路更加条理化。Primer 的思路
+    是，在 T& 的情况下 T 的类型无论如何都是和 expr 的类型一样的，但是由于有 reference
+    collapsing, 从而导致了这本书中说的结果。
+
+    我们用第三个例子来说明一下 Primer 的思路。由于 rx 是 const int& , 那么 T 的
+    类型同样是 const int&, 但是这样一来 param 的类型就变成 reference to
+    reference 了。为了处理这种情况，语言就定义了 reference collapsing，就是如果
+    以 type alias 或者 template type deduction 的情况出现了引用的引用的情况，那
+    么这个类型会自动变成普通的左值引用。在这个例子中， T 的类型就从上面说的情况
+    变成了普通的 reference to const int。
+
+    有一点需要注意的是，如果 expr 是带有 const 修饰符的类型，T 也会被推断为带有
+    const 修饰符的类型。这样想，如果你把一个变量设为 const 那么肯定不想让它的数
+    值被更改，所以 type deduction 也要尊重你这个决定。
+
+*** Case 2: ParamType is a universal reference
+    事实上一开始我愣了一下。。这个 universal reference 是什么东西。。 
+
+    When ParamType has type T&&, it is called universal reference. 本书的作者还
+    有一篇文章专门讲了 universal reference，在那里面他提到
+    
+        If a variable or parameter is declared to have type T&& for some
+        *deduced type* T, that variable or parameter is a universal reference. 
+
+    ( [[https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers][这篇文章]] 详细地讲解了 universal reference 和背后的逻辑）
+
+    这个情况的主要问题是，虽然 declared type 是 rvalue reference，但实际上的类型
+    并不一定是如此，上面提到的文章里面说得很详细了，这里就说一下这种情况下编译器
+    的推断策略。
+
+    1. 如果 expr 是 lvalue，那么不论是 T 还是 param 都会被推断为 lvalue
+       reference。注意这个策略中非常不寻常的地方。首先，这是编译器会推出引用类型
+       的唯一情况； 第二，虽然 param 被声明的类型是 ravlue reference，但实际上被
+       推断出的类型却是 lvalue reference。
+    2. 如果 expr 的类型是 rvalue，策略遵循 case 1. 也就是 pattern-matching
+
+    事实上，这里讲的就是 Primer 说得一个 exception，即当我们用 lvalue 来初始化
+    T&&， 的时候，T 会被视作普通的 lvalue reference。然后就是
+    reference collapsing。 当然这里的说法非常简单易懂。
+
+    
+*** Case 3: ParamType is neither a pointer or a reference
+    这种情况事实上就是 pass by value。 策略如下：
+    1. 和 case 1 一样，无视 reference 的部分。
+    2. 无视 top-level const 或者 volatile 的部分。
+
+    这基本就是和 pass by value 的过程是一样的。唯一的注意点是 pointer 的
+    low-level const 是不会被无视的
+
+    #+BEGIN_SRC c++
+    template <typename T>
+    void f(T param);
+
+    const char* const ptr = "Fun with pointers";
+
+    f(ptr);
+    #+END_SRC
+
+    在上面的例子里，T 的类型是 const char*
+
+*** Array Argument and Function Pointer
+    虽然 array-to-pointer 和 function-to-pointer 经常被编译器自动转换，导致看起
+    来 array 和 pointer 好像是同一种类型，但是事实上不是这样。
+    
+    #+BEGIN_SRC C++
+    const char name[] = "Huanming Song";
+
+    const char * ptrToName = name;
+    #+END_SRC
+
+    name 的类型是实实在在的数组类型：const char[14], 并不是 const char*
+    
+    同样地，在 template type deduction 的情况下，这种数组同样会退化成指针。当然，
+    我们可以把参数类型声明成引用，这样一来就的确是数组类型了，只不过数组的大小是
+    固定的。
+
+    事实上，有了 template 之后，函数可以更灵活一点：
+    #+BEGIN_SRC C++
+    template <typename T, std::size_t N>
+    constexpr std::size_t sizeOfArray(T (&)[N]) noexcept;
+    #+END_SRC
+
+    注意，上面这个函数。。。。它没有数组参数的名字。。。因为我们只在乎它的 size。
+    如果要写出名字的话，应该是 /T (&arr)[N]/.
+
+** Item 2: Understanding /auto/ Type Deduction
