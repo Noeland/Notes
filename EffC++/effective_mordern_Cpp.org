@@ -99,8 +99,8 @@
     2. 如果 expr 的类型是 rvalue，策略遵循 case 1. 也就是 pattern-matching
 
     事实上，这里讲的就是 Primer 说得一个 exception，即当我们用 lvalue 来初始化
-    T&&， 的时候，T 会被视作普通的 lvalue reference。然后就是
-    reference collapsing。 当然这里的说法非常简单易懂。
+    T&&，的时候，T 会被视作普通的 lvalue reference。然后就是 reference
+    collapsing，导致 T 和 param 的类型相同。 当然这里的说法非常简单易懂。
 
     
 *** Case 3: ParamType is neither a pointer or a reference
