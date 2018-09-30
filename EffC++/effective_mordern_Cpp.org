@@ -330,3 +330,14 @@
    
    Primer 里用 forward 的理由是为了对应 lvalue 不能用来初始化 ravlue reference
    的情况，但是这个例子里我就不太明白此举的意图了。
+
+** Item 4: 让我看看可爱的编译器又给我猜出什么类型？？？
+   首先 IDE 的话，我之前用 Eclipse 的确能知道它推断的类型，然后现在的 CLion 我还
+   真不知道怎么打开这个功能。。。
+
+   之后又提了一下标准库自带的 type id 和 type name 之类的方法，但是这个方法很不
+   好。。因为它反馈的策略是。。假设这里有一个 template function，把你想要知道的
+   表达式作为 argument 用 pass-by-value 的方式传递给这个函数从而得到类型的信
+   息。。。 （为什么不用 decltype 的策略呢）
+
+   总之作者推荐的是 boost 里的一个库。<boost/type_index.hpp>
