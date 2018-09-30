@@ -148,3 +148,185 @@
     如果要写出名字的话，应该是 /T (&arr)[N]/.
 
 ** Item 2: Understanding /auto/ Type Deduction
+   用了 auto 修饰符的类型推断和 template parameter 的类型推断几乎是一毛一样的。
+   事实上这本书还给了出了概念性的 one-to-one mapping。但是事实上有一点不同，那就
+   是当 initializer 是 std::initializer_list<T> 的时候，两者的处理方法不一样。
+
+   #+BEGIN_SRC c++ 
+   auto x1 = 27;               // type is int. value is 27
+
+   auto x2(27);
+
+   auto x3 = { 27 };           // type is std::initializer_list<int>
+   
+   auto x4{ 27 };
+#+END_SRC
+
+   也就是当我们用 curly braces 来当做 initializer 的时候，auto 会将其推断为
+   initializer_list 的类型。现在终于明白， Primer 中所谓的 list initialization
+   实际上是用 std::initializer_list 来初始化。
+
+   事实上，这里有两处类型推断
+   1. 由于编译器看到我们用了 {} 的形式，x3 和 x4 必须被推断为 initializer_list
+      的类型
+   2. 但是它是个 template 我们必须用某种类型 T 来将它实例化。这就是第二层类型判
+      断了。
+
+   之所以说这是 auto 和 template parameter duduction 的不同之处是因为。。你没办
+   直接让编译器推断出 std::initializer_list 的类型，下面的代码是不行的：
+   #+BEGIN_SRC C++
+   template <typename T>
+   void f(T param);
+
+   f({1, 2, 3});          // error! Cannot duduce type of T
+   #+END_SRC
+
+   具体为什么有这种差别。。。emm。。作者也没法想到一个合理的解释。但是我觉得
+   auto 有这种 rule 应该算是合理的，毕竟 auto 的确是根据 initializer 的类型推断
+   出被声明的变量的类型的。但是 template parameter 不这么做的原因可能是因为
+   initializer_list 最初的目的纯粹只是用来初始化吧。。。。虽然说不太通就是了。
+
+   在 C++14 中，事情又变得稍微麻烦了一点。。。
+
+   在 C++14 中，可以用 auto 来让编译器帮我们自动判断一个函数的返回值类型，也可以
+   用 auto specifier 来用作 lambda expression 的参数。
+
+   但是！！！重点来了！！在这两个 C++14 的新特性中。。auto 并不是用 auto 的
+   duduction 的策略…… 而是 /template type duduction/ 的策略。
+
+   也就是说单纯的 std::initializer_list 是无法被用作推断的因素的。
+   
+   #+BEGIN_SRC C++
+   auto createInts()
+   {
+       return {1, 4, 3};     // Error: can't deduce type for {1, 4, 3}               
+   }
+
+
+   auto resetV = [&v](const auto& newValue) { v = newValue };    // Allowed in C++14
+
+   resetV({1, 2, 3});                                            // Not allowed!  
+ #+END_SRC
+** Item 3: Understanding decltype.
+   decltype(expr) 在绝大多数情况下都是非常简单的，你会将 expr 声明成什么类型，
+   decltype 就会返回那个类型。这也是唯二的编译器会区别对待 T 和 T& 的情况。
+
+   注意，就和 sizeof 一样，decltype 并不会求值。
+
+   #+BEGIN_SRC C++
+   int x = 0;
+
+   int rx = x;
+
+   decltype(x) y1 = x;        // y1 has type int
+
+   decltype(rx) y2 = x;       // y2 has type int&
+   #+END_SRC
+
+   decltype 的一个大用处是，让一个函数的返回值的类型取决于这个函数接收
+   的 argumet 的类型。书中的用了 operator[] 作为例子。
+   （虽然一般来说这个 op 的返回值是引用，但是 vector<bool> 的这个 specialization
+   并非如此。）
+
+   #+BEGIN_SRC C++
+   template <typename Container, typename Index>
+   auto authAndAccess(Container &c, Index i)
+     -> decltype(c[i])
+   {
+       authenticateUser();
+       return c[i];
+   }
+   #+END_SRC
+
+   在上面的例子里（C++ 11)，我们只能通过 trailling return list 来实现这个方法。
+   因为在写返回值的时候，首先我们还没声明函数的参数，自然无法访问它们类型；其次，
+   如果要定义的是一个成员函数，在写返回值的时候我们还不在 scope 中，也没法访问想
+   要访问的名称。
+
+   如果是 C++14 trailing return list 也不需要了，因为新标准允许编译器直接推断一
+   个函数的返回值类型。你可能觉得，啊这样一来就不需要 decltype 了。然而并不是。。。
+   举例来说：
+
+   #+BEGIN_SRC C++
+   template <typename Container, typename Index>
+   auto anthAndAccess(Container &c, Index i)
+   {
+       authenticateUser();
+       return c[i];
+   }
+   #+END_SRC
+
+   事实上这个程序是不对的，在 item 3 里面说过，auto 的类型推断策略会无视引用
+   的部分，也就是说这个函数的返回值类型并不是引用，而是 c[i] 的一个copy。举例来
+   说：
+   #+BEGIN_SRC C++
+   std::deque<int> d;
+   ...
+   authAndAccess(d, 5) = 10;
+   #+END_SRC
+
+   上面那行代码原本的意思是在做了用户验证之后，给 d[5] 一个新的赋值，但是实际上
+   那段代码无法编译，因为函数的返回值是 int，一个 rvalue，而 C++ 不允许给 rvalue
+   赋值。
+
+   想要解决这个问题就要用一个很奇怪的 syntax: decltype(auto).
+
+   这个语法的意思是，在推断的时候使用 decltype 的策略。
+   #+BEGIN_SRC C++
+   template <typename Container, typename Index>
+   decltype(auto) anthAndAccess(Container &c, Index i)
+   {
+       authenticateUser();
+       return c[i];
+   }
+   #+END_SRC
+
+   上面说的都是一些正常情况，也就是 decltype 的确会返回 declared type of a
+   name. 下面要说一些 “不正常” 的情况，那就是，如果你给 decltype 的表达式并不单
+   纯是一个简单的名称，那么实际推断出的类型则必定是引用类型。什么意思呢？
+
+   #+BEGIN_SRC C++
+   decltype(auto) f()
+   {
+       int x = 0;
+       ...
+       return (x);
+   }
+   #+END_SRC
+
+   在上面的例子里，(x) 这个表达式并不是单纯的名称（名称加了括号...) 因此返回值是
+   一个 int&，于是你就欢快地坐上了一辆通往 undefined behavior 的云霄飞车。。。因
+   为我们不能让函数返回一个对本地变量的引用。
+
+   也就是说，如果你在 C++14 里用了 decltype(auto) 这种方式，那么你稍微改一下函数
+   返回值那个地方的表达式可能会引起很大的问题。。。。注意不要返回对本地变量的引
+   用。
+
+*** 一些额外的小优化
+    作者在这个 item 里还提到了对于那个用户认证+访问的函数的小调整。
+    #+BEGIN_SRC C++
+   template <typename Container, typename Index>
+   decltype(auto) anthAndAccess(Container &c, Index i)
+   {
+       authenticateUser();
+       return c[i];
+   }
+   #+END_SRC
+
+   这里，函数的参数类型是对非常亮的引用，也就是说 rvalue 是没法作为函数的
+   argument 的。虽然这种情况一般很少，但是作者表示可能会有人想要某个 temporary
+   容器的某个位置的 copy：
+   
+   #+BEGIN_SRC C++
+   std::deque<std::string> makeStringDeque();    // 工厂函数
+
+   // Make copy of the 5th element of a deque returned.
+   auto s = authAndAccess(makeStringDeque(), 5);
+   #+END_SRC
+
+   想要支持这种用法，只要把函数的第一个参数的类型变成 universal reference 就可以
+   了。不过作者表示无论何时想要使用 universal reference 的时候，都要用
+   std::forward 这个函数，具体为什么会在 item 26 里面讲。
+   
+   Primer 里用 forward 的理由是为了对应 lvalue 不能用来初始化 ravlue reference
+   的情况，但是这个例子里我就不太明白此举的意图了。
