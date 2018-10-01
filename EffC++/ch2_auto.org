@@ -1,0 +1,99 @@
+* Chapter 2: auto
+  这一章主要是讲 auto type specifier 的优点和一些坑
+
+  TODO:
+       1. 关于 function object 的性能问题
+       2. 补完 item 6 的一些细节
+
+** Item 5: Prefer auto to explicity type declaration
+   要说 auto 最明显的几个好处是什么？
+
+   首先，避免了未初始化的变量导致的 undefined behavior。就像 Primer 里提到的，用
+   了 auto type specifier 的变量必须被初始化（毕竟 auto 就是用 initializer 推断
+   具体类型的）。
+
+   其次（或许这个才是最最明显的），让我们少打很多代码，比如
+   #+BEGIN_SRC C++
+   template <typename It>
+   void doSomeWork(It b, It e)
+   {
+       for(; b != e; ++b)
+           typename std::iterator_traits<It>::value_type
+	       currValue = *b;
+   }
+   #+END_SRC
+
+   要用 *typename std::iterator_traits<It>::value_type* 来作为 currValue 的类型
+   有一些问题……一个是这很麻烦，另一个非常重要的是，经常会忘记前面要加
+   上”typename“（事实上我在打这个例子的时候就忘记了……）但是如果用了 auto 就完全没
+   有烦恼了。
+
+   第三个就是，可以用 auto 来表达那些只有编译器知道的数据类型（closure）。
+   #+BEGIN_SRC C++
+   auto derefUpLess = [](const std::unique_ptr<Widget>& p1,
+                         const std::unique_ptr<Widget>& p2)
+		      {  return *p1 < *[2; }; 	 
+   #+END_SRC
+
+   在有了 C++14 之后，lambda 表达式的参数都可以用 auto 了……
+   #+BEGIN_SRC C++
+   auto derefUpLess = [](const auto& p1,
+                         const auto& p2)
+		      {  return *p1 < *[2; }; 	 
+   #+END_SRC
+
+   书中还对这一点做了些更多的延伸，这个之后说。
+
+   还有一个问题是被作者称之为 “type shortcut" 的东西，事实上我好想真的这么写过
+   #+BEGIN_SRC C++   
+   std::vector<int> v;
+   
+   // do some work
+
+   unsigned sz = v.size();
+   #+END_SRC
+   
+   这代码看起来没问题啊？毕竟我在写代码的时候注意到了编译器的错误信息中有提到
+   vector 的 size_type 事实上就是无符号整型，所以用 unsigned 没什么大问题吧？
+   然而，只有在32位 Windows 下，unsigned 和 std::vector<int>::size_type 同是32位
+   整型，在64位系统下，unsigned 依旧是32位，而 size_type 则是64位……于是我们又愉
+   快地打上了通往 undefined behavior 的顺风车。
+
+   最后一个作者提到的问题也很有趣，当时我也是思考了很久都没有意识到，是关于 STL
+   里的 map。我们知道 map 的 key 的部分是以 const 类型储存的。所以 map 中的元素
+   实际的类型是 std::pair<const /key type/, /mapped type/ >
+   #+begin_src C++
+   std::unordered_map<std::string, int> m;
+
+   for(const std::pair<std::string, int> &p : m)
+   {
+       // Do some work....
+   }
+   #+END_SRC
+
+   这里的问题是，编译器每次轮换一个元素，都需要做一个类型转换。因为我们声明的变
+   量是一个 const reference，所以任何可以 convertible 的类型都可以用来初始化它。
+   在这里，std::unordered_map<const std::string, int> 被编译器转换为了我们声明的
+   类型，而这么做涉及到创建一个临时变量来暂时地储存 map 中的元素，再将这个临时变
+   量作为初始化子，初始化我们声明的 p。就类似于下面的代码。
+   #+BEGIN_SRC C++
+   const std::unordered_map<std::string, int> temp = elements; // make a copy
+   p = temp;
+   #+END_SRC
+
+   我们看到这样一来我们把 p 声明为引用的目的完全就达不到了，这里还是涉及到了
+   copy 而 copy 会造成潜在的性能影响。
+
+
+** Item 6: 明白什么情况下 auto 会给你捣乱
+   这里的例子是 proxy class。
+
+   所谓 proxy class，它模拟了它所代理的那个类型，并以此来增加那个类型的易用性。
+   proxy class 用起来就和用原类型一样的，只不过代理类一般是藏起来不让你知道的。
+   代理类所代表的是那个类的 marshalling and transport logic 而不是 application
+   logic。
+   书中的例子是 vector<bool> 这个 specialization。
+
+   书中也表示，代理类这个问题很难办，唯一的办法可能是了解你用的库了。
+
+   还有一个小技巧，就是用 static_cast 来显性地表达你实际想要的类型。
