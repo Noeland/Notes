@@ -340,4 +340,7 @@
    表达式作为 argument 用 pass-by-value 的方式传递给这个函数从而得到类型的信
    息。。。 （为什么不用 decltype 的策略呢）
 
+   另一个被大家成为“很聪明”的方法是声明（但不定义）一个模板类，这样编译器会在编
+   译时报错，并且错误信息中就会包含 template parameter 的类型。
+
    总之作者推荐的是 boost 里的一个库。<boost/type_index.hpp>
