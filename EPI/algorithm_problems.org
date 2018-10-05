@@ -111,7 +111,9 @@ Here is another faster bitcount
 ** 5.2: Flip Bit/ Swap Bits with XOR
    For a single bit x, x^0 = x
 ** 6.1: Array Partition
-   #+BEGIN_SRC c
+
+   - My First Solution
+     #+BEGIN_SRC c++
      void partition(int pivot_idx, vector<int>* A)
      {
      int last_smaller=0, first_non_smaller = 0, first_greater = 0;
@@ -133,3 +135,176 @@ Here is another faster bitcount
        }
      }
    #+END_SRC
+
+   - Book
+     * Brutal Force O(n^2)
+       #+BEGIN_SRC c++
+         typedef enum {RED, WHITE, BLUD} Color;
+
+         void DutchFlagPartition(int pivot_index, vector<Color>* A_ptr)
+         {
+           vector<Color> A = *A_ptr;
+           Color pivot = A[pivot_index];
+           // First pass: group elements smaller than pivot
+           for(int i=0; i < A.size(); ++i) {
+             //look for a smaller element.
+             for(int j = i + 1; j < A.size(); ++j) {
+       	if (A[j] < pivot) {
+       	  swap(A[i], A[j]);
+       	  break;
+       	}
+             }
+           }
+
+           // Second pass: group elements larger than pivot.
+           for (int i = A.size(); i >= 0 && A[i] >= pivot; --i) {
+             for (int j = i - 1; j >= 0 && A[j] >= pivot; --j) {
+       	if (A[j] > pivot) {
+       	  swap(A[i], A[j]);
+       	  break;
+       	}
+             }
+           }
+         }
+       #+END_SRC
+
+     * Modified O(n)
+       #+BEGIN_SRC c++
+         typedef enum {RED, WHITE, BLUE} Color;
+
+         int DutchFlagPartition(int pivot_idx, vector<Color>* A_ptr)
+         {
+           vector<Color> A = *A_ptr;
+           Color pivot = A[pivot_idx];
+
+           int smaller = 0;
+           for(int i = 0; i < A.size(); ++i) {
+             if (A[i] < pivot) {
+       	     swap(A[i], A[smaller++]);
+             }
+           }
+
+           int greater = A.size() - 1;
+           for(int i = A.size() - 1; i >=0 && A[i] >= pivot; --i) {
+             if (A[i] > pivot) {
+       	     swap(A[i], A[greater--]);
+             }
+           }
+         }
+       #+END_SRC
+
+     * Optimal O(n)
+       #+BEGIN_SRC c++
+         typedef enum {RED, WHILE, BLUE} Color;
+
+         int DutchFlagParition(int pivot_idx, vector<Color>* A_ptr)
+         {
+           vector<Color> A = *A_ptr;
+           /**
+              ,,* Keep the following invariants during partitioning:
+              ,,* bottom group: A[0: smaller - 1]
+              ,,* middle group: A[smaller: equal - 1]
+              ,,* unclassified: A[equal: larger - 1]
+              ,,* top group   : A[larger: A.size() - 1]
+              ,,**/
+
+           int smaller = 0, equal = 0, larger = A.size();
+           // keep iterating as long as there is unclassified elements
+           while(equal < larger) {
+             // A[equal] is the incoming unclassified element
+             if(A[equal] < pivot) {
+       	swap(A[equal], A[smaller++]);
+             } else if(A[equal] == pivot) {
+       	++equal;
+             }
+             else { // A[equal] > pivot
+       	swap(A[equal], A[--larger]);
+             }
+           }
+         }
+       #+END_SRC
+
+   - Variants
+     * Given an array of n objects with keys that taken one of four values,
+       reorder the array so that all values with the same key appear
+       together. Use O(1) additional space and O(n) time.
+** 6.6: Buy and Sell A Stock Once
+   - My first attemp on brutal force O(n^2)
+     #+BEGIN_SRC c++
+       double BuyAndSellAtOnce(vector<double>* A_ptr)
+       {
+         vector<double> A = *A_ptr;
+  
+         double max = 0;
+         for(int i = 0; i < A.size(); ++i) {
+           for(int j = i + 1; j < A.size(); ++j) {
+     	if(A[j] > A[i])
+     	  max = A[j] - A[i] > max ? A[j] - A[i] : max;
+           }
+         }
+       }
+     #+END_SRC
+
+   - My second attemp on linear time algorithm with space complexity O(n)
+     #+BEGIN_SRC C++
+       double BuyAndSellAtOnce(vector<double>* A_ptr)
+       {		     
+         vector<double> A = *A_ptr;
+         vector<double> peak, trough;
+
+         int start=0;
+         while(A[start] == A[start+1]) {
+           start++;
+         }
+         if(A[start] < A[start+1])
+           trough.push_back(A[start]);
+  
+         int end = A.size() - 1;
+         while(A[end] == A[end-1])
+           end--;
+         if(A[end] > A[end-1])
+           peak.push_back(A[end]);
+  
+
+         int prev = start;
+         for(int i = start+1; i < end; ++i) {
+           if(A[i] == A[i+1])
+     	continue;
+    
+           if(A[prev] < A[i] && A[i] > A[i+1])
+     	peak.push_back(A[i]);
+           else if(A[prev] > A[i] && A[i] < A[i+1])
+     	trough.push_back(A[i]);
+           prev=i;
+         }
+
+         double max = 0;
+         for(int i = 0; i < trough.size(); ++i) {
+           for(int j = i; j < peak.size(); ++j) {
+     	if (peak[j] > trough[i])
+     	  max = peak[j] - trough[i] > max ? peak[j] - trough[i] : max;
+           }
+         }
+
+         return max;
+       }
+     #+END_SRC
+
+   - Book: Linear Time with space complexity O(1)
+     #+BEGIN_SRC C++
+       double BuyAndSellAtOnce(vector<double>* A_ptr)
+       {
+         double curr_min = (*A_ptr)[0];
+         double max = 0;
+         for(int i = 0; i < A_ptr->size(); ++i)
+           {
+     	if((*A_ptr)[i] < curr_min)
+     	  curr_min = (*A_ptr)[i];
+
+     	if((*A_ptr)[i] - curr_min > max)
+     	  max = (*A_ptr)[i] - curr_min;
+           }
+
+         return max;
+       }
+     #+END_SRC

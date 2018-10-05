@@ -1107,3 +1107,586 @@ Foo.java -> java compiler -> Foo.class(bytecodes)
 
    * Object.notify()
      1. wakes up one thread 
+
+* Week 6
+** Data Synchronization
+   * Exchange
+     T1: v1 = x.exchange(v)
+     T2: w1 = w.exchange(w)
+     Only one thread will win
+
+   * CountDownLatch
+     Set up a latch such that all the threads are doing computation.
+
+     Cycle Barrier
+     what is cycle barrier
+
+   * All the above method build on the wait() notify() method
+     - Overhead: wait() and notify create bottleneck ????
+     - Avoid synchronized keyword. We need safe memory access without locking.
+     
+   * Java Memory Model
+     - Problems
+       Optimizing compiler reordering instructions to make program run faster
+       cache variables in registers
+
+       Ex:
+       o.x = o.y;
+       o.x++;
+       o.x = o.x;
+       return o.z - o.y;
+
+       Optimization: the compiler will eliminate all the code and create
+       constant 1.
+
+       EX: Reorder low level instruction
+       movq x, rax
+       addq $1, rax
+       movq rax, z
+       movq rax x
+
+       The above instructions are not in the same order as the original code.
+
+       So where is the problem? The optimization will make code run
+       faster. However, in multithreading, this will going to cause problem:
+       Inconsistency. ????
+
+       Therefore, java memory model determines which optimization can be done.
+       We want optimization as much as possible as long as they do not cause
+       problem. 
+
+       Casuality relationship
+
+     - 九宫格
+       * A normal load and normal store
+         Could you exchange the order of normal load and store if the program is
+         single threaded.
+
+         o.x = 1;
+         o.y = 2;
+         This is the original order but the actual instruction can be in any
+         order because this is single threaded.
+
+         However, if 
+         o.x = 1;
+         o.y = o.x;
+
+         This piece of code cannot be reordered.
+
+       * B volatile(enter monitor) load and C volatile store (exit monitor)
+	 volatile int n;
+
+	 Tells the compiler not to optimize the code.
+	 To solve the issue of "caching". Because we want each thread to look at
+         the variable directly instead of looking at the cache.
+
+	 Also, suppose
+	 volatile int m,n;
+	 int x,y;
+
+	 l = o.x;
+	 m = o.m;
+
+	 The compiler can still reorder the above instructions (one is volatile
+         and one is not).
+
+	 o.m = 12;
+	 o.x = 1;
+     
+       * Exception to the model: Constructor
+	 Because constructor is normal store, may wind up with an object with
+         garbage value in it.
+
+	 The self pointer cannot be shared with other thread.  ????
+
+	 Python mem model? ==> Global intepreter lock, bad peroformance
+	 Java want high performance
+
+** Name s & Binding
+   - Binding: associate a name with a variable
+   - Symbol table: a partial function from a name to a variable.
+   - Example: int x = 12;
+     1) What values are bound?
+	Bound name "x" to 12
+     2) When the binding happens
+	Binding time occurs when the declaration is executed.
+     3) We also bind the name to a type and the binding time is at compile
+        time.
+     4) Also bind the name to its memory address
+	Could be function entry time if x is inside a function.
+
+     Note the difference between declaration execution time and function entry
+     time.
+     struct x s = {0, &s}; The value of s binds later then its memory address.
+
+     What about typedef
+     typedef unsigned long sizet;
+     Bind at ABI time. why????
+
+   - Possible binding time
+     1. execution time
+     2. function entry time
+     3. compile time
+     4. ABI binding time
+     5. Link time ==> Static or dynamic
+	
+   - Namespaces
+     #+BEGIN_SRC c
+       int f(void)
+       {
+         struct f {int f} f;    // struct tags
+         enum f {zeros};        // enum tags
+         struct g {int f } g;   // struct content
+       #include <f>             // include file
+       #define f g;             // preprocessor namespace
+        f: goto f;              // label namespace because the label is only needed after goto
+            
+       }
+     #+END_SRC
+     - Label does not follow scope rule
+     - Labeled namespace
+       1. constructing a namespace
+       2. give it a name
+
+     - Visibility of identifier (Java as example)
+       class
+            int x;  (default visible to class and package)
+            private int y; 
+	    public int  z;
+	    protected int w; (visible in class and subclass/visible in package)
+
+       Class vs Package
+     - Ocaml Namespace
+     - Seperate Compilation
+       double v double v????
+** Logic Programming
+   - Imperative: Focus on loops and assignment statement
+   - Functional: Function definitions and calls
+   - Logical: 
+     Get rid of functions and (maybe calls) and only keeps recursions. 
+     predicate, assertion and queries
+     
+   For Imperative  
+   Algorithm = Logic + Control
+   for(i=0;i<x;i++
+   p(c);
+
+   Logic ==> correctness
+   Control ==>instructions to the machine
+   
+   For logical
+   Program specifies logic while controls are specified independently
+   The control in a logical program cannot affect the result you get, but only
+   affect performance. Only the logic affects/defines the correctness.
+
+   Cannot introduce bugs into our program through control.
+
+   This is the idea of SEPARATION OF CONSERNS.
+
+   Sorting Problem on C/C++ and Logic programming
+   sort(L, S) :-    where L is the unsorted list while S is the sorted list.
+   perm(L, S),
+   sorted(S).
+
+   sorted([]).
+   sorted([H|T] :- 
+   sorted(T),
+   ltfeof(H, T).
+
+   ltfef(H, []).
+   ltfef(H, [H1|T1]) :-
+   H =< H1.
+     
+   The anme ltfef bothers alot. When we feel it is hard to come out with a name,
+   it is better to get rid of that method.
+
+   sort(L,S)
+   sorted([]).
+   sorted([H]).
+   sorted([X,Y]|L) :-
+   X =< Y, sorted([Y|L]).
+
+   perm([], []).
+   perm([H|L], PHS ) :-
+   append(P, [H|S], PHS),
+   append(P, S, PS),
+   perm(L, PS).
+
+   append([], B, B).
+   append([H|L], M, [H|LM]) :-
+   append(L, M, LM).
+
+
+** Prolog Syntax
+
+   term -> atom 
+           number integer and floating
+	   variables (initially unbound variable) as you proceed the computation
+                      the variable bound on success and unbound on failure.
+	   structure(compound term) atom(termlist)
+
+   Comparison
+   atom and number are easy
+   variable: bound variables are easy. Two unbound variable becomes one unbound
+   variable under comparison.
+
+   Syntax shorthand to reat syntax
+
+
+** Prolog Program structure
+   - fact
+   - rules consequence :- antecedent
+             term           termlist
+
+   - Prolog is goal + control
+     computation is query, which establishes a list of goal.
+     computation is left-to-right
+     depth first search
+
+   - Example that the computation could go wrong
+     The simplest possible predicate: true.
+
+     repeat.
+     repeat :- repeat.
+     ?- repeat, write("foo"), nl, fail.
+
+     loop :- loop.
+     loop.
+
+     Note that the logic is the same but the behavior/control is different.
+
+     member(X, [X|L]).
+     member(X, [_|L]) :- member(X, L).
+     (append(_, [X|_], L).)
+
+
+     reverse list
+     
+     reverse([],[]).
+     reverse([X|L], R) :-
+     reverse(L,R2),
+     append(R2, [x], R).
+
+     reva(L, A, L'A).
+     reva([], A, A).
+     reva([X|L], A, R) :-
+     reva(L, [X|A], R).
+
+     reverse(L,R) :- reva(L, [], R).
+
+     
+* Week 7
+** Reading
+Chapter 1 - 15, 17, 19, 20, 22
+
+** is/2 ---- arithmetic
+is(N, 2+2).
+  * The second term must be /ground term/
+    - term contains no logical variables
+    - other wise what if 1234 is N*N?
+      To make the machine code efficient
+    - Note that in Ocaml, all variables are ground term.
+    - As the result of an "is query", the variable is bound to the result of
+        the expression
+
+** Debugging?
+   * trace
+
+** Memory Management
+   - Data structures in Prolog (terms, lists) are on the heap.
+   - Another efficient implementation: On Stack
+     Grow as you succeeds.
+     Shrink as you fail.
+     However, if a goal fails, all variables get unbound. 
+     Typically, unbound variables are self pointers.
+
+     The stack also contains a trail: a list of varaibles addresses that have
+     been bounnd. When you fail, not only do you pop the term from the stack,
+     you also pop the trail which allows you unbound the variables. Detail
+     depends on the implementation. The trail itself could be a stack.
+
+   - Stack management is fast.
+   - Stack overflow?? 
+     If a program that keeps succeeding, the stack is going to keep growing.
+     The solutions is that they look the huge stack and look for objects to
+     which cannot possibly be referred. This implementation is really a heap.
+     Therefore, normally the program can think the stack as stack. However, if
+     the stack grows too big, the problem of heap management comes. 
+     *Efficient Prolog algorithm does not "succeed" everytime.*
+
+** Unification
+Given two terms, find a way to unify them such that they become equal. 
+"Come with some way to make two terms equal."
+Usually, the way is by binding logical variables.
+
+Think of unification as bidirection pattern matching. What is this
+"bidirection"????
+
+*** Problem 
+p(X,X).
+?- p(Z, f(Z)).
+
+Z = f(f(f(f(f(f(f(f(......
+Z is an infinite term.
+
+Zero.
+Succ(E).
+
+add(Zero, X, X) 
+add(succ(X), Y, succ(XplusY)) :- add(X, Y, XplusY).
+sub(XplusY, X, Y) :- add(X, Y, XplusY).
+
+lt(X, succ(X)).
+lt(X, succ(Y)) :- lt(X, Y).
+
+?- lt(I, I).
+
+=(X, X).
+unify_with_occurs_check/2     same as '=' but fail on cycle
+
+lt(X, succ(Y)) :- unify_with_occurs_check(X, Y).
+
+The 'unify_with_occurs_check' is rarely used because
+1. Most program don't create infinite terms.
+2. It is slow due to cycle detecting. O(min) and O(max)????
+
+
+Peano arithmetic 
+(哥德尔不完备性定理)
+
+
+** Cut!
+p(X,Z) :- q(X, L), member(X, L), r(X, Z).
+If the r(X, Z) is really expensive, and we have multiple same failing instance in the
+list L. Then that same instance is going to fail three times on that expensive
+predicate.
+
+The first time X=a, r(X, Z) fails and then the program backtrack to member and
+continues to find another X=a which will fail again.
+
+*** Approx Not with Cut
+not(G) :- G,!,fail.
+not(_).
+
+?- X = 3, not(X = 4).
+X = 3.
+
+?- not(X = 4), X=3.
+false. because X is bounded to 4 and becomes true.
+
+Cut break the logic: communitative operation becomes not communitative.
+
+* Weak 8
+** Scheme
+   A subset of lisp, used for traditional AI (AI based on logic and arithmetic)
+   Too slow for practical use ===> Academic
+
+*** Basic Overview
+    - Objects are dynamically allocated and never freed
+      * Could be think that objects are represented by pointers
+      * Could think Scheme as OOP
+      * Always use 'new' to allocate
+      * Never freed ==> 垃圾收集
+      * Like Ocaml, Python (may be not java because Everything is object but in
+        java primitive types are not objects
+      * Unlike C/C++
+    - types are latent not manifest
+	* Latent: belongs to object (dynamic typeed, lkye python, unlike Ocaml,
+          java, C/C++)
+	* Manifest: belongs to expressions and identifier
+    - Static scoping
+	Like C/C++, Ocaml, Java, Python
+	* Dynamic is scope is only clear at runtime
+          * like lisp
+	    int f(int x) { return g(s) }
+	    int g(int n) { return n+x }
+	    g has no x declared, so it looks at its caller (if still no, caller's
+            caller)
+	  * Like Bash shell
+	    
+	* Why Scheme do not use dynamic scoping?
+	  * Performance
+
+	  * Error checking: find such as misspell before the running
+	* Why Dynamic scoping exists?
+	  * Convenience and Flexibility: Only one instance can be used for all.
+	* Similiar argument for static/dynamic type check
+    - Call by value
+	* Not like Prolog (call by unification)
+    - BUilt-in objects of any built-in types
+	* Lists, members, symbols...
+	* Procedure(including continuation)
+	  * Once created it immediately becomes part of teh future of your
+            program.
+	* Unlike most of other languages
+    - Very simple syntax, with a straightforward representation of programs as
+        data. 
+	* Its trivial in Scheme to write a piece of data as program.
+	* Unlike most of other language
+	* It's trivial to write a Scheme program that read in other scheme
+          program and check its syntax.
+	* Can find some similarity with Prolog (take a "program" as input)
+	* Need a lot of parens, but can write "metaprogram"
+	  Write a program that alter other program and make them evolve.
+    - Tail recursion optimization is required
+	Can write recursive function in Scheme but you do not need to worry it
+        exploding the stack
+	* gcc with optimization flag does that
+    - High level arithmetic
+	* Integers are what we've learn in 3rd grade. No wrap around.
+	* Never a integer overflow, but the size could exhaust memory.
+	* Might be slower
+	* Has exact fractions "1/3"
+	  * Represent internally as two integer
+	  * Know gcd algorithm to simplify
+	* Floating point number
+	
+*** Syntax
+    - Identifiers: a-zA-Z0-9+_.<,*/<=>:$%^&_~@
+      * Cannot start with digit or -/+/*
+	Some exception
+      * By convention, identifier ending with question mark returns boolean
+      * t->u is a conversion function
+      * ; comment
+      * improper list
+        (a b . c): list does not end with nil
+	Compare to (a b c) => (a b c nil)
+	(a b . c ) => (a b c)
+      * #f is the only way to represent false
+      * vector
+	
+* Weak 9
+** Scheme
+Impelement thread** Use continuation to support thread
+*** thread
+*** lambda
+*** define thread functions?
+   - yield
+   - thread-exit
+   - fork
+     (define (fork) (cdl/cc(lambda(k)(lwp(lamda()k #f)))))
+*** similarities of C getcontext/setcontext and call/cc
+*** Continuation passing style
+   Continuation without doing call/cc
+*** Continuation in Java
+   - Not in C++ because
+** Storage Management
+*** Array allocation
+    - double a[100]
+      * With static keyword, the array is allocated once and never change.
+      * Within a function, it is supposed to be allocated on stack.
+      * In real world, compiler does not allocate 800*size(double), but allocate
+        spaces for all the local variable because it is more efficient to do it
+        in one instruction.
+      * Conditional allocation?
+	Allocate space that can hold the larger one.
+      * double a[n]?
+	Controversial feature.
+	THe size is not known at compile time. This is going to slow down the
+        code. 
+	Need a stack base pointer and a stack pointer.
+*** Nested Functions
+    - Environment Pointer
+      Points to the frame of the caller
+*** Heap Management Issues
+    - issues
+      - Garbage Collector or explicit "free" operator
+	Historically later is the option because 
+        - Pros:
+          it allows a fine grainer
+          control of the memory and it is more efficient because the programmer
+          knows exactly when the memory is not needed.
+	- Con: 
+          * Memory leaks. Programmer not always remember to free the memory.
+	  * Use of dangling pointers. Things that are already deleted. Cause
+            crash. 
+	    In some machines, only copying the the dangling pointer will cause
+            crash.
+	    #+BEGIN_SRC c
+              char *p = malloc(30);
+              // ....
+              //....
+
+              free(p);
+              char *q = p // crash in some machine
+	    #+END_SRC
+	  
+	
+      - If assume GC:  Finding roots and how to find pointers in objects
+	GC have to figure out which part of the heap are in use and which part
+        of the heap are where no body cares.
+	THe problem is how to find the roots.
+	- Root Finding
+	  * The compilier and linker generate a tabled roots. This table will
+            find all the stuff in static memory. The table will tells us which
+            is roots.
+	    This is a complicated table that maps ip values to sets of
+            registers. Looks for movq etc.
+	  * No tabls. Instead, the runtime guesses conservatively. (called
+            conservative GC). If a word looks like a pointer ino the heap, then
+            assume it is a pointer.
+	    The downside is that the conservative guesses. In practive it does
+            not leak much memory.
+      - What you do with these information. The info will tell you where the
+        object in use are.
+	- Mark + Sweep
+	  * Clear all mark bits
+	  * Find all roots and traverse reachable objects, setting their mark
+            bits.
+	  * Find all objects whose mark bits are still zero. Then free them. 
+	- Can freeze the app.
+	  Can use GC in another thread. BUt this is complicated due to race
+          condition.
+	- Incremental GC (==> Real time GC)
+      - Heap arena. Linear array of bytes
+      - Basic assumption is that malloc is slow
+	Private free list to avoid calling of malloc.
+      - Alternatives to mark+sweep
+	- Python: Reference count + markandsweep
+	  * Reference counts. A count of the number of pointers to this object.
+	    Cons: Pointer assignment becomes more expensive.
+	          Cyclic data structures
+            Pros: Free objects immediatly when it counts to zero.
+	  * Python on JVM with Java GC
+	- Generation based Copying Collector
+	  - malloc(n)
+	    heap pointer 左边有object右边是free，和heap limit pointer
+	    希望mallochenkuai。要把hp和lp放进寄存器。
+	    f=hp
+	    hp+=n
+	    if(hp>lp) then slowCode()
+	    return r
+	    希望malloc的机器指令少于10对于任何一直架构。
+
+	    给object做年龄普查，把他们分成不同的generations。从老到年轻。
+	    hp和lp是在最新的generation分类中的。
+	    如果这样分类。那么对于面向对象语言有这么一个pattern可以利用，那就是
+            新object总是会指向就得object。相反的情况比较少见。
+	    假设hp一直在grow然后我们发现到了极限，那么垃圾更可能出现在刚刚增长的
+            那些东西中间。
+
+	    所以这个垃圾收集的想法就是，仅仅收集新生出来的垃圾。
+	    对于过去很老的object指向新生object的情况，我们可以吧老的generation全
+            设定为只读，如果有人尝试读取那个object，就会有pagefault，那我们只要
+            把它设定成可读可写就好了。
+
+	    Second idea: Copying
+	    假设我们只找到了两个不是垃圾的object。我们把这些可用对象复制到一个新
+            的“新生generation”跟类中。allocatd object被放在了一起。
+	    这个对缓存的利用更好，因为互相引用的object很可能会被放在同一个缓存
+            line中。
+	    并且我们可以有一个非常快的malloc。因为我们只有一个大的freeblock。
+	    并且，我们没有freelist。只要把正在使用的object移动到别处就好了。也就
+            是说不需要在关心垃圾object。
+
+	    麻烦的地方就是，如果有老的object指向新的object，我们需要relocate这些
+            pointers。 
+	    
+	    有没有可能结合“保守GC”和上面说的结合起来呢？不可能因为我们需要重新调
+            整旧pointer。
+
+	    另外也有可能对于private freelist做出错误决定。
+	  - 多线程
+	    我们可以锁住heap。所以不同的线程就不能同时运行new了。
+	    可以让每个线程都有自己的“新生heap”。
+

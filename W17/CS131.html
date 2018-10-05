@@ -1,0 +1,2004 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-02-08 Wed 23:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Noel Song" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org6087046">1. Week 1</a>
+<ul>
+<li><a href="#org1523241">1.1. Intro Problem</a></li>
+<li><a href="#orgc63bc2e">1.2. Language popularity</a></li>
+<li><a href="#org83a8e40">1.3. Course description</a></li>
+<li><a href="#orge2899f9">1.4. Reasons to prefer one language to another</a></li>
+<li><a href="#org269b2d9">1.5. Syntax</a></li>
+</ul>
+</li>
+<li><a href="#org7b64270">2. Week 2</a>
+<ul>
+<li><a href="#org1476711">2.1. On Context free language</a>
+<ul>
+<li><a href="#orga65f0b7">2.1.1. Some intro</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgb2dcd7a">3. Week 3</a>
+<ul>
+<li><a href="#orgf5829ca">3.1. Functional programming</a>
+<ul>
+<li><a href="#orgc0fe7d3">3.1.1. Clarity:</a></li>
+<li><a href="#orgdfaf9dc">3.1.2. Performance</a></li>
+<li><a href="#org78ce5f0">3.1.3. One success story (empty)</a></li>
+<li><a href="#org084e756">3.1.4. Function: What is a function</a></li>
+<li><a href="#orge0af987">3.1.5. Higher Order Function (Functional forms in math)</a></li>
+<li><a href="#orgca32869">3.1.6. Ocaml</a></li>
+<li><a href="#org10fc3d0">3.1.7. Functions</a></li>
+</ul>
+</li>
+<li><a href="#orgc1a567a">3.2. Reading</a></li>
+<li><a href="#org6d17e56">3.3. HW</a>
+<ul>
+<li><a href="#orgc7528b3">3.3.1. Theory</a></li>
+<li><a href="#orgfb1330c">3.3.2. Parsing a CFG</a></li>
+</ul>
+</li>
+<li><a href="#org65d62f5">3.4. Translation into machine code</a></li>
+</ul>
+</li>
+<li><a href="#org40dd304">4. Week 4</a>
+<ul>
+<li><a href="#orga385a38">4.1. Compiler vs. Intepreter</a></li>
+<li><a href="#orgd4539d8">4.2. Hybrid Approach: JVM</a>
+<ul>
+<li><a href="#orgbe48a88">4.2.1. Profiling</a></li>
+</ul>
+</li>
+<li><a href="#orgf2da2b1">4.3. Linking</a></li>
+<li><a href="#org78d7f5c">4.4. Type</a>
+<ul>
+<li><a href="#org6a7ddcb">4.4.1. Type equivalence: Structurally Equivalence and Name equivalence</a></li>
+<li><a href="#orgfd48bed">4.4.2. Subtype</a></li>
+</ul>
+</li>
+<li><a href="#orgf86a491">4.5. Polymorphism</a></li>
+<li><a href="#orgfc9daa9">4.6. Java &#x2013; history</a></li>
+<li><a href="#orgf2e178a">4.7. Java Types</a></li>
+<li><a href="#org675c947">4.8. Java: Single Inheritance</a></li>
+</ul>
+</li>
+<li><a href="#org51ac626">5. Week 5</a>
+<ul>
+<li><a href="#orgf431575">5.1. Abstract Class</a>
+<ul>
+<li><a href="#org277bce8">5.1.1. Java Standard Library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org6087046" class="outline-2">
+<h2 id="org6087046"><span class="section-number-2">1</span> Week 1</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-org1523241" class="outline-3">
+<h3 id="org1523241"><span class="section-number-3">1.1</span> Intro Problem</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Given a text file as input. Generate a list of words sorted according to its
+frequency in the input file.
+</p>
+
+<ul class="org-ul">
+<li>Literate Programming</li>
+
+<li><p>
+Professor simple method
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">tr -cs a-zA-Z [\n]  |  sort  | uniq  -c  | sort -nr
+</pre>
+</div></li>
+
+<li>Parallelism on the Above Method
+In a four core matchine it is possible for true parallelism. However, sort
+can only output after finishing processing all its input.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc63bc2e" class="outline-3">
+<h3 id="orgc63bc2e"><span class="section-number-3">1.2</span> Language popularity</h3>
+<div class="outline-text-3" id="text-1-2">
+<ol class="org-ol">
+<li>Java</li>
+<li>C</li>
+<li>C++</li>
+<li>C#</li>
+<li>Python</li>
+<li>VBNET</li>
+<li>js</li>
+<li>Perl</li>
+<li>assm</li>
+<li>PHP</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org83a8e40" class="outline-3">
+<h3 id="org83a8e40"><span class="section-number-3">1.3</span> Course description</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li>Core of this course
+<ul class="org-ul">
+<li>Principles and <b>limitations</b> of programming models.</li>
+
+<li>Notations for these models
+How to design, use and support for.</li>
+
+<li>Methods to evaluate the strength and weakness of these notations in
+various contexts.</li>
+</ul></li>
+
+<li>Current reading assignment: Ch 1-3, 5,7,9</li>
+
+<li>Grading:
+<ul class="org-ul">
+<li>40% final exam; open book + notes; closed computer</li>
+
+<li>20% midterm:</li>
+
+<li>40% HW: 6 - each 5%; 1 - 10%</li>
+
+<li>Late penalty: same as 35L; due on 23:55 on the due date</li>
+</ul></li>
+
+<li>Topics
+<ul class="org-ul">
+<li>Theory behind programming languages</li>
+
+<li>Language design</li>
+
+<li>Syntax</li>
+
+<li>Semantics</li>
+
+<li>Functions</li>
+
+<li>Names</li>
+
+<li>Types: descriptions of values</li>
+
+<li>Control: Art of letting your program use CPU</li>
+
+<li>Objects</li>
+
+<li>Exceptions: Sort of control</li>
+
+<li>Concurrency</li>
+
+<li>Scripting: like shell, python</li>
+
+<li>Exercises on Ocaml, Prolong, Java, Python</li>
+</ul></li>
+
+<li>Some questions
+<ol class="org-ol">
+<li>Why are there so many programming languages?
+Why cna't we just have one? There is a paper about "NExt 700 programming
+language".
+Why not only a broad-spectrum approach?</li>
+
+<li>Why software is so slow? (in lisp)
+Try C++ instead for fast memory access but loss reliability somehow.</li>
+</ol></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge2899f9" class="outline-3">
+<h3 id="orge2899f9"><span class="section-number-3">1.4</span> Reasons to prefer one language to another</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>Popularity</li>
+<li>Support from compilers, debuggers, etc.</li>
+<li>Similarity to existing languages</li>
+<li>Simplicity</li>
+<li>Versatility: How widly can we apply this language</li>
+<li>Performance
+<ul class="org-ul">
+<li>CPU</li>
+<li>Memory</li>
+<li>IO (disk/flash)</li>
+<li>Network</li>
+</ul></li>
+<li>Scalability: how well the language is for larger and larger program.</li>
+<li>Reliability</li>
+<li>Convenience: How easy to use? (i++ in C)</li>
+</ul>
+
+<p>
+We have competing goals, like similarity is in contradiction with convenience.
+</p>
+
+<ul class="org-ul">
+<li><p>
+Orthoganality
+From mathematic concept, there are independent axis which means change in one
+axis does not impose changes on another axis. Once we have multiple features,
+people do not need to worry about some other features.
+</p>
+
+<p>
+Example: In C, a function can return any kind of types
+</p>
+<div class="org-src-container">
+<pre class="src src-C">int f();
+char g();
+struct s h();
+</pre>
+</div>
+<p>
+However, we cannot return an array (or a function). One argument is that copy
+is potentially expensive.
+Then what about a structure? We can have a structure that is really big and
+that works. 
+They want to emphasize that arr and pointer are the same thing.
+</p>
+
+<p>
+Consider you want to write a code return some type t defined
+elsewhere. However, that is not guaranteed feasible (what if that t is an
+array type or function type?). Therefore, C kind of lack of orthoganality.
+</p></li>
+
+<li>Safety(Important subset of reliability)
+Does not cause really bad consequence.</li>
+
+<li>Concurrency for multi-threaded program</li>
+<li>Exceptions handling</li>
+<li>Mutability (Successful language evolve)\</li>
+</ul>
+<p>
+We want language that can change over time.
+</p>
+
+<p>
+Example: A language on 1971 run on PDP-11
+two int add
+16 KB RAM
+1.2 us memory
+</p>
+
+<p>
+Anyway, on this machine, memory access if considerably faster than
+cpu. Therefore, a language tuned for this machine has easy access to memory. 
+</p>
+
+<p>
+Nowadays, cpu speed is 100x faster than memory access.
+</p>
+
+<p>
+Example: Varying number of args for function.
+  In C there is some called Obj.
+  Obj arr[7];
+  arr[4] = &#x2026;
+  arr[1] = &#x2026;
+  Foo(7, arr); 
+  What we really want: foo(x, yz, w, u, v) but we have to fill those variables
+  in array. 
+</p>
+
+<p>
+We cannot realize this exactly but we can approach this as much as we can.
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#define ELTS(a) sizeof(a)/sizeof(*(a))
+#define CALLMANY(f, args) (f)(ELTS(args), args)
+
+#define CALLN(f, ...)  CALLMANY(f, (Obj[]{__VA_ARGS__}))
+
+Obj args[7];
+// Some Assignemtns
+//CALLMANY(Foo, args);
+CALLN(Foo, x, y,z ,u, v, a, b ,c);
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">#define IF if(
+#define THEN ){
+#define ELSE } else {
+#define FI }
+</pre>
+</div>
+
+<p>
+These are examples of mutability. Can the program evolve with the changing
+hardware (outside world). Can it change according to the idea of the
+programmer.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org269b2d9" class="outline-3">
+<h3 id="org269b2d9"><span class="section-number-3">1.5</span> Syntax</h3>
+<div class="outline-text-3" id="text-1-5">
+<ul class="org-ul">
+<li><p>
+whether a program is valid????
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int x = "abc"; // No syntax rule indicates that this is invalid
+int main(void) {return ""[1]; } // Stil, no syntax rule indicates that this is not valid.
+</pre>
+</div>
+<p>
+Above programs are definitely wrong but not because of wrong syntax.
+</p></li>
+
+<li>whether a program will compile????
+Consider the first example. It will not compile not because its syntax.</li>
+
+<li><b>A syntax is the form independent of meanings</b>
+In syntax we just care about its form. We do not care about what does it mean.</li>
+
+<li>Syntax
+"Clolorless greed ideas sleep furiously." ===&gt; Good syntax, nonsensee
+semantics.</li>
+
+<li><p>
+Natural Language Syntax
+"Ireland has leoperd galore. "&#x2013;P.Egger  ===&gt; Bad syntax but meaning is
+clear
+</p>
+
+<p>
+In real life the meaning is important. However, in the world of
+programming, syntax is critical.
+</p>
+
+<p>
+"Time flies." 'Time' chould be none and verb, so does 'files'. This is the
+problem of ambiguity.
+</p></li>
+
+<li>Programming language syntax: Reasons to prefer one over another
+<ul class="org-ul">
+<li>Inertia: Use syntax people have already get used to.
+a + b OR a b +</li>
+
+<li><p>
+simple and regular
+Pick syntax that lets us say things easily.
+Some claim postfix notation is simpler and regular.
+In C, (a+b)*c. With postfix, a b + c * ==&gt; No parens.
+</p>
+
+<p>
+The first reason prefers normal syntax
+</p></li>
+
+<li><p>
+It's unambiguous
+</p>
+<div class="org-src-container">
+<pre class="src src-c">a---b;
+// a-----b; does not work
+a--- --b;
+</pre>
+</div>
+<p>
+Why a&#x2013;&#x2014;b does not work?
+Because the token analyzer (tokenizer) reads from left to right and it reads
+greedily. The above line of code is intepreted as (a)(&#x2013;)(&#x2013;)(-)(b).
+<b>Greedy means it is going to keep gluing characters together</b>
+</p></li>
+</ul></li>
+</ul>
+<ul class="org-ul">
+<li>Tokenization
+comment: ??</li>
+
+<li>Language without keyword: no reserved word
+Why we have language like this? ==&gt; mutability? backward compatibility?
+Note that for C/C++ it is painful to improve the language.</li>
+</ul>
+
+<p>
+Clear syntax is one where visualization skill "work"
+Example
+do {
+   x/=10;
+} while(x &gt; 10);
+</p>
+
+<p>
+do {
+  x/=10
+} until(x &lt;= 10)
+</p>
+
+<p>
+if( i &gt; 0 &amp;&amp; i &lt; 1000) // Not what we want
+if(0 &lt; i &amp;&amp; i &lt; 1000)
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7b64270" class="outline-2">
+<h2 id="org7b64270"><span class="section-number-2">2</span> Week 2</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-org1476711" class="outline-3">
+<h3 id="org1476711"><span class="section-number-3">2.1</span> On Context free language</h3>
+<div class="outline-text-3" id="text-2-1">
+</div><div id="outline-container-orga65f0b7" class="outline-4">
+<h4 id="orga65f0b7"><span class="section-number-4">2.1.1</span> Some intro</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<ul class="org-ul">
+<li>Sentence= finite sequence of tokens(terminal symbols)</li>
+
+<li>Token is from a set of finite elements.
+<ul class="org-ul">
+<li>Identifier: A special kind of token.</li>
+<li>Some tokens have special information associated which is important for the
+language's semantics.</li>
+<li>A sentence must be finite</li>
+<li><p>
+Set of tokens must be finite: Important for analyzing of the language.
+</p>
+
+<p>
+Example: L = {a<sup>nb</sup><sup>n</sup> | n &gt;= 0}
+	 This language has infinite token set.
+	 This language does not scale well.
+</p></li>
+</ul></li>
+
+<li>Nonterminal
+Short for a (finite) sequence of tokens, than can be part of a sentence.</li>
+
+<li>Grammar
+<ul class="org-ul">
+<li>set of tokens(terminal symbols) and a finite set of nonterminal symbols.</li>
+
+<li>Start symbol: a nonterminal symbols</li>
+
+<li><p>
+finite set of rules
+</p>
+
+<p>
+Example: &lt;nonterminal&gt; -&gt; finite sequence of symbols (either a terminal or
+nonterminal)
+</p></li>
+
+<li>The compiler is going to figure out whether a sentence is a valid program language.</li>
+
+<li><p>
+Recursive grammar: A symbol is both on the RHS and LHS
+</p>
+
+<p>
+Example: Internet RFS 5322 (request for comment)
+comtains a grammar for email headers.
+</p>
+<ul class="org-ul">
+<li><p>
+Subject: &lt;any sequence of chars, except newline&gt;
+Grammar of subject content:
+      subject contents -&gt; empty
+      subject contents -&gt; subject<sub>contents</sub> CHAR
+      (subject content -&gt; CHAR subject<sub>contents</sub>)
+</p>
+
+<p>
+Different grammar can produce the same sentence.
+</p></li>
+
+<li>MessageID: &lt;xxx.xxx@xx.xx.xx&gt;
+Grammar of MessageID:
+msg-id = "&lt;" word *&lt;"."word&gt; "@" atom * ("." atom) "&gt;"
+
+<ul class="org-ul">
+<li>Some meta-notation like "*" (not strict BNF but EBNF)
+EBNF just give us some convenience
+BNF &lt;==&gt; EBNF
+dotword -&gt; &lt;empty&gt; | . word dotword vs. *&lt;"."word&gt;
+BNF is better for parser</li>
+</ul></li>
+
+<li>Some other grammar
+atom = 1 * &lt;any CHAR except special , SPACE and CR&gt;  
+specials = ()&lt;&gt;@  
+word = atom | quotestring
+CTLS = \000 \037 \177
+quotestring = &lt;"&gt; *(qtext | quoted-pair) &lt;"&gt;
+qtext = &lt;any CHAR except " \ newline&gt;
+quoted-pair = "\" CHAR</li>
+
+<li>Possible trouble
+<ul class="org-ul">
+<li>Infinite long string
+Fixed by standard other than grammar</li>
+
+<li>Control symbol in message</li>
+</ul></li>
+
+<li><p>
+Use RegExpr: Turn a specification of a language to a program
+qp = '\\.'
+qt = '[^\"]'
+ps =
+</p>
+
+<p>
+Regular expression can be used to write grammar with meta-symbols and terminal symbols.
+However, regExpr cannot count.
+Note that recursion is not the limitation.
+Example: T -&gt; abT is possible (tail-recursion)
+	 T -&gt; aTb is not possible to convert (not tail-recursion)
+	 (tail-recursion rule)
+</p></li>
+</ul></li>
+</ul></li>
+
+<li>ISO Standard for EBNF: Decreasing in precedence
+<ul class="org-ul">
+<li>"token" or 'token'</li>
+<li>[ option ]</li>
+<li>{ repetition }</li>
+<li>(* comment *)</li>
+<li>X* repetition of X</li>
+<li>X-Y: X except for Y</li>
+<li>X,Y: concatenation</li>
+<li>X | Y: OR</li>
+<li>X = expr;</li>
+</ul></li>
+
+<li>Define EBNF formmally
+syntax = syntax rule, {syntax rule};
+syntax rule = meta id, '=', defines list, ';' ;
+definitions list = defn, { '|', defns} ;
+Note: Define itself through itself</li>
+
+<li>Problems of Grammar
+<ul class="org-ul">
+<li>Large grammar is hard to understand
+<ul class="org-ul">
+<li>Syntax chart</li>
+</ul></li>
+<li>Nonterminal used but not defined (bug in grammar)
+Or better described as "non-productive"</li>
+<li>Nonterminal are defined but not used
+Or better described as "non-reachable"
+Cannot reach it from ths start symbol
+This applies recursively, consider the following with start symbol A
+W -&gt; W A
+A -&gt; <i>some other rules</i> | &lt;empty&gt;</li>
+
+<li>Ambiguity
+Has multiple way to parse the same input
+By making the program easy to parse, you may introduce ambiguity
+
+<ul class="org-ul">
+<li><p>
+Associativity
+E -&gt; E+E
+E -&gt; E-E
+E -&gt; ID
+E -&gt; (E)
+</p>
+
+<p>
+Has two ways to parse the sentence "a - b - c"
+</p>
+
+<ul class="org-ul">
+<li><p>
+Problem: Is it possible to write a program to test the ambiguity of a
+grammar just by looking at the grammar itself?
+</p>
+
+<p>
+It is too hard. However, we still want to debug the grammar. 比如debug普通
+的程序很难，但是我们还是会去debug并且有所收获。Solve the general problem
+of ambiguity is hard, but we are looking for a practical partial solution.
+</p></li>
+
+<li>General Idea: prohibit the part we do not want. Ambiguous grammar is too</li>
+</ul>
+<p>
+general. Consider the above grammar, is too general. Consider the second
+rule, the second E cannot be a plus/minus operation.
+</p>
+
+<ul class="org-ul">
+<li>Change: result in a more complicated parse tree</li>
+</ul>
+<p>
+E -&gt; T
+E -&gt; E+E (This is stil a problem because E is allowed to recurse on both side)
+E -&gt; E-T
+T -&gt; ID
+T -&gt; ( E )
+</p>
+
+<ul class="org-ul">
+<li>Why we must have (a+b)+c?</li>
+<li>Arithmetic overflow: Some order of the operation results in overflow</li>
+<li>Floating point rounding problem</li>
+<li>Side effects?</li>
+<li>Unsigned arithmetic: Wrap around give different answer
+(a+b)+c if a and b are unsigned int but c is unsigned long</li>
+</ul></li>
+
+<li><p>
+Precedence
+</p>
+
+<p>
+E -&gt; T
+E -&gt; E + T
+E -&gt; E*T   ==&gt; E -&gt; F * T
+	   ==&gt; T -&gt; F
+T -&gt; ID    ==&gt; F -&gt; ID
+T -&gt; ( E ) ==&gt; F -&gt; ( E )
+</p>
+
+<ul class="org-ul">
+<li>Infix grammar has trouble of precedence</li>
+</ul></li>
+
+<li>Another ambiguity in C
+<ul class="org-ul">
+<li>stmt: 
+;
+break;
+continue;
+expr;
+return expr; (no parens)
+while (expr) stmt
+do stmt while (expr); (we have no parens)
+
+<ul class="org-ul">
+<li><p>
+Some modification:
+do stmt while expr; ==&gt; This is not going to cause trouble)
+while expr stmt     ==&gt; This may cause ambiguous because parser
+may combine expr and stmt together:
+while i&lt;1 *c / while i&lt;1 -c;
+</p>
+
+<p>
+The parens for expr in do-while is not going to solve ambiguity
+but it is still there because we want consistency.
+</p></li>
+</ul></li>
+
+<li>Some other statement
+{ stmt or declaration list }
+for(expr; expr; expr;) stmt
+if (expr) stmt
+if (expr) stmt else stmt
+switch (expr) stmt
+
+<ul class="org-ul">
+<li>Dangling "else" problem
+fix: stmt: if (expr) stmt | stmt1 
+stmt1 has everything except if (expr) stmt</li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li>Too much details 
+<ul class="org-ul">
+<li>because of ambiguity
+<ul class="org-ul">
+<li>Abstract syntax and concrete syntax
+Let the parser deal with known ambiguity issue directly instead of writing
+complex grammar rule.</li>
+</ul></li>
+<li><p>
+because of attempts to cover too much
+IntE -&gt; IntE + IntE | IntE * IntE | IntID| Inte
+StrE -&gt; StrID | StrLiteral | StrE ^ StrE
+</p>
+
+<p>
+Note: The above is rarely done in real world language because there are
+infinite number of types. Generally grammar is only good at deal with
+syntax but not semantics.
+</p></li>
+</ul></li>
+</ul></li>
+
+<li>Expressions problems
+
+<ul class="org-ul">
+<li><p>
+user-defined operators (not the c++ way because we must pick the existing
+operator and give it new meaning)
+</p>
+
+<ul class="org-ul">
+<li>Prolong: defining new operator</li>
+</ul>
+<p>
+:-op (700, xfx, [=, &lt;=, &gt;=,])
+:-op (500, yfx, [+,-])
+:-op (400, yfx, [*, /])
+:-op (200, xfy, [**])
+:-op (1200, xfy, [&lt;&#x2013;])
+</p>
+
+<ul class="org-ul">
+<li>500 is the precedence</li>
+<li>y means same precedence is ok</li>
+<li>x means same precedence is not ok</li>
+
+<li>Note that ambiguity is not possible because "yfy" is not allowed.</li>
+</ul></li>
+
+<li><p>
+Side effect(especially in C/C++): a = f(x) + g(x);
+a = a++ -a++;
+We cannot determine the order of executing because compiler will optimize
+the code.
+</p>
+
+<p>
+Example of Professor:
+</p>
+<div class="org-src-container">
+<pre class="src src-c">double stack[1000];
+double *top = &amp;sstack[1000];
+#define PUSH(x) (*--top = (x))
+#define POP()   (*top++)
+switch(op) {
+ case MULTI:
+   PUSH( POP() * POP());
+   break;
+ }
+</pre>
+</div>
+<p>
+*&#x2013;top = (*top++) * (*top++);
+</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb2dcd7a" class="outline-2">
+<h2 id="orgb2dcd7a"><span class="section-number-2">3</span> Week 3</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-orgf5829ca" class="outline-3">
+<h3 id="orgf5829ca"><span class="section-number-3">3.1</span> Functional programming</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li>Functional programming motivation
+<ul class="org-ul">
+<li>Clarity</li>
+<li>performance</li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-orgc0fe7d3" class="outline-4">
+<h4 id="orgc0fe7d3"><span class="section-number-4">3.1.1</span> Clarity:</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<ul class="org-ul">
+<li>Take advantage of mathematic notation
+We want to build on mathematic traditions.
+<ul class="org-ul">
+<li>a + b = b + a
+May not true in C due to side effects
+(a+=10) + (a-=10)</li>
+<li>E - E = 0
+what if E is getchar() which return different char each time.</li>
+<li>i = i + 1 is definitely false mathematically</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgdfaf9dc" class="outline-4">
+<h4 id="orgdfaf9dc"><span class="section-number-4">3.1.2</span> Performance</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<p>
+C or Java are designed for Von Neuman architecture(loading and store)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org78ce5f0" class="outline-4">
+<h4 id="org78ce5f0"><span class="section-number-4">3.1.3</span> One success story (empty)</h4>
+</div>
+
+<div id="outline-container-org084e756" class="outline-4">
+<h4 id="org084e756"><span class="section-number-4">3.1.4</span> Function: What is a function</h4>
+<div class="outline-text-4" id="text-3-1-4">
+<ul class="org-ul">
+<li>CS: a chunk of code with a name
+This is how we think when we are implementing the function.</li>
+
+<li>Math: A mapping from a domain to a range
+This is how we think when we are using a function.</li>
+
+<li><p>
+Side Effect: Evaluation is no longer imposed by sequencing but only by function calls.
+</p>
+<div class="org-src-container">
+<pre class="src src-c">a = f(x);
+b = g(y);
+c = h(z);
+e(a, b, c);
+</pre>
+</div>
+<p>
+The above code might have hidden dependency so the sequential relationship
+must be as written.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">a = b + f(x) - b;
+</pre>
+</div>
+<p>
+In C/C++ or Java, b cannot be eliminated.
+</p></li>
+
+<li><p>
+Referential transparency: Variables with the same name always have the same
+value.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">let a = b + (f x) - b
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge0af987" class="outline-4">
+<h4 id="orge0af987"><span class="section-number-4">3.1.5</span> Higher Order Function (Functional forms in math)</h4>
+<div class="outline-text-4" id="text-3-1-5">
+<ul class="org-ul">
+<li>Functions that take function as argument
+"Build function on some other functions".
+<ul class="org-ul">
+<li>Summation operator</li>
+<li>Integration operator</li>
+<li>Function composition operator "o"</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgca32869" class="outline-4">
+<h4 id="orgca32869"><span class="section-number-4">3.1.6</span> Ocaml</h4>
+<div class="outline-text-4" id="text-3-1-6">
+<ul class="org-ul">
+<li>Compile time type checking (like C/C++, Java)
+<ul class="org-ul">
+<li>Type inference
+Do not need to write all types down. The types are inferred from the
+context.</li>
+</ul></li>
+
+<li>Garbage Collection
+No need to worry about storage management.</li>
+
+<li>Good support for higher order function</li>
+
+<li>Name and Types are really important in Ocaml</li>
+
+<li><p>
+Pattern matching
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">let cons (x,y) = x::y;;
+(* The above is equivalent to the following*)
+     (fun a -&gt; 
+       match a with
+       | (x,y) -&gt; x::y)
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org10fc3d0" class="outline-4">
+<h4 id="org10fc3d0"><span class="section-number-4">3.1.7</span> Functions</h4>
+<div class="outline-text-4" id="text-3-1-7">
+<ul class="org-ul">
+<li><p>
+Simple functions
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">(fun a -&gt; a);;
+-: 'a -&gt; 'a = &lt;fun&gt;
+
+(fun () -&gt; ());;
+-: unit -&gt; unit
+</pre>
+</div></li>
+
+<li><p>
+Higher order function
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">(fun x -&gt; match x with
+	  | 0 -&gt; (fun x -&gt; -x)
+	  | _ -&gt; (fun x -&gt; x * 2));;
+-: int -&gt; (int -&gt; int) = &lt;fun&gt;
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Note that '-&gt;' is right associative</li>
+<li>Function is left associative</li>
+</ul></li>
+
+<li>Recursion
+<ul class="org-ul">
+<li><p>
+Fib
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">let rec fib n =
+match n with
+| 0 -&gt; 1
+| 1 -&gt; 1
+| n -&gt; fib(n-1) + fib(n-2)
+</pre>
+</div></li>
+</ul></li>
+
+<li>Currying function: <b>All the functions are curried</b>
+<ul class="org-ul">
+<li><p>
+Max element in list
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">let rec maxlist =
+function 
+| (x::l) -&gt; let m = maxlist l in if x &lt; m then m else x
+| [] -&gt; 0;;
+</pre>
+</div></li>
+
+<li><p>
+Reverse
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">let rec reverse= function
+  | [] -&gt; []
+  | (x::l) -&gt; (rev l) @ [x]
+</pre>
+</div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc1a567a" class="outline-3">
+<h3 id="orgc1a567a"><span class="section-number-3">3.2</span> Reading</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+1-9, 13, 15, 17
+</p>
+</div>
+</div>
+<div id="outline-container-org6d17e56" class="outline-3">
+<h3 id="org6d17e56"><span class="section-number-3">3.3</span> HW</h3>
+<div class="outline-text-3" id="text-3-3">
+</div><div id="outline-container-orgc7528b3" class="outline-4">
+<h4 id="orgc7528b3"><span class="section-number-4">3.3.1</span> Theory</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<ol class="org-ol">
+<li>Finite State Automata</li>
+<li>Push Down Automata = FSA + Stack</li>
+<li>Turing Machine: FSA dealing with infinite term.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgfb1330c" class="outline-4">
+<h4 id="orgfb1330c"><span class="section-number-4">3.3.2</span> Parsing a CFG</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<ol class="org-ol">
+<li>Recursion
+Grammar rules are recursive.</li>
+<li>Concatenation
+Suppose S -&gt; T U and we know how to build a matcher for T and U
+matcher = acceptor -&gt; token list -&gt; bool</li>
+
+<li>OR (disjunction)
+<ul class="org-ul">
+<li><p>
+lookahead
+S -&gt; a T b
+S -&gt; c U d
+Check if it is a or c
+</p>
+
+<p>
+However,
+S -&gt; a T b
+S -&gt; a U d
+</p>
+
+<p>
+But we can change it into the following form to use lookahead
+S -&gt; a S'
+S' -&gt; T b
+S' -&gt; U d
+</p>
+
+<p>
+But if the "T" is "if then"  ???
+</p></li>
+
+<li>Create a choice point while parsing
+First parse a T b, if fail then parse a U b
+BUt need memory to record information</li>
+
+<li>Stack
+Note that function call is build-in stack.</li>
+
+<li><p>
+acceptor(token list -&gt; bool)
+Takes a string of tokens and indicates correctness
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">function | ")"::_ -&gt; true | _ -&gt; false
+</pre>
+</div></li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org65d62f5" class="outline-3">
+<h3 id="org65d62f5"><span class="section-number-3">3.4</span> Translation into machine code</h3>
+<div class="outline-text-3" id="text-3-4">
+<ul class="org-ul">
+<li><p>
+Consider the following code
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int main()
+{
+  return ! getchar();
+}
+</pre>
+</div>
+<p>
+This piece of code will not compile because getchar() has not been
+declared. We need to include stdio.h
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;stdio.h&gt;
+int mainn() { return !getchar();}
+</pre>
+</div></li>
+
+<li>Translation
+<ul class="org-ul">
+<li><p>
+Preprocessor: a kind of text expansion.
+</p>
+<div class="org-src-container">
+<pre class="src src-c">extern int getchar(void);
+
+int main() {return !getchar();}
+</pre>
+</div></li>
+
+<li><p>
+Convert program text into sequence of tokens
+Each token is represented by a byte.
+</p>
+
+<p>
+<b>lexing</b>: extra information associated with the token. For example, the
+difference between "main" and any other identifier.
+</p></li>
+
+<li>Parsing: Parse tree</li>
+<li>Semantics analysis
+<ul class="org-ul">
+<li>Type checking</li>
+<li>Scope checking</li>
+</ul></li>
+<li>Intermediate code generation
+main:
+     push &amp;getchar
+     push 0
+     call 
+     not
+     ret</li>
+<li>Code generation x86<sub>64</sub>
+main:
+     call getchar
+     tstl %eax, %eax
+     setn %eax, %eax
+     ret</li>
+</ul></li>
+
+<li>Unix design philosophy (software tools)
+Break a procoess into multiple independent pieces.
+Ensures independence but increase overhead.</li>
+
+<li>Smalltallc Design Philosophy (IDE)</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org40dd304" class="outline-2">
+<h2 id="org40dd304"><span class="section-number-2">4</span> Week 4</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-orga385a38" class="outline-3">
+<h3 id="orga385a38"><span class="section-number-3">4.1</span> Compiler vs. Intepreter</h3>
+</div>
+
+
+<div id="outline-container-orgd4539d8" class="outline-3">
+<h3 id="orgd4539d8"><span class="section-number-3">4.2</span> Hybrid Approach: JVM</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Foo.java -&gt; java compiler -&gt; Foo.class(bytecodes)
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+<p>
+\/
+Java(intepret + profiler(for performance))
+hotpot -&gt; (another compiler) -&gt; machine code
+(this method is expensive so we only do it for "hotspot")
+</p>
+</div>
+
+<div id="outline-container-orgbe48a88" class="outline-4">
+<h4 id="orgbe48a88"><span class="section-number-4">4.2.1</span> Profiling</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<ul class="org-ul">
+<li>statistical: sample hw ip 100 times/s =&gt; make a histogram
+We can know the "hotspot" of our program</li>
+
+<li>Insert counting code (gcc -pg -fprofile -&#x2026;)
+finer graine performance measrue</li>
+
+<li>Once we know the "hotspot" we translate it into machine code</li>
+
+<li>Cause nondeterministic performance</li>
+
+<li>Hard to debug on the lower level compiler
+<ul class="org-ul">
+<li>Nondeterministic</li>
+<li>Generally we will never see the machine code??</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf2da2b1" class="outline-3">
+<h3 id="orgf2da2b1"><span class="section-number-3">4.3</span> Linking</h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
+<li>Loading time dynamic linking (load code before main start)
+Library will be dynamically linked as part of initialization process.</li>
+
+<li>Running dynamic linking (use special function to call)
+Self modifying code
+<ul class="org-ul">
+<li>Pros: Flexibility</li>
+<li>Cons: Library version conflict: some module need version 1 but some other need version 2</li>
+<li>Cons: Worry about unstructed code
+Once we allow dynamic linking, our program may execute some suspicious code.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org78d7f5c" class="outline-3">
+<h3 id="org78d7f5c"><span class="section-number-3">4.4</span> Type</h3>
+<div class="outline-text-3" id="text-4-4">
+<ul class="org-ul">
+<li>Why we need type
+<ul class="org-ul">
+<li>Help us understand the code
+when we look at an id x, we know which operations are valid and which are
+not.</li>
+<li><p>
+Reliability/Redundancy
+</p>
+<div class="org-src-container">
+<pre class="src src-c">string x;
+x = x + 1; // ???
+</pre>
+</div>
+<p>
+Catch trivial mistakes early
+</p></li>
+<li>Performance
+Type helps compiler generate better code</li>
+</ul></li>
+
+<li>Strongly Typed: All operations are type checked, you cannot escape
+C/C++ is not strongly typed.</li>
+
+<li>Primitive vs. Constructed types
+<ul class="org-ul">
+<li>Primitive types are built in while structure type are built by user.</li>
+<li>array of C/C++ are constructed types</li>
+</ul></li>
+
+<li>What is type? Is it some data structure? How exposed is the implementation of
+a type?
+<ul class="org-ul">
+<li>Exposed Type
+User know details of the type: integral type</li>
+
+<li><p>
+Abstract Type
+User only konw what operation can be done to that type
+check NaN
+</p>
+<div class="org-src-container">
+<pre class="src src-c">bool isnanf(float x)
+{ return x!=x; }
+bool isinfinityf()
+{ return x!=0 &amp;&amp; x == 2*x; }
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>floating point
+<ul class="org-ul">
+<li>Abstract type</li>
+<li><p>
+Why we need small number?
+We need computation with small number
+</p>
+<div class="org-src-container">
+<pre class="src src-c">if(x == y &amp;&amp; x-y==0) // does this always true????
+</pre>
+</div></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-org6a7ddcb" class="outline-4">
+<h4 id="org6a7ddcb"><span class="section-number-4">4.4.1</span> Type equivalence: Structurally Equivalence and Name equivalence</h4>
+<div class="outline-text-4" id="text-4-4-1">
+<ul class="org-ul">
+<li>C uses structural equivalence for typedef and name equivalence for struct
+type.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfd48bed" class="outline-4">
+<h4 id="orgfd48bed"><span class="section-number-4">4.4.2</span> Subtype</h4>
+<div class="outline-text-4" id="text-4-4-2">
+<div class="org-src-container">
+<pre class="src src-pascal">var a int,
+var b 1..127,
+</pre>
+</div>
+<ul class="org-ul">
+<li>Subtype in C
+<ul class="org-ul">
+<li>float and double</li>
+<li><p>
+char* vs. char const* ???
+</p>
+<div class="org-src-container">
+<pre class="src src-c">char *p;
+char const* c_p;
+c_p = p;
+// p = c_p
+</pre>
+</div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf86a491" class="outline-3">
+<h3 id="orgf86a491"><span class="section-number-3">4.5</span> Polymorphism</h3>
+<div class="outline-text-3" id="text-4-5">
+<ul class="org-ul">
+<li><p>
+Early polymorphism: Type Coersion &amp; overloading
+int vs. unsigned int
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int i = random();
+if( i &lt; -217473848)
+{
+   printf("machine error");
+}
+</pre>
+</div>
+
+<p>
+long vs. double
+</p>
+
+<p>
+multiple bugs
+double f(double, int);
+double f(int, double);
+f(3,5);
+</p>
+
+<p>
+Error: Semantically ambiguous
+</p></li>
+
+<li>Parametric polymorphism
+<ul class="org-ul">
+<li><p>
+iterator
+Suppose a list of string, we want to remove the short ones
+</p>
+
+<p>
+s = iterator.next
+s.length &lt; xxx
+s.remove()
+</p>
+
+<p>
+This code has some problems because collections might contian any object
+so first assigning an object to string may cause trouble.
+</p>
+
+<p>
+If we know we are working with list of string, we can do runtime cast.
+s = (string) iterator
+</p>
+
+<p>
+However, some language has static type checking.
+Also, runtime type check has may harm performance. Python has the
+"runtime type checking" problem.
+</p>
+
+<p>
+In java, we use java template to solve this problem.
+</p>
+
+<p>
+c is a collection of string Collection&lt;string&gt;
+</p>
+
+<p>
+for(iterator&lt;string&gt; = c.begin(), &#x2026;)
+   String s = c.next()
+</p>
+
+<p>
+No runtime type check.
+</p>
+
+<p>
+ML, Java: Generic
+C++: templates
+</p>
+
+<p>
+Template method is different from java/ml method. In template, we
+instantiate the template with the actual type. We know what the type is
+at compile time. It is similiar to macros. We actually compitle the code
+n times if we have n template. The machine code is copied n times also.
+</p>
+
+<p>
+That not how generic work. In Java, we just compile the generic version
+once. It is going to think is that going to work with any type. We just
+have one copy of the machine code. 
+</p>
+
+<p>
+Generic wins?
+</p>
+
+<p>
+"sizeof T" with T some template type. The compiler can convert it into a
+constant. However, in generic, this is still a variable. We do not know
+the size.
+</p>
+
+<p>
+Another example
+T x,y;
+x = y;
+</p>
+
+<p>
+In template, we know what instruction to execute because the type is know
+at compile time. However, in generic we do not know which instruction to
+take. 
+</p>
+
+<p>
+However, Java or ML use some other method to make this efficient. Every
+object is a pointer. We will never see the actual object. The above
+assignment is just poiner assignment. (Java does not have "sizeof"
+operator either). That's how generic work. We do not need to know the
+exact type of our object. We are just dealling with pointers(references).
+</p></li>
+
+<li><p>
+Subtypes and generic
+Soppose a list of string:
+List&lt;string&gt; ls = [                  ];
+List&lt;Obejct&gt; lo = ls;
+lo.add new Thread;
+String s = ls.get() // we want the most recently added object
+</p>
+
+<p>
+The problem is that although string is a subtype of object, list of
+string is not a subtype of list of object.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-java">void printALL(Collection&lt;?&gt; c) {
+  for(object o: c) {
+    Object o = c.next();
+    System.out.println(o);
+  }
+}
+
+// Soppose we String has a subtype of BlueString
+printAll(Collection&lt;BlueString&gt; cbs); // Does this work?
+				      // No because collection of bluesring is not a subtype of collection os string
+void printAll&lt;Collection(? extends String&gt; o);
+// Only accept types that extends string
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-java">public static void &lt;T&gt; convert( T[], Collection&lt;T&gt; c) {
+    for(int i=0; i&lt;a.len ; i++)
+    c.add(a[i]);
+}
+
+/**
+ ** Suppose: BlueString[] a, Collection&lt;String&gt; c will not work on convert
+ ** because convert require two parameter to be the same type.
+ **/
+
+public static void &lt;T&gt; convert( T[], Collection&lt;? super T&gt; c) {
+    for(int i=0; i&lt;a.len ; i++)
+    c.add(a[i]);
+}
+</pre>
+</div></li>
+
+<li>Python &amp; Subtype
+<ul class="org-ul">
+<li>Duck Typing: 
+Never ask whether a type is the subtype of another type. Just check if
+it works.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfc9daa9" class="outline-3">
+<h3 id="orgfc9daa9"><span class="section-number-3">4.6</span> Java &#x2013; history</h3>
+<div class="outline-text-3" id="text-4-6">
+<ul class="org-ul">
+<li>What we had
+workstations + servers + operation staff on a network = (Solaris written in
+C)</li>
+<li>what they wanted: IoT
+<ul class="org-ul">
+<li>Reliability</li>
+<li>size of program</li>
+<li>Flexibility(OOP)</li>
+<li>architecture agnostic</li>
+</ul></li>
+
+<li>First trial: C++
+C++ does provide flexibility but not other thing. For example, template
+increases program size.</li>
+
+<li>Steal Smalltalk
+<ul class="org-ul">
+<li>OOP -&gt; Flexibility</li>
+<li>Bytecodes -&gt; architecture agnostic
+Took program and translate it into machine independent bytecode. Then the
+interpreter will analyze the bytecode.</li>
+<li>Runtime checking -&gt; Reliability</li>
+</ul></li>
+
+<li>Smalltalk bad ideas
+<ul class="org-ul">
+<li>Weird syntax</li>
+<li>Program internally use secret bytecode
+For internet of thing, they need download bytecodes instead of machine
+code and let the hardware to intepret.</li>
+</ul></li>
+
+<li>Oak ==&gt; Java
+<ul class="org-ul">
+<li>1995 Browser in Java
+HotJava and applets(java code compiled into bytecode)</li>
+<li>And Browser Mosaic in C++
+which becomes IE and Mozilla
+Plugin technology which are dynamic linked machine code.
+To fix security issue, they later use javascript.</li>
+<li>Java -&gt; server worked well
+-&gt; thread support</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgf2e178a" class="outline-3">
+<h3 id="orgf2e178a"><span class="section-number-3">4.7</span> Java Types</h3>
+<div class="outline-text-3" id="text-4-7">
+<ul class="org-ul">
+<li><p>
+Primitive type
+byte, short, int, long, char, boolean, float, double
+ 8      16    32    64   16      1       32     64
+				      IEEE-754 fp
+</p>
+
+<p>
+In java, the those numbers are fixed for portable flexibility.
+In C, performance is more concerned. Machine are allowed to choose more
+suitable size.
+</p>
+
+<ul class="org-ul">
+<li>Overflow??
+In C, overflow is undefined.
+In Java, overflow causes wrapping around ==&gt; reliability.</li>
+</ul></li>
+
+<li>References type
+Array.
+All objects are represented in pointers. You cannot see them but they're
+there.
+
+<ul class="org-ul">
+<li><p>
+Some thing valid in C++ but not in Java
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int foo(int n) {
+  char buf[512];
+
+  return ...;
+}
+</pre>
+</div>
+
+<p>
+Cannot allocate on the stack. Everything is on the heap.
+The size is dynamically chosen.
+Fixed after created.
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int foo(int n){
+    char[] bof = new char[512];
+    return xxx;
+}
+
+char[] foo(int n) {
+    char[] bof = new char[512]; // Could be new char[n];
+    return bof;
+}
+</pre>
+</div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org675c947" class="outline-3">
+<h3 id="org675c947"><span class="section-number-3">4.8</span> Java: Single Inheritance</h3>
+<div class="outline-text-3" id="text-4-8">
+<ul class="org-ul">
+<li>Simple and elegant but not flexible</li>
+<li>Use interfaces instead</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org51ac626" class="outline-2">
+<h2 id="org51ac626"><span class="section-number-2">5</span> Week 5</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-orgf431575" class="outline-3">
+<h3 id="orgf431575"><span class="section-number-3">5.1</span> Abstract Class</h3>
+<div class="outline-text-3" id="text-5-1">
+</div><div id="outline-container-org277bce8" class="outline-4">
+<h4 id="org277bce8"><span class="section-number-4">5.1.1</span> Java Standard Library</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<ol class="org-ol">
+<li><p>
+Collection framwork
+Three interfaces
+  (Copy)
+  Serializable
+  RandomAccess
+</p>
+
+<p>
+Collection of iterable which could be put into a for loop
+  (Abstract collections) which implement collection
+  List
+    Abstract List
+      Abstract Sequential list
+	LinkedList  ==&gt; (implement) Queue CS
+	Array List CSR
+	vector (synchronized, thread-safe compared to array list) CSR
+  Set 
+    Sorted Set
+    Abstract Set 
+      Hash set (real class. can use the "new" keyword) CS
+	LinkedHashSet
+      TreSet CS
+</p></li>
+
+<li>Object
+<ul class="org-ul">
+<li>Has constructor 
+so we can use "new" keyword for Object.
+Can be used as test case
+Placeholder</li>
+
+<li>public boolean equal(Object arg);  == (reference equality)</li>
+
+<li>public int hashCode();  default hashcode is some bits extracted from mem addr.
+For building hash table.
+We want the following to be true:
+If o1 <code>= o2 then hashCode(o1) =</code> hasCode(o2)
+Note that the reverse is not true.</li>
+
+<li><p>
+public final Class&lt;? extends Object&gt; getClass(); 
+abstract (class) ==&gt; subclass is mandatory
+final (class) ==&gt; subclass is not allowed
+final (function) ==&gt; cannot override it.
+Final allows inline and optimization ????
+</p>
+
+<p>
+Object o = ???
+Class c = o.getClass(); ==&gt; May get "Thread"
+This is runtime type of o
+</p>
+
+<p>
+Reflection:
+Program tries to understand itself
+</p>
+
+<p>
+What is the point of getClass()?
+debug
+</p>
+
+<p>
+The "final" keyword does not allow overriding because you could write it in
+a way that it return a different class.
+</p></li>
+
+<li>public String toString();
+For debug</li>
+
+<li>protected void finalize(); can throw exception
+For garbage collector
+Why we need to override finalize method?
+A subclass overrides the finalize method to dispose of system resources or
+to perform other cleanup.</li>
+
+<li>protected Object clone();</li>
+</ul></li>
+
+<li>class Class
+<ul class="org-ul">
+<li>public final Class&lt;? extends Object&gt; getClass()</li>
+</ul></li>
+</ol>
+
+
+<ol class="org-ol">
+<li>Thread
+Threads stay out of trouble via:
+<ul class="org-ul">
+<li>Synchronized
+int i;
+public synchronized int m() { i++; }
+this.lock() -&gt; this.unlock()</li>
+<li>Object.wait()
+<ol class="org-ol">
+<li>remove all synchronized locks held by this thread</li>
+<li>Wait until the object beomes available</li>
+</ol></li>
+
+<li>Object.notify()
+<ol class="org-ol">
+<li>wakes up one thread</li>
+</ol></li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Noel Song</p>
+<p class="date">Created: 2017-02-08 Wed 23:26</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

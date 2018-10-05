@@ -1,0 +1,1353 @@
+% Created 2017-02-08 Wed 23:26
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Noel Song}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Noel Song},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.1.1 (Org mode 9.0.2)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{Week 1}
+\label{sec:orgf630056}
+\subsection{Intro Problem}
+\label{sec:orga78d26b}
+Given a text file as input. Generate a list of words sorted according to its
+frequency in the input file.
+
+\begin{itemize}
+\item Literate Programming
+
+\item Professor simple method
+\begin{verbatim}
+tr -cs a-zA-Z [\n]  |  sort  | uniq  -c  | sort -nr
+\end{verbatim}
+
+\item Parallelism on the Above Method
+In a four core matchine it is possible for true parallelism. However, sort
+can only output after finishing processing all its input.
+\end{itemize}
+\subsection{Language popularity}
+\label{sec:orgbc87239}
+\begin{enumerate}
+\item Java
+\item C
+\item C++
+\item C\#
+\item Python
+\item VBNET
+\item js
+\item Perl
+\item assm
+\item PHP
+\end{enumerate}
+
+\subsection{Course description}
+\label{sec:org2cae0e3}
+\begin{itemize}
+\item Core of this course
+\begin{itemize}
+\item Principles and \textbf{limitations} of programming models.
+
+\item Notations for these models
+How to design, use and support for.
+
+\item Methods to evaluate the strength and weakness of these notations in
+various contexts.
+\end{itemize}
+
+\item Current reading assignment: Ch 1-3, 5,7,9
+
+\item Grading:
+\begin{itemize}
+\item 40\% final exam; open book + notes; closed computer
+
+\item 20\% midterm:
+
+\item 40\% HW: 6 - each 5\%; 1 - 10\%
+
+\item Late penalty: same as 35L; due on 23:55 on the due date
+\end{itemize}
+
+\item Topics
+\begin{itemize}
+\item Theory behind programming languages
+
+\item Language design
+
+\item Syntax
+
+\item Semantics
+
+\item Functions
+
+\item Names
+
+\item Types: descriptions of values
+
+\item Control: Art of letting your program use CPU
+
+\item Objects
+
+\item Exceptions: Sort of control
+
+\item Concurrency
+
+\item Scripting: like shell, python
+
+\item Exercises on Ocaml, Prolong, Java, Python
+\end{itemize}
+
+\item Some questions
+\begin{enumerate}
+\item Why are there so many programming languages?
+Why cna't we just have one? There is a paper about "NExt 700 programming
+language".
+Why not only a broad-spectrum approach?
+
+\item Why software is so slow? (in lisp)
+Try C++ instead for fast memory access but loss reliability somehow.
+\end{enumerate}
+\end{itemize}
+
+\subsection{Reasons to prefer one language to another}
+\label{sec:org5d833c0}
+\begin{itemize}
+\item Popularity
+\item Support from compilers, debuggers, etc.
+\item Similarity to existing languages
+\item Simplicity
+\item Versatility: How widly can we apply this language
+\item Performance
+\begin{itemize}
+\item CPU
+\item Memory
+\item IO (disk/flash)
+\item Network
+\end{itemize}
+\item Scalability: how well the language is for larger and larger program.
+\item Reliability
+\item Convenience: How easy to use? (i++ in C)
+\end{itemize}
+
+We have competing goals, like similarity is in contradiction with convenience.
+
+\begin{itemize}
+\item Orthoganality
+From mathematic concept, there are independent axis which means change in one
+axis does not impose changes on another axis. Once we have multiple features,
+people do not need to worry about some other features.
+
+Example: In C, a function can return any kind of types
+\begin{verbatim}
+int f();
+char g();
+struct s h();
+\end{verbatim}
+However, we cannot return an array (or a function). One argument is that copy
+is potentially expensive.
+Then what about a structure? We can have a structure that is really big and
+that works. 
+They want to emphasize that arr and pointer are the same thing.
+
+Consider you want to write a code return some type t defined
+elsewhere. However, that is not guaranteed feasible (what if that t is an
+array type or function type?). Therefore, C kind of lack of orthoganality.
+
+\item Safety(Important subset of reliability)
+Does not cause really bad consequence.
+
+\item Concurrency for multi-threaded program
+\item Exceptions handling
+\item Mutability (Successful language evolve)$\backslash$
+\end{itemize}
+We want language that can change over time.
+
+Example: A language on 1971 run on PDP-11
+two int add
+16 KB RAM
+1.2 us memory
+
+Anyway, on this machine, memory access if considerably faster than
+cpu. Therefore, a language tuned for this machine has easy access to memory. 
+
+Nowadays, cpu speed is 100x faster than memory access.
+
+Example: Varying number of args for function.
+  In C there is some called Obj.
+  Obj arr[7];
+  arr[4] = \ldots{}
+  arr[1] = \ldots{}
+  Foo(7, arr); 
+  What we really want: foo(x, yz, w, u, v) but we have to fill those variables
+  in array. 
+
+We cannot realize this exactly but we can approach this as much as we can.
+\begin{verbatim}
+#define ELTS(a) sizeof(a)/sizeof(*(a))
+#define CALLMANY(f, args) (f)(ELTS(args), args)
+
+#define CALLN(f, ...)  CALLMANY(f, (Obj[]{__VA_ARGS__}))
+
+Obj args[7];
+// Some Assignemtns
+//CALLMANY(Foo, args);
+CALLN(Foo, x, y,z ,u, v, a, b ,c);
+\end{verbatim}
+
+\begin{verbatim}
+#define IF if(
+#define THEN ){
+#define ELSE } else {
+#define FI }
+\end{verbatim}
+
+These are examples of mutability. Can the program evolve with the changing
+hardware (outside world). Can it change according to the idea of the
+programmer.
+
+\subsection{Syntax}
+\label{sec:orga024d6d}
+\begin{itemize}
+\item whether a program is valid????
+\begin{verbatim}
+int x = "abc"; // No syntax rule indicates that this is invalid
+int main(void) {return ""[1]; } // Stil, no syntax rule indicates that this is not valid.
+\end{verbatim}
+Above programs are definitely wrong but not because of wrong syntax.
+
+\item whether a program will compile????
+Consider the first example. It will not compile not because its syntax.
+
+\item \textbf{A syntax is the form independent of meanings}
+In syntax we just care about its form. We do not care about what does it mean.
+
+\item Syntax
+"Clolorless greed ideas sleep furiously." ===> Good syntax, nonsensee
+semantics.
+
+\item Natural Language Syntax
+"Ireland has leoperd galore. "--P.Egger  ===> Bad syntax but meaning is
+clear
+
+In real life the meaning is important. However, in the world of
+programming, syntax is critical.
+
+"Time flies." 'Time' chould be none and verb, so does 'files'. This is the
+problem of ambiguity.
+
+\item Programming language syntax: Reasons to prefer one over another
+\begin{itemize}
+\item Inertia: Use syntax people have already get used to.
+a + b OR a b +
+
+\item simple and regular
+Pick syntax that lets us say things easily.
+Some claim postfix notation is simpler and regular.
+In C, (a+b)*c. With postfix, a b + c * ==> No parens.
+
+The first reason prefers normal syntax
+
+\item It's unambiguous
+\begin{verbatim}
+a---b;
+// a-----b; does not work
+a--- --b;
+\end{verbatim}
+Why a-----b does not work?
+Because the token analyzer (tokenizer) reads from left to right and it reads
+greedily. The above line of code is intepreted as (a)(--)(--)(-)(b).
+\textbf{Greedy means it is going to keep gluing characters together}
+\end{itemize}
+\end{itemize}
+\begin{itemize}
+\item Tokenization
+comment: ??
+
+\item Language without keyword: no reserved word
+Why we have language like this? ==> mutability? backward compatibility?
+Note that for C/C++ it is painful to improve the language.
+\end{itemize}
+
+Clear syntax is one where visualization skill "work"
+Example
+do \{
+   x/=10;
+\} while(x > 10);
+
+do \{
+  x/=10
+\} until(x <= 10)
+
+if( i > 0 \&\& i < 1000) // Not what we want
+if(0 < i \&\& i < 1000)
+
+\section{Week 2}
+\label{sec:orgb0b9746}
+\subsection{On Context free language}
+\label{sec:org2ee43c3}
+\subsubsection{Some intro}
+\label{sec:org6812f68}
+\begin{itemize}
+\item Sentence= finite sequence of tokens(terminal symbols)
+
+\item Token is from a set of finite elements.
+\begin{itemize}
+\item Identifier: A special kind of token.
+\item Some tokens have special information associated which is important for the
+language's semantics.
+\item A sentence must be finite
+\item Set of tokens must be finite: Important for analyzing of the language.
+
+Example: L = \{a\(^{\text{nb}}\)\(^{\text{n}}\) | n >= 0\}
+	 This language has infinite token set.
+	 This language does not scale well.
+\end{itemize}
+
+\item Nonterminal
+Short for a (finite) sequence of tokens, than can be part of a sentence.
+
+\item Grammar
+\begin{itemize}
+\item set of tokens(terminal symbols) and a finite set of nonterminal symbols.
+
+\item Start symbol: a nonterminal symbols
+
+\item finite set of rules
+
+Example: <nonterminal> -> finite sequence of symbols (either a terminal or
+nonterminal)
+
+\item The compiler is going to figure out whether a sentence is a valid program language.
+
+\item Recursive grammar: A symbol is both on the RHS and LHS
+
+Example: Internet RFS 5322 (request for comment)
+comtains a grammar for email headers.
+\begin{itemize}
+\item Subject: <any sequence of chars, except newline>
+Grammar of subject content:
+      subject contents -> empty
+      subject contents -> subject\(_{\text{contents}}\) CHAR
+      (subject content -> CHAR subject\(_{\text{contents}}\))
+
+Different grammar can produce the same sentence.
+
+\item MessageID: <xxx.xxx@xx.xx.xx>
+Grammar of MessageID:
+msg-id = "<" word *<"."word> "@" atom * ("." atom) ">"
+
+\begin{itemize}
+\item Some meta-notation like "*" (not strict BNF but EBNF)
+EBNF just give us some convenience
+BNF <==> EBNF
+dotword -> <empty> | . word dotword vs. *<"."word>
+BNF is better for parser
+\end{itemize}
+
+\item Some other grammar
+atom = 1 * <any CHAR except special , SPACE and CR>  
+specials = ()<>@  
+word = atom | quotestring
+CTLS = $\backslash$000 $\backslash$037 $\backslash$177
+quotestring = <"> *(qtext | quoted-pair) <">
+qtext = <any CHAR except " $\backslash$ newline>
+quoted-pair = "$\backslash$" CHAR
+
+\item Possible trouble
+\begin{itemize}
+\item Infinite long string
+Fixed by standard other than grammar
+
+\item Control symbol in message
+\end{itemize}
+
+\item Use RegExpr: Turn a specification of a language to a program
+qp = '$\backslash$\.'
+qt = '[\^{}$\backslash$"]'
+ps =
+
+Regular expression can be used to write grammar with meta-symbols and terminal symbols.
+However, regExpr cannot count.
+Note that recursion is not the limitation.
+Example: T -> abT is possible (tail-recursion)
+	 T -> aTb is not possible to convert (not tail-recursion)
+	 (tail-recursion rule)
+\end{itemize}
+\end{itemize}
+
+\item ISO Standard for EBNF: Decreasing in precedence
+\begin{itemize}
+\item "token" or 'token'
+\item\relax [ option ]
+\item \{ repetition \}
+\item (* comment *)
+\item X* repetition of X
+\item X-Y: X except for Y
+\item X,Y: concatenation
+\item X | Y: OR
+\item X = expr;
+\end{itemize}
+
+\item Define EBNF formmally
+syntax = syntax rule, \{syntax rule\};
+syntax rule = meta id, '=', defines list, ';' ;
+definitions list = defn, \{ '|', defns\} ;
+Note: Define itself through itself
+
+\item Problems of Grammar
+\begin{itemize}
+\item Large grammar is hard to understand
+\begin{itemize}
+\item Syntax chart
+\end{itemize}
+\item Nonterminal used but not defined (bug in grammar)
+Or better described as "non-productive"
+\item Nonterminal are defined but not used
+Or better described as "non-reachable"
+Cannot reach it from ths start symbol
+This applies recursively, consider the following with start symbol A
+W -> W A
+A -> \emph{some other rules} | <empty>
+
+\item Ambiguity
+Has multiple way to parse the same input
+By making the program easy to parse, you may introduce ambiguity
+
+\begin{itemize}
+\item Associativity
+E -> E+E
+E -> E-E
+E -> ID
+E -> (E)
+
+Has two ways to parse the sentence "a - b - c"
+
+\begin{itemize}
+\item Problem: Is it possible to write a program to test the ambiguity of a
+grammar just by looking at the grammar itself?
+
+It is too hard. However, we still want to debug the grammar. 比如debug普通
+的程序很难，但是我们还是会去debug并且有所收获。Solve the general problem
+of ambiguity is hard, but we are looking for a practical partial solution.
+
+\item General Idea: prohibit the part we do not want. Ambiguous grammar is too
+\end{itemize}
+general. Consider the above grammar, is too general. Consider the second
+rule, the second E cannot be a plus/minus operation.
+
+\begin{itemize}
+\item Change: result in a more complicated parse tree
+\end{itemize}
+E -> T
+E -> E+E (This is stil a problem because E is allowed to recurse on both side)
+E -> E-T
+T -> ID
+T -> ( E )
+
+\begin{itemize}
+\item Why we must have (a+b)+c?
+\item Arithmetic overflow: Some order of the operation results in overflow
+\item Floating point rounding problem
+\item Side effects?
+\item Unsigned arithmetic: Wrap around give different answer
+(a+b)+c if a and b are unsigned int but c is unsigned long
+\end{itemize}
+
+\item Precedence
+
+E -> T
+E -> E + T
+E -> E*T   ==> E -> F * T
+	   ==> T -> F
+T -> ID    ==> F -> ID
+T -> ( E ) ==> F -> ( E )
+
+\begin{itemize}
+\item Infix grammar has trouble of precedence
+\end{itemize}
+
+\item Another ambiguity in C
+\begin{itemize}
+\item stmt: 
+;
+break;
+continue;
+expr;
+return expr; (no parens)
+while (expr) stmt
+do stmt while (expr); (we have no parens)
+
+\begin{itemize}
+\item Some modification:
+do stmt while expr; ==> This is not going to cause trouble)
+while expr stmt     ==> This may cause ambiguous because parser
+may combine expr and stmt together:
+while i<1 *c / while i<1 -c;
+
+The parens for expr in do-while is not going to solve ambiguity
+but it is still there because we want consistency.
+\end{itemize}
+
+\item Some other statement
+\{ stmt or declaration list \}
+for(expr; expr; expr;) stmt
+if (expr) stmt
+if (expr) stmt else stmt
+switch (expr) stmt
+
+\begin{itemize}
+\item Dangling "else" problem
+fix: stmt: if (expr) stmt | stmt1 
+stmt1 has everything except if (expr) stmt
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\item Too much details 
+\begin{itemize}
+\item because of ambiguity
+\begin{itemize}
+\item Abstract syntax and concrete syntax
+Let the parser deal with known ambiguity issue directly instead of writing
+complex grammar rule.
+\end{itemize}
+\item because of attempts to cover too much
+IntE -> IntE + IntE | IntE * IntE | IntID| Inte
+StrE -> StrID | StrLiteral | StrE \^{} StrE
+
+Note: The above is rarely done in real world language because there are
+infinite number of types. Generally grammar is only good at deal with
+syntax but not semantics.
+\end{itemize}
+\end{itemize}
+
+\item Expressions problems
+
+\begin{itemize}
+\item user-defined operators (not the c++ way because we must pick the existing
+operator and give it new meaning)
+
+\begin{itemize}
+\item Prolong: defining new operator
+\end{itemize}
+:-op (700, xfx, [=, <=, >=,])
+:-op (500, yfx, [+,-])
+:-op (400, yfx, [*, /])
+:-op (200, xfy, [**])
+:-op (1200, xfy, [<--])
+
+\begin{itemize}
+\item 500 is the precedence
+\item y means same precedence is ok
+\item x means same precedence is not ok
+
+\item Note that ambiguity is not possible because "yfy" is not allowed.
+\end{itemize}
+
+\item Side effect(especially in C/C++): a = f(x) + g(x);
+a = a++ -a++;
+We cannot determine the order of executing because compiler will optimize
+the code.
+
+Example of Professor:
+\begin{verbatim}
+double stack[1000];
+double *top = &sstack[1000];
+#define PUSH(x) (*--top = (x))
+#define POP()   (*top++)
+switch(op) {
+ case MULTI:
+   PUSH( POP() * POP());
+   break;
+ }
+\end{verbatim}
+*--top = (*top++) * (*top++);
+\end{itemize}
+\end{itemize}
+
+
+\section{Week 3}
+\label{sec:org42e3059}
+\subsection{Functional programming}
+\label{sec:org65cdde2}
+\begin{itemize}
+\item Functional programming motivation
+\begin{itemize}
+\item Clarity
+\item performance
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Clarity:}
+\label{sec:orgd5c2ac2}
+\begin{itemize}
+\item Take advantage of mathematic notation
+We want to build on mathematic traditions.
+\begin{itemize}
+\item a + b = b + a
+May not true in C due to side effects
+(a+=10) + (a-=10)
+\item E - E = 0
+what if E is getchar() which return different char each time.
+\item i = i + 1 is definitely false mathematically
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Performance}
+\label{sec:org18fa146}
+C or Java are designed for Von Neuman architecture(loading and store)
+
+\subsubsection{One success story (empty)}
+\label{sec:org6484c3a}
+
+\subsubsection{Function: What is a function}
+\label{sec:org5aaf39a}
+\begin{itemize}
+\item CS: a chunk of code with a name
+This is how we think when we are implementing the function.
+
+\item Math: A mapping from a domain to a range
+This is how we think when we are using a function.
+
+\item Side Effect: Evaluation is no longer imposed by sequencing but only by function calls.
+\begin{verbatim}
+a = f(x);
+b = g(y);
+c = h(z);
+e(a, b, c);
+\end{verbatim}
+The above code might have hidden dependency so the sequential relationship
+must be as written.
+
+\begin{verbatim}
+a = b + f(x) - b;
+\end{verbatim}
+In C/C++ or Java, b cannot be eliminated.
+
+\item Referential transparency: Variables with the same name always have the same
+value.
+\begin{verbatim}
+let a = b + (f x) - b
+\end{verbatim}
+\end{itemize}
+
+\subsubsection{Higher Order Function (Functional forms in math)}
+\label{sec:org38192ea}
+\begin{itemize}
+\item Functions that take function as argument
+"Build function on some other functions".
+\begin{itemize}
+\item Summation operator
+\item Integration operator
+\item Function composition operator "o"
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Ocaml}
+\label{sec:org1519363}
+\begin{itemize}
+\item Compile time type checking (like C/C++, Java)
+\begin{itemize}
+\item Type inference
+Do not need to write all types down. The types are inferred from the
+context.
+\end{itemize}
+
+\item Garbage Collection
+No need to worry about storage management.
+
+\item Good support for higher order function
+
+\item Name and Types are really important in Ocaml
+
+\item Pattern matching
+\begin{verbatim}
+let cons (x,y) = x::y;;
+(* The above is equivalent to the following*)
+     (fun a -> 
+       match a with
+       | (x,y) -> x::y)
+\end{verbatim}
+\end{itemize}
+
+\subsubsection{Functions}
+\label{sec:orgd7761ad}
+\begin{itemize}
+\item Simple functions
+\begin{verbatim}
+(fun a -> a);;
+-: 'a -> 'a = <fun>
+
+(fun () -> ());;
+-: unit -> unit
+\end{verbatim}
+
+\item Higher order function
+\begin{verbatim}
+(fun x -> match x with
+	  | 0 -> (fun x -> -x)
+	  | _ -> (fun x -> x * 2));;
+-: int -> (int -> int) = <fun>
+\end{verbatim}
+
+\begin{itemize}
+\item Note that '->' is right associative
+\item Function is left associative
+\end{itemize}
+
+\item Recursion
+\begin{itemize}
+\item Fib
+\begin{verbatim}
+let rec fib n =
+match n with
+| 0 -> 1
+| 1 -> 1
+| n -> fib(n-1) + fib(n-2)
+\end{verbatim}
+\end{itemize}
+
+\item Currying function: \textbf{All the functions are curried}
+\begin{itemize}
+\item Max element in list
+\begin{verbatim}
+let rec maxlist =
+function 
+| (x::l) -> let m = maxlist l in if x < m then m else x
+| [] -> 0;;
+\end{verbatim}
+
+\item Reverse
+\begin{verbatim}
+let rec reverse= function
+  | [] -> []
+  | (x::l) -> (rev l) @ [x]
+\end{verbatim}
+\end{itemize}
+\end{itemize}
+
+
+\subsection{Reading}
+\label{sec:org0067397}
+1-9, 13, 15, 17
+\subsection{HW}
+\label{sec:org40272d1}
+\subsubsection{Theory}
+\label{sec:orgce00f6e}
+\begin{enumerate}
+\item Finite State Automata
+\item Push Down Automata = FSA + Stack
+\item Turing Machine: FSA dealing with infinite term.
+\end{enumerate}
+
+\subsubsection{Parsing a CFG}
+\label{sec:org985bd24}
+\begin{enumerate}
+\item Recursion
+Grammar rules are recursive.
+\item Concatenation
+Suppose S -> T U and we know how to build a matcher for T and U
+matcher = acceptor -> token list -> bool
+
+\item OR (disjunction)
+\begin{itemize}
+\item lookahead
+S -> a T b
+S -> c U d
+Check if it is a or c
+
+However,
+S -> a T b
+S -> a U d
+
+But we can change it into the following form to use lookahead
+S -> a S'
+S' -> T b
+S' -> U d
+
+But if the "T" is "if then"  ???
+
+\item Create a choice point while parsing
+First parse a T b, if fail then parse a U b
+BUt need memory to record information
+
+\item Stack
+Note that function call is build-in stack.
+
+\item acceptor(token list -> bool)
+Takes a string of tokens and indicates correctness
+\begin{verbatim}
+function | ")"::_ -> true | _ -> false
+\end{verbatim}
+\end{itemize}
+\end{enumerate}
+
+\subsection{Translation into machine code}
+\label{sec:org6a4769d}
+\begin{itemize}
+\item Consider the following code
+\begin{verbatim}
+int main()
+{
+  return ! getchar();
+}
+\end{verbatim}
+This piece of code will not compile because getchar() has not been
+declared. We need to include stdio.h
+
+\begin{verbatim}
+#include <stdio.h>
+int mainn() { return !getchar();}
+\end{verbatim}
+
+\item Translation
+\begin{itemize}
+\item Preprocessor: a kind of text expansion.
+\begin{verbatim}
+extern int getchar(void);
+
+int main() {return !getchar();}
+\end{verbatim}
+
+\item Convert program text into sequence of tokens
+Each token is represented by a byte.
+
+\textbf{lexing}: extra information associated with the token. For example, the
+difference between "main" and any other identifier.
+
+\item Parsing: Parse tree
+\item Semantics analysis
+\begin{itemize}
+\item Type checking
+\item Scope checking
+\end{itemize}
+\item Intermediate code generation
+main:
+     push \&getchar
+     push 0
+     call 
+     not
+     ret
+\item Code generation x86\(_{\text{64}}\)
+main:
+     call getchar
+     tstl \%eax, \%eax
+     setn \%eax, \%eax
+     ret
+\end{itemize}
+
+\item Unix design philosophy (software tools)
+Break a procoess into multiple independent pieces.
+Ensures independence but increase overhead.
+
+\item Smalltallc Design Philosophy (IDE)
+\end{itemize}
+
+
+\section{Week 4}
+\label{sec:org87a8f35}
+
+\subsection{Compiler vs. Intepreter}
+\label{sec:orgc70d434}
+
+
+\subsection{Hybrid Approach: JVM}
+\label{sec:org0ccf83b}
+
+Foo.java -> java compiler -> Foo.class(bytecodes)
+\begin{center}
+\begin{tabular}{l}
+\\
+\end{tabular}
+\end{center}
+$\backslash$/
+Java(intepret + profiler(for performance))
+hotpot -> (another compiler) -> machine code
+(this method is expensive so we only do it for "hotspot")
+
+\subsubsection{Profiling}
+\label{sec:orgc5ee857}
+\begin{itemize}
+\item statistical: sample hw ip 100 times/s => make a histogram
+We can know the "hotspot" of our program
+
+\item Insert counting code (gcc -pg -fprofile -\ldots{})
+finer graine performance measrue
+
+\item Once we know the "hotspot" we translate it into machine code
+
+\item Cause nondeterministic performance
+
+\item Hard to debug on the lower level compiler
+\begin{itemize}
+\item Nondeterministic
+\item Generally we will never see the machine code??
+\end{itemize}
+\end{itemize}
+
+
+\subsection{Linking}
+\label{sec:org30332c0}
+
+\begin{itemize}
+\item Loading time dynamic linking (load code before main start)
+Library will be dynamically linked as part of initialization process.
+
+\item Running dynamic linking (use special function to call)
+Self modifying code
+\begin{itemize}
+\item Pros: Flexibility
+\item Cons: Library version conflict: some module need version 1 but some other need version 2
+\item Cons: Worry about unstructed code
+Once we allow dynamic linking, our program may execute some suspicious code.
+\end{itemize}
+\end{itemize}
+
+\subsection{Type}
+\label{sec:org4aa901e}
+\begin{itemize}
+\item Why we need type
+\begin{itemize}
+\item Help us understand the code
+when we look at an id x, we know which operations are valid and which are
+not.
+\item Reliability/Redundancy
+\begin{verbatim}
+string x;
+x = x + 1; // ???
+\end{verbatim}
+Catch trivial mistakes early
+\item Performance
+Type helps compiler generate better code
+\end{itemize}
+
+\item Strongly Typed: All operations are type checked, you cannot escape
+C/C++ is not strongly typed.
+
+\item Primitive vs. Constructed types
+\begin{itemize}
+\item Primitive types are built in while structure type are built by user.
+\item array of C/C++ are constructed types
+\end{itemize}
+
+\item What is type? Is it some data structure? How exposed is the implementation of
+a type?
+\begin{itemize}
+\item Exposed Type
+User know details of the type: integral type
+
+\item Abstract Type
+User only konw what operation can be done to that type
+check NaN
+\begin{verbatim}
+bool isnanf(float x)
+{ return x!=x; }
+bool isinfinityf()
+{ return x!=0 && x == 2*x; }
+\end{verbatim}
+
+\begin{itemize}
+\item floating point
+\begin{itemize}
+\item Abstract type
+\item Why we need small number?
+We need computation with small number
+\begin{verbatim}
+if(x == y && x-y==0) // does this always true????
+\end{verbatim}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Type equivalence: Structurally Equivalence and Name equivalence}
+\label{sec:orgd86577b}
+\begin{itemize}
+\item C uses structural equivalence for typedef and name equivalence for struct
+type.
+\end{itemize}
+
+\subsubsection{Subtype}
+\label{sec:org5bcbfd8}
+\begin{verbatim}
+var a int,
+var b 1..127,
+\end{verbatim}
+\begin{itemize}
+\item Subtype in C
+\begin{itemize}
+\item float and double
+\item char* vs. char const* ???
+\begin{verbatim}
+char *p;
+char const* c_p;
+c_p = p;
+// p = c_p
+\end{verbatim}
+\end{itemize}
+\end{itemize}
+
+
+\subsection{Polymorphism}
+\label{sec:org5d2bc44}
+\begin{itemize}
+\item Early polymorphism: Type Coersion \& overloading
+int vs. unsigned int
+\begin{verbatim}
+int i = random();
+if( i < -217473848)
+{
+   printf("machine error");
+}
+\end{verbatim}
+
+long vs. double
+
+multiple bugs
+double f(double, int);
+double f(int, double);
+f(3,5);
+
+Error: Semantically ambiguous
+
+\item Parametric polymorphism
+\begin{itemize}
+\item iterator
+Suppose a list of string, we want to remove the short ones
+
+s = iterator.next
+s.length < xxx
+s.remove()
+
+This code has some problems because collections might contian any object
+so first assigning an object to string may cause trouble.
+
+If we know we are working with list of string, we can do runtime cast.
+s = (string) iterator
+
+However, some language has static type checking.
+Also, runtime type check has may harm performance. Python has the
+"runtime type checking" problem.
+
+In java, we use java template to solve this problem.
+
+c is a collection of string Collection<string>
+
+for(iterator<string> = c.begin(), \ldots{})
+   String s = c.next()
+
+No runtime type check.
+
+ML, Java: Generic
+C++: templates
+
+Template method is different from java/ml method. In template, we
+instantiate the template with the actual type. We know what the type is
+at compile time. It is similiar to macros. We actually compitle the code
+n times if we have n template. The machine code is copied n times also.
+
+That not how generic work. In Java, we just compile the generic version
+once. It is going to think is that going to work with any type. We just
+have one copy of the machine code. 
+
+Generic wins?
+
+"sizeof T" with T some template type. The compiler can convert it into a
+constant. However, in generic, this is still a variable. We do not know
+the size.
+
+Another example
+T x,y;
+x = y;
+
+In template, we know what instruction to execute because the type is know
+at compile time. However, in generic we do not know which instruction to
+take. 
+
+However, Java or ML use some other method to make this efficient. Every
+object is a pointer. We will never see the actual object. The above
+assignment is just poiner assignment. (Java does not have "sizeof"
+operator either). That's how generic work. We do not need to know the
+exact type of our object. We are just dealling with pointers(references).
+
+\item Subtypes and generic
+Soppose a list of string:
+List<string> ls = [                  ];
+List<Obejct> lo = ls;
+lo.add new Thread;
+String s = ls.get() // we want the most recently added object
+
+The problem is that although string is a subtype of object, list of
+string is not a subtype of list of object.
+
+\begin{verbatim}
+void printALL(Collection<?> c) {
+  for(object o: c) {
+    Object o = c.next();
+    System.out.println(o);
+  }
+}
+
+// Soppose we String has a subtype of BlueString
+printAll(Collection<BlueString> cbs); // Does this work?
+				      // No because collection of bluesring is not a subtype of collection os string
+void printAll<Collection(? extends String> o);
+// Only accept types that extends string
+\end{verbatim}
+\begin{verbatim}
+public static void <T> convert( T[], Collection<T> c) {
+    for(int i=0; i<a.len ; i++)
+    c.add(a[i]);
+}
+
+/**
+ ** Suppose: BlueString[] a, Collection<String> c will not work on convert
+ ** because convert require two parameter to be the same type.
+ **/
+
+public static void <T> convert( T[], Collection<? super T> c) {
+    for(int i=0; i<a.len ; i++)
+    c.add(a[i]);
+}
+\end{verbatim}
+
+\item Python \& Subtype
+\begin{itemize}
+\item Duck Typing: 
+Never ask whether a type is the subtype of another type. Just check if
+it works.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\subsection{Java -- history}
+\label{sec:orgd925bc5}
+\begin{itemize}
+\item What we had
+workstations + servers + operation staff on a network = (Solaris written in
+C)
+\item what they wanted: IoT
+\begin{itemize}
+\item Reliability
+\item size of program
+\item Flexibility(OOP)
+\item architecture agnostic
+\end{itemize}
+
+\item First trial: C++
+C++ does provide flexibility but not other thing. For example, template
+increases program size.
+
+\item Steal Smalltalk
+\begin{itemize}
+\item OOP -> Flexibility
+\item Bytecodes -> architecture agnostic
+Took program and translate it into machine independent bytecode. Then the
+interpreter will analyze the bytecode.
+\item Runtime checking -> Reliability
+\end{itemize}
+
+\item Smalltalk bad ideas
+\begin{itemize}
+\item Weird syntax
+\item Program internally use secret bytecode
+For internet of thing, they need download bytecodes instead of machine
+code and let the hardware to intepret.
+\end{itemize}
+
+\item Oak ==> Java
+\begin{itemize}
+\item 1995 Browser in Java
+HotJava and applets(java code compiled into bytecode)
+\item And Browser Mosaic in C++
+which becomes IE and Mozilla
+Plugin technology which are dynamic linked machine code.
+To fix security issue, they later use javascript.
+\item Java -> server worked well
+-> thread support
+\end{itemize}
+\end{itemize}
+
+
+\subsection{Java Types}
+\label{sec:org3bda141}
+\begin{itemize}
+\item Primitive type
+byte, short, int, long, char, boolean, float, double
+ 8      16    32    64   16      1       32     64
+				      IEEE-754 fp
+
+In java, the those numbers are fixed for portable flexibility.
+In C, performance is more concerned. Machine are allowed to choose more
+suitable size.
+
+\begin{itemize}
+\item Overflow??
+In C, overflow is undefined.
+In Java, overflow causes wrapping around ==> reliability.
+\end{itemize}
+
+\item References type
+Array.
+All objects are represented in pointers. You cannot see them but they're
+there.
+
+\begin{itemize}
+\item Some thing valid in C++ but not in Java
+\begin{verbatim}
+int foo(int n) {
+  char buf[512];
+
+  return ...;
+}
+\end{verbatim}
+
+Cannot allocate on the stack. Everything is on the heap.
+The size is dynamically chosen.
+Fixed after created.
+\begin{verbatim}
+int foo(int n){
+    char[] bof = new char[512];
+    return xxx;
+}
+
+char[] foo(int n) {
+    char[] bof = new char[512]; // Could be new char[n];
+    return bof;
+}
+\end{verbatim}
+\end{itemize}
+\end{itemize}
+
+\subsection{Java: Single Inheritance}
+\label{sec:org0012460}
+\begin{itemize}
+\item Simple and elegant but not flexible
+\item Use interfaces instead
+\end{itemize}
+
+\section{Week 5}
+\label{sec:orgba48538}
+
+\subsection{Abstract Class}
+\label{sec:org225327e}
+
+\subsubsection{Java Standard Library}
+\label{sec:orga4f52a6}
+\begin{enumerate}
+\item Collection framwork
+Three interfaces
+  (Copy)
+  Serializable
+  RandomAccess
+
+Collection of iterable which could be put into a for loop
+  (Abstract collections) which implement collection
+  List
+    Abstract List
+      Abstract Sequential list
+	LinkedList  ==> (implement) Queue CS
+	Array List CSR
+	vector (synchronized, thread-safe compared to array list) CSR
+  Set 
+    Sorted Set
+    Abstract Set 
+      Hash set (real class. can use the "new" keyword) CS
+	LinkedHashSet
+      TreSet CS
+
+\item Object
+\begin{itemize}
+\item Has constructor 
+so we can use "new" keyword for Object.
+Can be used as test case
+Placeholder
+
+\item public boolean equal(Object arg);  == (reference equality)
+
+\item public int hashCode();  default hashcode is some bits extracted from mem addr.
+For building hash table.
+We want the following to be true:
+If o1 \texttt{= o2 then hashCode(o1) =} hasCode(o2)
+Note that the reverse is not true.
+
+\item public final Class<? extends Object> getClass(); 
+abstract (class) ==> subclass is mandatory
+final (class) ==> subclass is not allowed
+final (function) ==> cannot override it.
+Final allows inline and optimization ????
+
+Object o = ???
+Class c = o.getClass(); ==> May get "Thread"
+This is runtime type of o
+
+Reflection:
+Program tries to understand itself
+
+What is the point of getClass()?
+debug
+
+The "final" keyword does not allow overriding because you could write it in
+a way that it return a different class.
+
+\item public String toString();
+For debug
+
+\item protected void finalize(); can throw exception
+For garbage collector
+Why we need to override finalize method?
+A subclass overrides the finalize method to dispose of system resources or
+to perform other cleanup.
+
+\item protected Object clone();
+\end{itemize}
+
+\item class Class
+\begin{itemize}
+\item public final Class<? extends Object> getClass()
+\end{itemize}
+\end{enumerate}
+
+
+\begin{enumerate}
+\item Thread
+Threads stay out of trouble via:
+\begin{itemize}
+\item Synchronized
+int i;
+public synchronized int m() \{ i++; \}
+this.lock() -> this.unlock()
+\item Object.wait()
+\begin{enumerate}
+\item remove all synchronized locks held by this thread
+\item Wait until the object beomes available
+\end{enumerate}
+
+\item Object.notify()
+\begin{enumerate}
+\item wakes up one thread
+\end{enumerate}
+\end{itemize}
+\end{enumerate}
+\end{document}

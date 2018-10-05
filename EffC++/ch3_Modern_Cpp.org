@@ -123,6 +123,7 @@
    ptr = &MyClass;    // Error! Assigning to 'nullptr_t' with incompatible type 'MyClass *'
    #+END_SRC
 
+
 ** Item 9: Prefer alias declaration to typedef
    最主要的原因是 alias declaration 支持 template, 如果想要利用 typedef 来实现一
    个 template type 需要通过先构造一个模板类才行：
@@ -181,11 +182,107 @@
 
     然而单纯用 alias template 是没办法实现这个特性的，因为 alias template 不支持
     partial specilization （C++11）。
+
+
 ** Item 10: Prefer scoped enum to unscoped one
+   传统的 C++98 的 enumerator 类型是会导致名称污染的，因为 enum 内的名称会被默认
+   放置到包含这个 enum 的 scope 中。但是 C++14 的 scoped enum 就不会，但相应的，
+   想要访问内部的名称需要通过 :: scope operator 来完成。
+
+   另外一点就是，C++14 的 scoped enum 是不支持隐性类型转换的，但 C++98 的
+   unscoped enum 实际上就是某种 integral type。
+
+   作者还说了一种 unscoped enum 可能有用的情况，就是让 std::tuple 的访问更加易懂。
+   #+BEGIN_SRC C++
+   enum { first, last, size };  // really bad names, easy to get name pollution
+   head->next = std::get<first>(result);
+   tail->prev = std::get<last>(result);
+   listSize = std::get<size>(result);
+   #+END_SRC
+
+   用 C++11 的 scoped enum 就不会这么容易了，当然我们可以写一个专门用来提取 enum
+   中名称数值的函数。不过需要注意的是，std::get 是一个模板函数，我们给的 index
+   是作为 template parameter 被传递给 std::get 的，因此这个 index 必须是
+   constexpr，所以我们要实现的函数必须是 constexpr 函数。
+   #+BEGIN_SRC C++
+   template <typename E>
+   constexpr typename std::underlying_type<E>::type
+   toUType(E enumerator) noexcept
+   {
+       return static_cast<typename 
+                          std::underlying_type<E>::type>(enumerator);
+   }
+   #+END_SRC
+
+   如果利用 C++14 的新标准库，syntax 会简单不少
+
+   #+BEGIN_SRC C++
+   template <typename E>
+   constexpr auto toUType(E enumerator) noexcept
+   {
+       return static_cast<std::underlying_type_t<E>>(enumerator);
+   }
+   #+END_SRC
+
+   这样一来一开始的代码会变成这样：
+   #+BEGIN_SRC C++
+   enum class ReturnFields{ first, last, size };  // really bad names, easy to get name pollution
+   head->next = std::get<toUType(ReturnFields::first)>(result);
+   tail->prev = std::get<toUType(ReturnFields::last)>(result);
+   listSize = std::get<toUType(ReturnFields::size)>(result);
+   #+END_SRC
+
 
 ** Item 11: Prefer delete to private undefined function
+   这点其实没什么好说的，毕竟在 C++98 中，private undefined 函数只是一种妥协，有
+   了 deteted funciton 肯定是用新特性更好。
+
+   这一章比较重要的是说了 deleted function 一些更多的用法，比如避免一些不想要的
+   自动类型转换
+   #+BEGIN_SRC C++
+   bool isLucky(int a);    // Test whether a number is lucky
+   bool isLucky(double d) = deleted;
+   bool isLucky(char a) = deleted;
+   #+END_SRC
+
+   还可以主动引导模板函数的调用，即把不应该被调用的函数 delete 掉。
 
 ** Item 12: Explicitly specify override when overriding virtual base class function
 
+   由于对虚函数的覆盖要注意很对细节，很容易犯错，用了 override 就相当于把检查细
+   节的工作交给了编译器了。
+
+   除了定义的时候的可能的犯错之外，override 还可以在我们想要改变虚函数 interface
+   的时候给我们提供一个参考，可以告诉我们 interface 的改变会导致多少代码的重写和
+   重编译。
+
+   书中还提到了 override 可以作为普通的名字，只有把 override 放在成员函数声明的
+   末尾时才具有特定意义。
+
+*** Overriding virtual member function
+    1. Must both virtual
+    2. Identical function signature (return type and parameter list)
+    3. Identical name.
+    4. Identical exception specification
+    5. Identical constness
+    6. Identical reference specifier.
+
+
 ** Item 13: Prefer const_iterator over iterator
+   这个也没什么好说的，主要震惊到我的一点是，c++ 中没有任何方法可以把标准库的
+   const_iterator 转换成普通的 iterator。
+   
+   另外 C++11 虽然有 begin 和 end 这两个 non-member function 来返回跌代替，但是
+   却没有 cbegin，cend 之类的类似函数。这些函数在 C++14 中才被加进去。但是我们可
+   以自己实现呀
+   #+BEGIN_SRC C++
+   template <typename ContainerType>
+   auto cbegin(const Containertype &c) -> decltype(std::begin(c))
+   {
+       return std::begin(c);
+   }
+   
+   #+END_SRC
+
+   这里用到的地方是，如果 begin 的参数是一个 const object，那么它会返回 const_iterator。
    

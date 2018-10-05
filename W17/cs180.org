@@ -105,7 +105,11 @@ overfall running time is still polyomial.
 Next year's computer will be 2x faster. If I can solve problem of size n0 today,
 how large a problem can i solve in the same time next year?
 
+New size/speed ratio shoule equal to the old size/speed ratio.
+
 O(n): n0 -> 2n0
+O(n^2) n0 -> sqrt(2)n0
+...
 
 *** Complexity of multiplication
 - O(n^2)
@@ -143,7 +147,7 @@ them in accending order.
   * Minimal spanning tree
 
 **** Mergesort?
-- Developed in 1945 by von Meumann
+- Developed in 1945 by von Neumann
 - Must faster than "Selection", "Insertion", "Bubble"
 - Sorting in Perl, Java, Python, Android: hybrid
 - Merge Algorithm: Can reduce space complexity by using linked-list.
@@ -205,8 +209,9 @@ T(n) = a*T(n/b) + f(n)
 *Master theorem*
 T(n) = aT(n/b) + f(n)
 k = logb(a)
-
+  * if f(n) = O(n^(k-e)) ==> k > d ==> a > b^d => T(n) = Theta(n^k)
   * if f(n) = Theta(n^k log(n)^p), then T(n) = Theta(n^k log(n)^(p+1))
+  * if f(n) = O(n^(k+e)) ==> k < d ==> a < b^d => T(n) = Theta(f(n))
 
 *** Integer multiplication: Karatsuba Algorithm
 
@@ -269,7 +274,7 @@ k = logb(a)
   1. if n = 1 return
 
   2. else
-     (a) set A1 = exponentiation(3, floor(n/2)
+     (a) set A1 = exponentiation(3, floor(n/2))
      (b) if n is even
          return Karatsuba(A1, A1)  ==> O(n^1.585)
 
