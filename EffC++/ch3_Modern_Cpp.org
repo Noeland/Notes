@@ -1,0 +1,135 @@
+* Chapter 3: Moving to Modern C++
+  这一章讲了一些 C++11 和 C++14 的新特性，比如用 {} 和 () 来初始化有什么区别，
+  delete 函数，constexpr 之类的东西，基本就是让你多用这些新特性
+
+** Iten 7: Distinguish between () and {} when creating objects
+   
+   新标准给了 {} 这种初始化对象的方式，在读 Primer 的时候被称为 “list
+   initialization”。 这种方式非常通用，可以直接初始化，可以给 STL container 预输
+   出初始值，可以充当 in-class initializer。相比之下 () 基本上只能用来 direct
+   initialization。 
+
+   有一个比较重要的点是， braced-initialization 不允许 narrowing，也就是说 brace
+   中的表达式如果不能被目标类型完整地包含，就会报错
+   #+begin_src C++
+   double x, y, z;
+   ...
+   int sum1{x + y + z}; // Error! sum of double may not be expressible as int.
+   #+end_src
+
+   另外，书中提到了一个我不知道的点，就是 C++ 的编译器会把任何“可以”被视作
+   declaration 的代码视作 declaration。什么意思呢？如果你想 default initialize
+   一个变量，你可能会这么做：
+   #+BEGIN_SRC C++
+   int a();        // Declaration of a function with empty parameter list and returns int
+
+   Myclass b();    // Treated as declaration.
+   #+END_SRC
+   
+   就像上面评论中说得，这两行代码就会被编译器视为函数声明。而想要避免这个问题就
+   只要用 brace 就行了，因为函数声明必须要用 parenthesis。作者把这个叫做 C++ 中
+   最讨人厌的 parsing rule。
+
+*** brace initialization 的一些问题
+    这个问题非常傻逼，是关于 std::initializer_list 和 class 的 constructor 的。
+    具体问题是，如果某个类有一个 constructor 的参数列表是 std::initializer_list，
+    那么如果你用 braced initialization，编译器会十分偏向调用这个接受
+    std::initializer_list 的 constructor。
+
+    这就是傻逼的地方了，这个“十分偏向”是什么意思呢？？意思是，只要有任何一种类型
+    转换的路径可以让编译器成功调用那个 constructor，那么编译器就会这么做。当然，
+    这种类型转换必须是 applicable 的，比如 string 没法转换成 int，arithmetic
+    type 没法转换成 pointer。
+
+    #+BEGIN_SRC C++
+    struct A{
+    public:
+        A(std::initializer_list<bool> li):data(0) { cerr << "A(std::initializer_list li)" << endl;}
+
+        A(int a): data(a) {}
+        int data;
+    };
+
+
+    A a1(1);        // Calls A(int);
+    A a2{1};        // Calls the one with parameter std::initializer_list
+    A a3{&a1}       // Makes no sense, but still calls the ctor
+                    // with parameter std::initializer_list
+    #+END_SRC
+
+    注意，虽然对第二个初始化 A(int）是一个 perfect match，编译器还是会调用另一个
+    构造体。这个例子中，所有的 arithmetic type 都会别变为 bool，从而去调用那个构
+    造体。
+
+    编译器对这种构造体的喜爱非常强，甚至会无视 copy/move constructor
+    #+BEGIN_SRC C++
+    class Widget {
+    public:
+      Widget(int i, bool b);
+      Widget(int i, doube d);
+      Widget(std::initializer_list<long double> il);
+
+      operator float() const;
+    };
+
+    Widget w5(w4);  // 正常的 copy constructor
+    Widget w6{w4};  // w4 -> float -> long double
+
+    Widget w7(std::move(w4));  // move constructor called
+    Widget w7{std::move(w4)};  // w4 -> float -> long double
+    #+END_SRC
+
+*** 对实际的一些影响
+    事实上 vector 就会被这个奇怪的法则影响。
+    #+BEGIN_SRC C++
+    std::vector<int> v1(10, 20);     // 10 elements
+    std::vector<int> v2{10, 20};     // 2 elements !
+    #+END_SRC
+
+    如果你写模板函数这个问题会更加棘手，你不知道该怎么做。。。
+    #+BEGIN_SRC C++
+    template <typename T< typename ...Args>
+    doSomeWork(Args ... args)
+    {
+        T localObj(std::forward<Args>(args)...);
+	// or ??
+	T localobj{std::forward<Args>(args)...};
+    }
+
+    doSomeWord<std::vector<int>>(10, 20); // What does the user what?
+    #+END_SRC
+    
+    事实上我觉得要处理这个问题，就应该默认用 (), 因为如果用了 {} 就没办法用 ()
+    的版本了，但是我们可以用 doSomeWork<std::vector<int>>({10, 20}), 来实现
+    braced list initialization。
+    
+    
+
+    
+    
+
+** Item 8: Prefer nullptr over 0 and NULL
+   这个主要是因为 nullptr 的类型是 nullptr_t，但是 0 和 NULL 的类型实际上是
+   integral type，在遇到template type deduction的时候，0 和 NULL 都会被视作实际
+   上的整型类型，而 nullptr_t 是可以被转换为 pointer type 的。
+
+   但是事实上 nullptr 和 auto 一起用的时候有一个注意点，这个是我自己在用的时候发
+   现的。那就是如果想先把某个类型的指针初始化城 nullptr，之后再将实际的指针赋值，
+   那么一开始就不要用 auto 了。因为这个指针的类型会被 auto 推断为 nullptr_t，所
+   以之后会出现类型错误。
+   #+BEGIN_SRC C++
+   auto ptr = nullptr;
+
+   ptr = &MyClass;    // Error! Assigning to 'nullptr_t' with incompatible type 'MyClass *'
+   #+END_SRC
+
+** Item 9: Prefer alias declaration to typedef
+
+** Item 10: Prefer scoped enum to unscoped one
+
+** Item 11: Prefer delete to private undefined function
+
+** Item 12: Explicitly specify override when overriding virtual base class function
+
+** Item 13: Prefer const_iterator over iterator
+   
