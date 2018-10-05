@@ -124,7 +124,63 @@
    #+END_SRC
 
 ** Item 9: Prefer alias declaration to typedef
+   最主要的原因是 alias declaration 支持 template, 如果想要利用 typedef 来实现一
+   个 template type 需要通过先构造一个模板类才行：
+   #+begin_SRC C++
+   template <typename T>
+   using myAllocList = std:list<T, myAlloc<T>>;
 
+   myAllocList<Widget> lw;
+   #+END_SRC
+
+   对比一下用 typedef 的版本
+   #+BEGIN_SRC C++
+   template <typename T>
+   struct myAllocList {
+     typedef std::list<T, myAlloc<T>> type;
+   };
+
+   myAllocList<Widget>::type lw;
+   #+END_SRC
+
+   另外，如果想要在模板类的内部声明这样一个变量，则必须在前面加上 typename。而
+   alias declaration 就不需要，因为编译器知道这肯定是一个 type。
+
+   很多 C++98 标准库中的一些特性都是通过 typedef 来实现的，比如 <type_traits> 这
+   个头文件中一些设计模板元编程的东西。
+   #+BEGIN_SRC C++
+   #include <type_traits>
+   typename std::remove_const<const string&>::type s = "Hello";
+   typename std::conditional<true, const string*, string*>::type ptr;
+   #+END_SRC
+
+   在 C++ 14 中这些特性全都变成了以 template alias 实现的了，我们在 C++11 的编译
+   器中也可以自己处理一下
+   #+BEGIN_SRC C++
+   template <typename T>
+   using remove_const_t = typename std::remove_const<T>::type;
+
+   template <bool cond, typename T, typename F>
+   using conditional_t = typename std::conditional<cond, T, F>::type;
+   #+END_SRC
+
+*** 关于 std::conditional 的实现方法
+    由于我之前在练习自己编写链表，在处理常量和非常量迭代器的代码重用的时候注意到
+    了 std::conditional 这个特性，就很好奇它的具体实现方法。在看了源码之后发现是
+    利用了 template class specialization。
+    #+BEGIN_SRC C++
+    template <bool cond, typename T, typename F>
+    struct conditional{
+      typedef T type;
+    };
+
+    // template class partial specialization of template class
+    template <typename T, typename F>
+    struct conditional<false, T, F> { typedef F type; };
+    #+END_SRC
+
+    然而单纯用 alias template 是没办法实现这个特性的，因为 alias template 不支持
+    partial specilization （C++11）。
 ** Item 10: Prefer scoped enum to unscoped one
 
 ** Item 11: Prefer delete to private undefined function
